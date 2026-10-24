@@ -20,5 +20,19 @@ and push to `develop` and `main`:
 
 The scripts come from Open3DBroadcast and need Python 3.8 or later, standard library only.
 
-Not in CI yet: the UE build and the automation tests. They need a Windows runner with UE 5.8
-(WP-9); until then, plugin changes are built and tested at the desk.
+[`.github/workflows/ue-build-test.yml`](../.github/workflows/ue-build-test.yml) runs the UE job on
+non-draft PRs, pushes to `develop` and `main`, and by hand (Actions > UE build and tests > Run
+workflow), on the self-hosted `[self-hosted, ue5, windows]` runner that Open3DBroadcast also uses,
+with UE 5.8 at `C:\Program Files\Epic Games\UE_5.8`:
+
+1. `Scripts/Build-Plugin.ps1 -FailOnWarnings`: RunUAT BuildPlugin for Win64; a compiler warning
+   in a plugin source file fails the job (rule FAB-004).
+2. `Scripts/Run-AutomationTests.ps1 -PluginPackageDir <package> -MinTestsKey plugin`: the
+   `Open3DPuppet` tests in a throwaway host project that loads exactly the package from step 1.
+   Pass or fail comes from the exported report, and fewer tests than the floor in
+   `automation-test-floors.json` is a failure.
+3. The report, the editor log and the BuildPlugin log are uploaded as
+   `Open3DPuppet-Tests-<sha>`.
+
+Drafts skip the UE job so unfinished work does not hold the shared runner. Both scripts come
+from Open3DBroadcast.

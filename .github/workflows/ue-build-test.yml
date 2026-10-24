@@ -1,0 +1,68 @@
+name: UE build and tests
+
+# The plugin built with RunUAT BuildPlugin on UE 5.8 (ADR 0001) and its automation tests run
+# against that package, on the self-hosted [self-hosted, ue5, windows] runner that
+# Open3DBroadcast also uses (Build/README.md, "CI"). The runner takes one job at a time, so the
+# two repositories' UE jobs queue rather than build at once (AGENTS.md).
+#
+# Drafts skip the job so unfinished work does not hold the shared runner: mark the PR ready for
+# review, or run this workflow by hand on the branch (Actions > UE build and tests > Run workflow).
+
+on:
+  # Any base branch, so stacked PRs (one work package on top of another) are checked too.
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+  push:
+    branches: [ develop, main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ue-build-test-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build-and-test:
+    name: UE build and tests
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: [ self-hosted, ue5, windows ]
+    timeout-minutes: 120
+    env:
+      UE_ROOT: 'C:\Program Files\Epic Games\UE_5.8'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Warnings in plugin sources fail the build (rule FAB-004).
+      - name: Build the plugin (Win64)
+        shell: powershell
+        run: |
+          $pkg = Join-Path $env:RUNNER_TEMP 'PluginPackage'
+          & .\Build\Scripts\Build-Plugin.ps1 `
+            -UEPath "$env:UE_ROOT" `
+            -PluginUPluginPath (Join-Path $PWD 'ProjectSandbox\Plugins\Open3DPuppet\Open3DPuppet.uplugin') `
+            -OutDir $pkg `
+            -FailOnWarnings
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run the automation tests against the package
+        shell: powershell
+        run: |
+          & .\Build\Scripts\Run-AutomationTests.ps1 `
+            -UEPath "$env:UE_ROOT" `
+            -PluginPackageDir (Join-Path $env:RUNNER_TEMP 'PluginPackage') `
+            -ResultsDir 'Artifacts\Tests' `
+            -MinTestsKey plugin
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload the test report and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Open3DPuppet-Tests-${{ github.sha }}
+          path: |
+            Artifacts/Tests
+            ${{ runner.temp }}/PluginPackage-BuildPlugin.log
+          if-no-files-found: warn

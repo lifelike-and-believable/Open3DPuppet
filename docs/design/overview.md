@@ -117,7 +117,7 @@ frame, so a change in the details panel shows up live in the viewport.
 | Prop-driven | Tracked rigid body (Live Link Transform role) | Mapping space, filtering | WP-7 |
 | Digits (fingers, toes, talons, feathers) | Performer fingers, relative to the hand | Finger-to-digit mapping, curl and spread gains, chain resampling | WP-12 |
 | Curve to bone | A performer curve (face, finger curl) | Source range to bone rotation or translation range, dead zone, smoothing | WP-13 |
-| Curve remap | Performer curves | Per-curve remap, combination, smoothing to puppet curves (morph targets) | WP-13 |
+| Curve remap | Performer curves (ARKit's 52 blend shapes by default; other sources through the profile) | Per-curve remap, combination, smoothing to puppet curves (morph targets) | WP-13 |
 | Eyes | Eye-look curves or eye bones | Range limits, convergence | WP-13 |
 | Physics Region (optional module) | Its controls or a performer curve | Strength and damping of a region in Rigid Body With Control | WP-15 |
 | Control Rig adapter | A Control Rig asset with a known interface | The rig's own controls | WP-10 |

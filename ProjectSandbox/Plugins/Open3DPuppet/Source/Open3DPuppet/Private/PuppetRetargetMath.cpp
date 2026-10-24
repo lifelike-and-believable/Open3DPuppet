@@ -13,7 +13,7 @@ namespace PuppetRetarget
 
 	FQuat RotationDeltaInParent(const FQuat& Current, const FQuat& Rest, const FQuat& ParentCurrent, const FQuat& ParentRest, const FQuat& Alignment)
 	{
-		return FQuat::Identity;
+		return (Alignment * ParentRest * ParentCurrent.Inverse() * Current * Rest.Inverse() * Alignment.Inverse()).GetNormalized();
 	}
 
 	FQuat ScaleRotation(const FQuat& Delta, double Amount)

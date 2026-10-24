@@ -122,6 +122,13 @@ void FAnimNode_PuppetSolve::Evaluate_AnyThread(FPoseContext& Output)
 	{
 		Output.Pose[BoneIndex] = Solved.GetLocal(RequiredBones.MakeMeshPoseIndex(BoneIndex).GetInt());
 	}
+	// Curves no module wrote pass through from Source (ADR 0006).
+	const TConstArrayView<FName> CurveNames = Solved.GetCurveNames();
+	const TConstArrayView<float> CurveValues = Solved.GetCurveValues();
+	for (int32 Curve = 0; Curve < CurveNames.Num(); ++Curve)
+	{
+		Output.Curve.Set(CurveNames[Curve], CurveValues[Curve]);
+	}
 }
 
 void FAnimNode_PuppetSolve::InitializeInstance(const FReferenceSkeleton& RefSkeleton)
@@ -164,23 +171,29 @@ void FAnimNode_PuppetSolve::ReadPerformers()
 			}
 		}
 
-		// No frame this time: the slot keeps the performer's last pose.
+		// No frame this time: the slot keeps the performer's last pose and curves.
 		FLiveLinkSubjectFrameData Frame;
-		const FLiveLinkSkeletonStaticData* Skeleton = nullptr;
-		const FLiveLinkAnimationFrameData* Animation = nullptr;
-		if (!LiveLinkClient || !PuppetLiveLink::EvaluateAnimation(*LiveLinkClient, Entry.Subject, Frame, Skeleton, Animation))
+		PuppetLiveLink::FSubjectData Data;
+		if (!LiveLinkClient || !PuppetLiveLink::EvaluateSubject(*LiveLinkClient, Entry.Subject, Frame, Data))
 		{
 			continue;
 		}
-		FString Error;
-		if (!Instance->SetPerformerSkeleton(Slot, Skeleton->BoneNames, Skeleton->BoneParents, Entry.Profile, Error))
+		if (Data.Skeleton && Data.Animation)
 		{
-			// Empty when this skeleton was already reported.
-			UE_CLOG(!Error.IsEmpty(), LogOpen3DPuppet, Warning, TEXT("Puppet %s, slot %s: Live Link subject %s has an invalid skeleton: %s"),
-				*BoundPuppet->GetName(), *Entry.Slot.ToString(), *Entry.Subject.ToString(), *Error);
-			continue;
+			FString Error;
+			if (Instance->SetPerformerSkeleton(Slot, Data.Skeleton->BoneNames, Data.Skeleton->BoneParents, Entry.Profile, Error))
+			{
+				Instance->SetPerformerTransforms(Slot, Data.Animation->Transforms);
+			}
+			else
+			{
+				// Empty when this skeleton was already reported.
+				UE_CLOG(!Error.IsEmpty(), LogOpen3DPuppet, Warning, TEXT("Puppet %s, slot %s: Live Link subject %s has an invalid skeleton: %s"),
+					*BoundPuppet->GetName(), *Entry.Slot.ToString(), *Entry.Subject.ToString(), *Error);
+			}
 		}
-		Instance->SetPerformerTransforms(Slot, Animation->Transforms);
+		Instance->SetPerformerCurveNames(Slot, Data.Static->PropertyNames, Entry.Profile);
+		Instance->SetPerformerCurveValues(Slot, Data.Frame->PropertyValues);
 	}
 }
 

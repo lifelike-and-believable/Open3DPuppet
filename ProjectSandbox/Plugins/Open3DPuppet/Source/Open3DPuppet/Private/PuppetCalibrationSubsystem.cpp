@@ -18,24 +18,33 @@ bool UPuppetCalibrationSubsystem::CalibratePerformer(FLiveLinkSubjectName Subjec
 		return false;
 	}
 	FLiveLinkSubjectFrameData Frame;
-	const FLiveLinkSkeletonStaticData* Skeleton = nullptr;
-	const FLiveLinkAnimationFrameData* Animation = nullptr;
-	if (!PuppetLiveLink::EvaluateAnimation(*Client, Subject, Frame, Skeleton, Animation))
+	PuppetLiveLink::FSubjectData Data;
+	if (!PuppetLiveLink::EvaluateSubject(*Client, Subject, Frame, Data))
 	{
-		UE_LOG(LogOpen3DPuppet, Warning, TEXT("Cannot calibrate %s: the subject has no Animation-role frame."), *Subject.ToString());
+		UE_LOG(LogOpen3DPuppet, Warning, TEXT("Cannot calibrate %s: the subject has no frame."), *Subject.ToString());
 		return false;
 	}
 
 	FPuppetPerformerPose Pose;
-	FString Error;
-	if (!Pose.SetSkeleton(Skeleton->BoneNames, Skeleton->BoneParents, nullptr, Error) || !Pose.SetLocalTransforms(Animation->Transforms))
+	if (Data.Skeleton && Data.Animation)
 	{
-		UE_LOG(LogOpen3DPuppet, Warning, TEXT("Cannot calibrate %s: %s"), *Subject.ToString(),
-			Error.IsEmpty() ? TEXT("the frame's transform count does not match its skeleton") : *Error);
+		FString Error;
+		if (!Pose.SetSkeleton(Data.Skeleton->BoneNames, Data.Skeleton->BoneParents, nullptr, Error) || !Pose.SetLocalTransforms(Data.Animation->Transforms))
+		{
+			UE_LOG(LogOpen3DPuppet, Warning, TEXT("Cannot calibrate %s: %s"), *Subject.ToString(),
+				Error.IsEmpty() ? TEXT("the frame's transform count does not match its skeleton") : *Error);
+			return false;
+		}
+	}
+	Pose.SetCurveNames(Data.Static->PropertyNames, nullptr);
+	Pose.SetCurveValues(Data.Frame->PropertyValues);
+	if (!Pose.HasData())
+	{
+		UE_LOG(LogOpen3DPuppet, Warning, TEXT("Cannot calibrate %s: the subject has neither bones nor curves."), *Subject.ToString());
 		return false;
 	}
 	SetCalibration(Subject, FPuppetPerformerCalibration::Capture(Pose, Alignment));
-	UE_LOG(LogOpen3DPuppet, Log, TEXT("Calibrated performer %s (%d bones)."), *Subject.ToString(), Pose.Num());
+	UE_LOG(LogOpen3DPuppet, Log, TEXT("Calibrated performer %s (%d bones, %d curves)."), *Subject.ToString(), Pose.Num(), Pose.GetCurveNames().Num());
 	return true;
 }
 

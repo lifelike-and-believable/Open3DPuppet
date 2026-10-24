@@ -20,6 +20,14 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Curves in the pipeline** (WP-11, ADR 0006): performers carry curves from Live Link (curve
+  names from static data, values per frame), looked up by canonical name with an optional
+  mapping in the performer profile (`CurveCanonicalToSource`). Curve-only (Basic-role) subjects,
+  such as a face, can be cast into a slot. Calibration captures each curve's neutral value.
+  Modules read a curve's change from neutral (`FPuppetSolveContext::GetCurveDelta`) and write
+  output curves (`FPuppetPose::SetCurve`), which the Puppet Solve node writes to the pose's
+  curves. `GetJointDeltaInParent` gives a joint's rotation relative to its parent, for fingers.
+  8 new tests (42).
 - **Licence:** MIT, as Open3DBroadcast (maintainer, 2026-10-24), at the repository root and the
   plugin root; `Config/FilterPlugin.ini` puts it in the plugin package.
 - **UE build and test CI** (WP-9a): `.github/workflows/ue-build-test.yml` builds the plugin with

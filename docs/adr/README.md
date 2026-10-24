@@ -30,6 +30,7 @@ questions of accepted ADRs are recorded here.
 | 0006 | Face capture | Configurable. The default is the most common source: ARKit's 52 blend-shape curves (`jawOpen`, `eyeBlinkLeft`, `browInnerUp`, ...) as Live Link Face sends them. Other sources map their curve names through the performer profile. |
 | 0007 | Physics assets for the Wolf and Eagle | None yet. Tier 1 (solver dynamics) needs none; Tier 2 (WP-15) needs them authored first. |
 | 0008 | Manual re-centre | Yes: `UPuppetPerformanceComponent` gets a re-centre call that captures the same offset as a hand-off, mid-scene, which then converges on the performer as a hand-off's does (WP-16). |
+| 0008 | Item 5: a transition back to the animation "drops the offset" | The offset is kept until the next hand-off or re-centre replaces it, so a slot still under its performer does not snap when another slot hands back (WP-16). |
 
 ## Conventions
 

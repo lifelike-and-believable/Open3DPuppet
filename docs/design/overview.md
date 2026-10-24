@@ -227,11 +227,11 @@ It comes in two tiers:
   playable live. It is deterministic, so re-solving a take reproduces it.
 - **Tier 2, engine physics hand-off, in the optional `Open3DPuppetPhysics` module.** For contact
   with the world and reactions to impacts, Puppet Solve feeds the engine's Rigid Body With Control
-  node (Physics Control plugin, Beta). Physics Region modules publish each region's strength and
+  node (Physics Control plugin). Physics Region modules publish each region's strength and
   damping as curves, and a function library turns them into the node's control parameters. A
   puppeteer can make the wolf's legs heavy and grounded, or let the whole body go limp and pull
-  it back. Enabled only in projects that enable Physics Control, so the core plugin has no Beta
-  dependency. Takes that use it also record the solved pose, because engine physics is not
+  it back. Enabled only in projects that enable Physics Control, so the core plugin does not
+  depend on it. Takes that use it also record the solved pose, because engine physics is not
   deterministic.
 
 For the first characters:

@@ -21,10 +21,11 @@ puppet accelerate or turn. The engine already has physics animation nodes (UE 5.
 - `FAnimNode_RigidBody` and `FAnimNode_AnimDynamics` in AnimGraphRuntime
   (`Engine/Source/Runtime/AnimGraphRuntime/Public/BoneControllers/AnimNode_RigidBody.h`,
   `AnimNode_AnimDynamics.h`).
-- `FAnimNode_RigidBodyWithControl` in the Physics Control plugin, marked Beta
-  (`Engine/Plugins/Experimental/PhysicsControl/PhysicsControl.uplugin`). Its control targets and
-  strengths are per-frame pins
-  (`Engine/Plugins/Experimental/PhysicsControl/Source/PhysicsControl/Public/AnimNode_RigidBodyWithControl.h:362-380`).
+- `FAnimNode_RigidBodyWithControl` in the Physics Control plugin. In 5.7.4 the plugin was Beta,
+  under `Engine/Plugins/Experimental/`; in 5.8.4 it is at
+  `Engine/Plugins/Animation/PhysicsControl/` and no longer marked Beta. Its control targets and
+  strengths are per-frame pins (`Source/PhysicsControl/Public/AnimNode_RigidBodyWithControl.h`,
+  lines 362-380 in 5.7.4).
   It drives a physics asset's bodies towards the animation with springs, which suits
   puppetry: the performer gives the intent, physics gives weight and contact.
 
@@ -37,7 +38,7 @@ The animation instance proxy gives the component's world transform on worker thr
 1. Puppeteers can make a region more or less physical while performing, live.
 2. Secondary motion is stable at any frame rate, and the same take re-solved gives the same
    motion.
-3. The core plugin does not require a Beta engine plugin.
+3. The core plugin depends only on the engine plugins it needs for every puppet.
 4. Module authors get the dynamics building blocks once, tested, as they get the retarget math.
 
 ## Options considered
@@ -45,7 +46,7 @@ The animation instance proxy gives the component's world transform on worker thr
 ### Option A: engine physics only (puppet output into RigidBody With Control)
 - Pros: real collision with the world, the physics asset's limits.
 - Cons: not deterministic, so a re-solved take differs; every tail and ear needs physics bodies
-  and tuning in the physics asset; a Beta plugin becomes a requirement.
+  and tuning in the physics asset; every project needs the Physics Control plugin.
 
 ### Option B: dynamics inside the modules only
 - Pros: deterministic, cheap, testable like the other modules, no physics asset.
@@ -86,8 +87,8 @@ The animation instance proxy gives the component's world transform on worker thr
 ## Consequences
 
 - WP-5 (tail) builds on Tier 1; ears, mane and feathers reuse the same dynamic chain.
-- The core plugin stays free of Beta dependencies; projects that want contact and impacts enable
-  Physics Control and the optional module.
+- The core plugin does not depend on Physics Control; projects that want contact and impacts
+  enable it and the optional module.
 - A Tier 2 setup needs a physics asset per character, authored outside this toolkit.
 
 ## Open questions for the maintainer
@@ -95,5 +96,6 @@ The animation instance proxy gives the component's world transform on worker thr
 1. Which regions of the Wolf and the Eagle should be physical in the show (tail, ears, mane,
    feathers, legs on contact, whole-body falls)?
 2. Do the characters already have physics assets?
-3. needs-verification: Physics Control's status and the Rigid Body With Control node's pins on
-   UE 5.8 (read from 5.7.4, where the plugin is Beta).
+3. Physics Control is no longer Beta in 5.8.4. Should Tier 2 stay an optional module, or move into
+   the core plugin? This ADR keeps it optional so that projects without physics assets carry no
+   physics dependency.

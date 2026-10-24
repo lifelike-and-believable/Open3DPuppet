@@ -13,6 +13,7 @@ directly). Rules for Claude Code are in `.claude/rules/` (rules-for-robots core 
 
 - Plugin: `ProjectSandbox/Plugins/Open3DPuppet/`. Host project: `ProjectSandbox/ProjectSandbox.uproject`.
 - Design: `docs/design/overview.md` (read it first). Decisions: `docs/adr/`. Plan and current state: `docs/roadmap/roadmap.md`. Writing a new puppet module: `docs/guides/authoring-puppet-modules.md`. Build and CI: `Build/README.md`.
+- Across components (Open3DBroadcast, VMCLiveLink, Open3DPuppet): the contracts between them (Live Link roles, subject, bone and curve names), the engine versions that work together, cross-repository decisions and show milestones are in [`lifelike-and-believable/live-virtual-performance`](https://github.com/lifelike-and-believable/live-virtual-performance) (private). A change to a contract another component relies on is written there first. Issues use the shared labels `desk`, `needs-decision`, `interface` and `show:<name>` (its `docs/process.md`).
 
 ## Commands
 

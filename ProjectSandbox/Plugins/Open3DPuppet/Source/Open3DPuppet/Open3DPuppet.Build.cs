@@ -10,11 +10,20 @@ public class Open3DPuppet : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+		// LiveLinkInterface is public: the AnimGraph node and the calibration subsystem take
+		// FLiveLinkSubjectName (ADR 0003).
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core",
 			"CoreUObject",
-			"Engine"
+			"Engine",
+			"LiveLinkInterface"
+		});
+
+		// AnimationCore: two-bone IK for the limb module.
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"AnimationCore"
 		});
 	}
 }

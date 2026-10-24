@@ -13,6 +13,7 @@ Status: early development. See the [roadmap](docs/roadmap/roadmap.md).
 ## Documentation
 
 - [Design overview](docs/design/overview.md): concepts, the frame pipeline, the retargeting model and the module library.
+- [Authoring puppet modules](docs/guides/authoring-puppet-modules.md): how to add a module to the library.
 - [Architecture decisions](docs/adr/README.md).
 - [Build and CI](Build/README.md).
 - [Changelog](CHANGELOG.md).

@@ -35,9 +35,9 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetFingerCurlNamesTest, "Open3DPuppet.Curve
 bool FPuppetFingerCurlNamesTest::RunTest(const FString& Parameters)
 {
 	const FPuppetPerformerPose Hand = PuppetTests::FPerformer(PuppetTests::Hand()).ToPose();
-	TestNotEqual(TEXT("curl_thumb_l"), Hand.FindCurve(TEXT("curl_thumb_l")), INDEX_NONE);
-	TestNotEqual(TEXT("curl_index_l"), Hand.FindCurve(TEXT("curl_index_l")), INDEX_NONE);
-	TestNotEqual(TEXT("curl_pinky_l"), Hand.FindCurve(TEXT("curl_pinky_l")), INDEX_NONE);
+	TestTrue(TEXT("curl_thumb_l"), Hand.FindCurve(TEXT("curl_thumb_l")) != INDEX_NONE);
+	TestTrue(TEXT("curl_index_l"), Hand.FindCurve(TEXT("curl_index_l")) != INDEX_NONE);
+	TestTrue(TEXT("curl_pinky_l"), Hand.FindCurve(TEXT("curl_pinky_l")) != INDEX_NONE);
 	TestEqual(TEXT("No right hand, no curl_index_r"), Hand.FindCurve(TEXT("curl_index_r")), INDEX_NONE);
 	TestEqual(TEXT("Five derived curves"), Hand.GetCurveNames().Num(), 5);
 	TestEqual(TEXT("No source curves"), Hand.GetSourceCurveNames().Num(), 0);

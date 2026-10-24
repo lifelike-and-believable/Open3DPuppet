@@ -73,6 +73,16 @@ public:
 	/** Gives a slot this frame's curve values. False on a count mismatch; the slot keeps its last values. */
 	bool SetPerformerCurveValues(int32 Slot, TConstArrayView<float> Values);
 
+	/**
+	 * Sets a slot's control blend (ADR 0008): 0 leaves its modules' bones as the input pose (an
+	 * animation), 1 is full performer control. It scales every module weight of the slot. Default 1.
+	 */
+	void SetControlBlend(int32 Slot, float Blend);
+	float GetControlBlend(int32 Slot) const;
+
+	/** Asks the slot's modules to re-centre on the next frame they run (a hand-off or a manual re-centre). */
+	void RequestRecentre(int32 Slot);
+
 	/** Sets or clears a slot's calibration; its modules bind again. */
 	void SetCalibration(int32 Slot, const FPuppetPerformerCalibration& Calibration);
 	void ClearCalibration(int32 Slot);
@@ -100,6 +110,9 @@ private:
 		int32 PerformerPelvis = INDEX_NONE;
 		double RootScale = 1.0;
 		bool bNeedsBind = true;
+		float ControlBlend = 1.0f;
+		/** A re-centre waiting for the slot's modules to run. */
+		bool bRecentre = false;
 		/** Neutral value per performer curve, from the calibration (ADR 0006). */
 		TArray<float> CurveNeutral;
 		/** The skeleton last rejected by SetPerformerSkeleton, so it is reported once. */

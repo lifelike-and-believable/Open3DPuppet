@@ -135,6 +135,19 @@ bool FPuppetInstance::SetPerformerCurveValues(int32 Slot, TConstArrayView<float>
 	return Slots[Slot].Performer.SetCurveValues(Values);
 }
 
+void FPuppetInstance::SetControlBlend(int32 Slot, float Blend)
+{
+}
+
+float FPuppetInstance::GetControlBlend(int32 Slot) const
+{
+	return 1.0f;
+}
+
+void FPuppetInstance::RequestRecentre(int32 Slot)
+{
+}
+
 void FPuppetInstance::SetCalibration(int32 Slot, const FPuppetPerformerCalibration& Calibration)
 {
 	FSlot& State = Slots[Slot];

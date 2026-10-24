@@ -4,6 +4,7 @@
 
 #include "Containers/UnrealString.h"
 #include "Math/Quat.h"
+#include "Math/Transform.h"
 #include "Templates/UniquePtr.h"
 #include "UObject/Object.h"
 
@@ -47,8 +48,25 @@ struct OPEN3DPUPPET_API FPuppetSolveContext
 	float DeltaTime = 0.0f;
 	/** Each performer curve's value at rest (neutral), indexed like the performer's curves; 0 where the calibration had none. */
 	TConstArrayView<float> CurveNeutral;
+	/**
+	 * How much of the module's result to blend over the pose it received: the module's Weight times
+	 * its slot's control blend (ADR 0008). Use this, not the module's own Weight.
+	 */
+	float Weight = 1.0f;
+	/**
+	 * True on the frame a hand-off to the performer starts or a re-centre is asked for (ADR 0008).
+	 * The Root module on the root slot captures HandoffOffset then.
+	 */
+	bool bRecentre = false;
+	/**
+	 * The hand-off offset (ADR 0008): a turn about the vertical axis and a horizontal move that keep
+	 * the puppet where an animation left it. The helpers below apply it, so every slot's modules turn
+	 * with the puppet. The Root module on the root slot owns it: it captures it on bRecentre and
+	 * converges it to identity; other modules only read it.
+	 */
+	FTransform HandoffOffset = FTransform::Identity;
 
-	/** A performer joint's rotation change since calibration, in puppet component space (PuppetRetarget::RotationDelta). */
+	/** A performer joint's rotation change since calibration, in puppet component space (PuppetRetarget::RotationDelta), turned by the hand-off offset. */
 	FQuat GetJointDelta(int32 Joint) const;
 
 	/** A performer joint's rotation change relative to its parent (PuppetRetarget::RotationDeltaInParent); GetJointDelta for a root joint. */
@@ -60,10 +78,10 @@ struct OPEN3DPUPPET_API FPuppetSolveContext
 	/** A performer curve's change from its neutral value. */
 	float GetCurveDelta(int32 Curve) const;
 
-	/** A performer joint's current component-space position, in puppet orientation. */
+	/** A performer joint's current component-space position, in puppet orientation, with the hand-off offset applied. */
 	FVector GetJointPosition(int32 Joint) const;
 
-	/** A performer joint's position change since calibration, in puppet orientation, unscaled. */
+	/** A performer joint's position change since calibration, in puppet orientation, unscaled, turned by the hand-off offset. */
 	FVector GetJointTranslation(int32 Joint) const;
 };
 

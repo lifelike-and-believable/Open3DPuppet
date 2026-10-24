@@ -1,6 +1,6 @@
 # 0003: Performer input and calibration
 
-- **Status:** Proposed (pending maintainer sign-off)
+- **Status:** Accepted (maintainer sign-off 2026-10-24)
 - **Date:** 2026-10-24
 - **Related:** [ADR 0002](0002-puppet-module-architecture.md), [design overview](../design/overview.md) §3, §4 and §7
 

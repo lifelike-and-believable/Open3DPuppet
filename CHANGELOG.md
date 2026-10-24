@@ -5,6 +5,15 @@ Until then changes collect under `## Unreleased`.
 
 ## Unreleased
 
+### Planned
+
+- **Fingers, face and the first characters** (ADR 0006): curves in the pipeline, Digits, face and
+  eye modules, and the Wolf and Eagle of *Mamaawi Together Through the Fire* as the first puppets
+  (design overview §10, roadmap WP-11 to WP-13, WP-M1, WP-M2).
+- **Physics-driven modules** (ADR 0007): solver dynamics in the core plugin and an optional
+  hand-off to the engine's Rigid Body With Control node (design overview §11, roadmap WP-14,
+  WP-15).
+
 ### Added
 
 - **UE build and test CI** (WP-9a): `.github/workflows/ue-build-test.yml` builds the plugin with

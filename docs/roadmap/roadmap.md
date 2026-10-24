@@ -24,8 +24,6 @@ Items that need a person at the desk or a maintainer decision:
 
 - Sign-off on ADRs 0001 to 0005 and their open questions (licence, Fab, canonical joint names,
   C++-first module contract).
-- A Windows machine or runner with UE 5.8 for building and testing the plugin. Nothing in WP-0 or
-  WP-1 has been built with Unreal Build Tool or run yet.
 - WP-1 at the desk: a mannequin driven live through Live Link (Open3DBroadcast or a capture
   system), calibrated with the subsystem, with Root, Chain and Two-Bone Limb modules.
 - A first target creature for the end-to-end demo (for example a dog-legged biped with a tail).

@@ -64,16 +64,24 @@ UE 5.8.4 evaluates a sequence's pose at a time through `UAnimSequence::GetAnimat
    - **Operator:** an input action, or Remote Control for a hardware panel.
    - **Performer gesture:** a trigger that watches the performer (a held pose, a position mark, a
      curve over a threshold) and calls the component.
-5. **Anchoring the root at a hand-off.** When a slot that owns the root (ADR 0004) starts a
-   transition to the performer, the node captures an anchor: the puppet's current root and pelvis
-   transform, taken from the pose it is about to blend from, against the performer's current pelvis
-   on the stage. From then on the Root module applies the performer's movement relative to the
-   anchor, so the creature continues from where the clip left it, facing the way it faced. The
-   anchor's facing is yaw only, by default, so the performer's lean and crouch still come through.
-   A transition back to the animation releases the anchor. The solve context gains the anchor,
-   which is a contract change, recorded here. A creature clip that moves the actor through root
-   motion and one that travels in component space both work: the anchor is taken in component
-   space from the pose the clip produced on that frame.
+5. **Anchoring the root at a hand-off, then converging on the performer.** When a slot that owns
+   the root (ADR 0004) starts a transition to the performer, the node captures an anchor offset:
+   the difference between where the creature is (its root and pelvis in the pose it is about to
+   blend from) and where the performer's own, scaled stage position would put it. At first the
+   Root module applies the performer's movement on top of that offset, so the creature continues
+   from where the clip left it, facing the way it faced, with no snap. The offset then blends out,
+   so the creature's position and facing converge on the performer's (maintainer, 2026-10-24):
+   - **Convergence time** and **easing** set how long that takes. A time of 0 snaps at once; an
+     infinite time keeps the anchor (the creature stays offset from the performer).
+   - **While moving only** (on by default): the offset shrinks only while the performer moves,
+     in proportion to their speed and turn rate, so the correction hides inside the performer's
+     motion and a standing creature never slides.
+   - The facing correction is yaw only, so the performer's lean and crouch come through
+     throughout.
+   A transition back to the animation drops the offset. The solve context gains the current
+   offset, which is a contract change, recorded here. A creature clip that moves the actor through
+   root motion and one that travels in component space both work: the offset is taken in
+   component space from the pose the clip produced on that frame.
 6. **Continuity during the blend.** Modules blend from the clip's pose to the retargeted pose as
    the control blend rises; limbs in Pelvis Relative mode keep the feet from sliding while the root
    is anchored.
@@ -92,8 +100,8 @@ UE 5.8.4 evaluates a sequence's pose at a time through `UAnimSequence::GetAnimat
 
 1. Which triggers the show uses: a Sequencer cue, an operator, a performer gesture, or several
    (maintainer, 2026-10-24: still open; all three are designed for).
-2. Should a slot's anchor also be settable by hand (re-centring a performer mid-scene without a
-   transition)?
+2. Should the same offset be settable by hand mid-scene (re-centring a performer without a
+   transition, then converging as above)?
 3. needs-verification: evaluating a sequence on the animation worker thread for a skeleton other
    than the mesh's, through `GetAnimationPose` with a bone container built for the sequence's
    skeleton, or `GetBoneTransform` per bone (to be settled in WP-3).

@@ -262,9 +262,10 @@ skeletons, then pass to the performer.
   easing curve, towards the performer or back to the animation. Triggers call it: a Sequencer cue,
   an operator's button, or a performer gesture (a held pose, a mark on the stage, a curve over a
   threshold). The show's choice is still open, so all three are planned.
-- **Anchoring.** At a hand-off to the performer, the root is anchored where the clip left the
-  creature, facing the same way, and the performer's movement continues from there: no snap to the
-  performer's stage position.
+- **Anchoring, then converging.** At a hand-off to the performer, the creature starts from where
+  the clip left it, facing the same way, so nothing snaps. The offset to the performer's own stage
+  position then blends out over a convergence time, by default only while the performer moves, so
+  the correction hides inside their motion and a standing creature never slides.
 
 ```
  Wolf run clip ──► input pose ──┐

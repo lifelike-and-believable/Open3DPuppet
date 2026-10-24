@@ -250,7 +250,8 @@ and the Physics Weight blend.
 ## 12. Animation sources and hand-offs
 
 Added 2026-10-24; the decision is [ADR 0008](../adr/0008-animation-sources-and-handoffs.md). In
-*Mamaawi* the Wolf runs in and the Eagle flies in on an AnimSequence, then pass to the performer.
+*Mamaawi* the Wolf runs in and the Eagle flies in on an AnimSequence authored on their own
+skeletons, then pass to the performer.
 
 - **Two kinds of clip.** A creature clip (authored on the Wolf or Eagle skeleton) plays into the
   Puppet Solve node's input pose. A performer clip (human motion) is a cast source like a Live

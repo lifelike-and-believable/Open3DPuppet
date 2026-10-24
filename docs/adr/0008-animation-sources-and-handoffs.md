@@ -14,7 +14,8 @@ than a trip through Take Recorder's Live Link playback (ADR 0003 open question 2
 Two kinds of clip are in play, and both are to be supported (maintainer, 2026-10-24):
 
 - **Creature clips**, authored on the puppet's own skeleton (a Wolf run cycle made by an
-  animator). They need no retargeting.
+  animator). They need no retargeting. The show's entrances are creature clips: the Wolf's run and
+  the Eagle's flight are authored on the Wolf and Eagle skeletons (maintainer, 2026-10-24).
 - **Performer clips**, human motion (a mocap take, a recording) on a performer skeleton. They are
   retargeted through the puppet's modules, exactly like live motion.
 
@@ -70,7 +71,9 @@ UE 5.8.4 evaluates a sequence's pose at a time through `UAnimSequence::GetAnimat
    anchor, so the creature continues from where the clip left it, facing the way it faced. The
    anchor's facing is yaw only, by default, so the performer's lean and crouch still come through.
    A transition back to the animation releases the anchor. The solve context gains the anchor,
-   which is a contract change, recorded here.
+   which is a contract change, recorded here. A creature clip that moves the actor through root
+   motion and one that travels in component space both work: the anchor is taken in component
+   space from the pose the clip produced on that frame.
 6. **Continuity during the blend.** Modules blend from the clip's pose to the retargeted pose as
    the control blend rises; limbs in Pelvis Relative mode keep the feet from sliding while the root
    is anchored.

@@ -36,9 +36,6 @@ Items that need a person at the desk or a maintainer decision:
 - Sign-off on ADRs 0001 to 0007 and their open questions (licence, Fab, canonical joint names,
   C++-first module contract, the show's finger and face capture systems, which regions are
   physical and whether the characters have physics assets).
-- Runner access: the shared `[self-hosted, ue5, windows]` runner must serve this repository
-  (move it into the organization, or register the runner for it). Until it does, nothing in WP-0
-  or WP-1 has been built with Unreal Build Tool or run.
 - WP-1 at the desk: a mannequin driven live through Live Link (Open3DBroadcast or a capture
   system), calibrated with the subsystem, with Root, Chain and Two-Bone Limb modules.
 - Wolf and Eagle: the skeletal meshes (or their bone hierarchies and reference poses), their morph

@@ -75,7 +75,7 @@ int32 FPuppetInstance::FindSlot(FName Slot) const
 EPuppetSlotState FPuppetInstance::GetSlotState(int32 Slot) const
 {
 	const FSlot& State = Slots[Slot];
-	if (!State.Performer.HasTransforms())
+	if (!State.Performer.HasData())
 	{
 		return EPuppetSlotState::NoData;
 	}
@@ -119,6 +119,22 @@ bool FPuppetInstance::SetPerformerTransforms(int32 Slot, TConstArrayView<FTransf
 	return Slots[Slot].Performer.SetLocalTransforms(LocalTransforms);
 }
 
+void FPuppetInstance::SetPerformerCurveNames(int32 Slot, TConstArrayView<FName> CurveNames, const UPuppetPerformerProfile* Profile)
+{
+	FSlot& State = Slots[Slot];
+	if (State.Performer.HasCurveNames(CurveNames))
+	{
+		return;
+	}
+	InvalidateSlot(Slot);
+	State.Performer.SetCurveNames(CurveNames, Profile);
+}
+
+bool FPuppetInstance::SetPerformerCurveValues(int32 Slot, TConstArrayView<float> Values)
+{
+	return Slots[Slot].Performer.SetCurveValues(Values);
+}
+
 void FPuppetInstance::SetCalibration(int32 Slot, const FPuppetPerformerCalibration& Calibration)
 {
 	FSlot& State = Slots[Slot];
@@ -150,6 +166,12 @@ void FPuppetInstance::BindSlot(int32 Slot)
 {
 	FSlot& State = Slots[Slot];
 	State.bNeedsBind = false;
+	const TConstArrayView<FName> CurveNames = State.Performer.GetCurveNames();
+	State.CurveNeutral.SetNum(CurveNames.Num());
+	for (int32 Curve = 0; Curve < CurveNames.Num(); ++Curve)
+	{
+		State.CurveNeutral[Curve] = State.Calibration.GetRestCurve(CurveNames[Curve]);
+	}
 	State.PerformerPelvis = State.Performer.FindJoint(PuppetInstance::PerformerPelvisJoint);
 	State.RootScale = 1.0;
 	if (PuppetPelvis != INDEX_NONE && State.PerformerPelvis != INDEX_NONE)
@@ -181,6 +203,7 @@ void FPuppetInstance::BindSlot(int32 Slot)
 void FPuppetInstance::Solve(TConstArrayView<FTransform> InputLocal, float DeltaTime)
 {
 	Puppet.SetLocalTransforms(InputLocal);
+	Puppet.ResetCurves();
 
 	for (int32 Slot = 0; Slot < Slots.Num(); ++Slot)
 	{
@@ -197,7 +220,7 @@ void FPuppetInstance::Solve(TConstArrayView<FTransform> InputLocal, float DeltaT
 			continue;
 		}
 		const FSlot& State = Slots[Entry.Slot];
-		FPuppetSolveContext Context{ Puppet, State.Performer, State.Calibration, State.Alignment, PuppetPelvis, State.PerformerPelvis, State.RootScale, DeltaTime };
+		FPuppetSolveContext Context{ Puppet, State.Performer, State.Calibration, State.Alignment, PuppetPelvis, State.PerformerPelvis, State.RootScale, DeltaTime, State.CurveNeutral };
 		Entry.Solver->Solve(Context);
 	}
 }

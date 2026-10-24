@@ -11,6 +11,8 @@ FPuppetPerformerCalibration FPuppetPerformerCalibration::Capture(const FPuppetPe
 	FPuppetPerformerCalibration Calibration;
 	Calibration.BoneNames = Pose.GetBoneNames();
 	Calibration.RestComponent = Pose.GetComponentTransforms();
+	Calibration.CurveNames = Pose.GetCurveNames();
+	Calibration.RestCurveValues = Pose.GetCurveValues();
 	Calibration.Alignment = InAlignment;
 	return Calibration;
 }
@@ -30,4 +32,10 @@ bool FPuppetPerformerCalibration::Matches(const FPuppetPerformerPose& Pose) cons
 		}
 	}
 	return true;
+}
+
+float FPuppetPerformerCalibration::GetRestCurve(FName CurveName) const
+{
+	const int32 Curve = CurveNames.IndexOfByKey(CurveName);
+	return RestCurveValues.IsValidIndex(Curve) ? RestCurveValues[Curve] : 0.0f;
 }

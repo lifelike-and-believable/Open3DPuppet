@@ -6,6 +6,7 @@
 #include "ILiveLinkClient.h"
 #include "Roles/LiveLinkAnimationRole.h"
 #include "Roles/LiveLinkAnimationTypes.h"
+#include "Roles/LiveLinkBasicRole.h"
 
 namespace PuppetLiveLink
 {
@@ -20,18 +21,25 @@ namespace PuppetLiveLink
 		return &ModularFeatures.GetModularFeature<ILiveLinkClient>(ILiveLinkClient::ModularFeatureName);
 	}
 
-	bool EvaluateAnimation(ILiveLinkClient& Client, const FLiveLinkSubjectName& Subject, FLiveLinkSubjectFrameData& OutFrame,
-		const FLiveLinkSkeletonStaticData*& OutSkeleton, const FLiveLinkAnimationFrameData*& OutAnimation)
+	bool EvaluateSubject(ILiveLinkClient& Client, const FLiveLinkSubjectName& Subject, FLiveLinkSubjectFrameData& OutFrame, FSubjectData& OutData)
 	{
-		OutSkeleton = nullptr;
-		OutAnimation = nullptr;
-		if (!Client.DoesSubjectSupportsRole_AnyThread(Subject, ULiveLinkAnimationRole::StaticClass())
-			|| !Client.EvaluateFrame_AnyThread(Subject, ULiveLinkAnimationRole::StaticClass(), OutFrame))
+		OutData = FSubjectData();
+		if (Client.DoesSubjectSupportsRole_AnyThread(Subject, ULiveLinkAnimationRole::StaticClass()))
+		{
+			if (!Client.EvaluateFrame_AnyThread(Subject, ULiveLinkAnimationRole::StaticClass(), OutFrame))
+			{
+				return false;
+			}
+			OutData.Skeleton = OutFrame.StaticData.Cast<FLiveLinkSkeletonStaticData>();
+			OutData.Animation = OutFrame.FrameData.Cast<FLiveLinkAnimationFrameData>();
+		}
+		else if (!Client.DoesSubjectSupportsRole_AnyThread(Subject, ULiveLinkBasicRole::StaticClass())
+			|| !Client.EvaluateFrame_AnyThread(Subject, ULiveLinkBasicRole::StaticClass(), OutFrame))
 		{
 			return false;
 		}
-		OutSkeleton = OutFrame.StaticData.Cast<FLiveLinkSkeletonStaticData>();
-		OutAnimation = OutFrame.FrameData.Cast<FLiveLinkAnimationFrameData>();
-		return OutSkeleton && OutAnimation;
+		OutData.Static = OutFrame.StaticData.Cast<FLiveLinkBaseStaticData>();
+		OutData.Frame = OutFrame.FrameData.Cast<FLiveLinkBaseFrameData>();
+		return OutData.Static && OutData.Frame;
 	}
 }

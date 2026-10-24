@@ -116,3 +116,63 @@ int32 FPuppetPerformerPose::FindJoint(FName CanonicalJoint) const
 	const int32* Bone = CanonicalToBone.Find(CanonicalJoint);
 	return Bone ? *Bone : INDEX_NONE;
 }
+
+void FPuppetPerformerPose::SetCurveNames(TConstArrayView<FName> InCurveNames, const UPuppetPerformerProfile* Profile)
+{
+	CurveNames = InCurveNames;
+	CurveValues.SetNumZeroed(CurveNames.Num());
+	bHasCurveValues = false;
+
+	CanonicalToCurve.Reset();
+	for (int32 Curve = 0; Curve < CurveNames.Num(); ++Curve)
+	{
+		CanonicalToCurve.FindOrAdd(CurveNames[Curve], Curve);
+	}
+	if (Profile)
+	{
+		for (const TPair<FName, FName>& Mapping : Profile->CurveCanonicalToSource)
+		{
+			const int32 Curve = CurveNames.IndexOfByKey(Mapping.Value);
+			if (Curve != INDEX_NONE)
+			{
+				CanonicalToCurve.Add(Mapping.Key, Curve);
+			}
+		}
+	}
+}
+
+bool FPuppetPerformerPose::HasCurveNames(TConstArrayView<FName> InCurveNames) const
+{
+	if (CurveNames.Num() != InCurveNames.Num())
+	{
+		return false;
+	}
+	for (int32 Curve = 0; Curve < CurveNames.Num(); ++Curve)
+	{
+		if (CurveNames[Curve] != InCurveNames[Curve])
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool FPuppetPerformerPose::SetCurveValues(TConstArrayView<float> InValues)
+{
+	if (InValues.Num() != CurveNames.Num())
+	{
+		return false;
+	}
+	for (int32 Curve = 0; Curve < InValues.Num(); ++Curve)
+	{
+		CurveValues[Curve] = InValues[Curve];
+	}
+	bHasCurveValues = InValues.Num() > 0;
+	return true;
+}
+
+int32 FPuppetPerformerPose::FindCurve(FName CanonicalCurve) const
+{
+	const int32* Curve = CanonicalToCurve.Find(CanonicalCurve);
+	return Curve ? *Curve : INDEX_NONE;
+}

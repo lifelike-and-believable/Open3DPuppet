@@ -45,9 +45,20 @@ struct OPEN3DPUPPET_API FPuppetSolveContext
 	int32 PerformerPelvis = INDEX_NONE;
 	double RootScale = 1.0;
 	float DeltaTime = 0.0f;
+	/** Each performer curve's value at rest (neutral), indexed like the performer's curves; 0 where the calibration had none. */
+	TConstArrayView<float> CurveNeutral;
 
 	/** A performer joint's rotation change since calibration, in puppet component space (PuppetRetarget::RotationDelta). */
 	FQuat GetJointDelta(int32 Joint) const;
+
+	/** A performer joint's rotation change relative to its parent (PuppetRetarget::RotationDeltaInParent); GetJointDelta for a root joint. */
+	FQuat GetJointDeltaInParent(int32 Joint) const;
+
+	/** A performer curve's current value (index from FPuppetPerformerPose::FindCurve). */
+	float GetCurve(int32 Curve) const;
+
+	/** A performer curve's change from its neutral value. */
+	float GetCurveDelta(int32 Curve) const;
 
 	/** A performer joint's current component-space position, in puppet orientation. */
 	FVector GetJointPosition(int32 Joint) const;

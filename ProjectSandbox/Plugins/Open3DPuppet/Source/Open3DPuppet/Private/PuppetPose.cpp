@@ -66,3 +66,29 @@ void FPuppetPose::PropagateFrom(int32 FirstChanged)
 		Component[Bone] = Parent == INDEX_NONE ? Local[Bone] : Local[Bone] * Component[Parent];
 	}
 }
+
+void FPuppetPose::SetCurve(FName Name, float Value)
+{
+	const int32 Curve = CurveNames.IndexOfByKey(Name);
+	if (Curve == INDEX_NONE)
+	{
+		CurveNames.Add(Name);
+		CurveValues.Add(Value);
+	}
+	else
+	{
+		CurveValues[Curve] = Value;
+	}
+}
+
+const float* FPuppetPose::FindCurve(FName Name) const
+{
+	const int32 Curve = CurveNames.IndexOfByKey(Name);
+	return Curve == INDEX_NONE ? nullptr : &CurveValues[Curve];
+}
+
+void FPuppetPose::ResetCurves()
+{
+	CurveNames.Reset();
+	CurveValues.Reset();
+}

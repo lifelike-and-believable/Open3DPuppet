@@ -11,6 +11,11 @@ namespace PuppetRetarget
 		return (Alignment * Current * Rest.Inverse() * Alignment.Inverse()).GetNormalized();
 	}
 
+	FQuat RotationDeltaInParent(const FQuat& Current, const FQuat& Rest, const FQuat& ParentCurrent, const FQuat& ParentRest, const FQuat& Alignment)
+	{
+		return (Alignment * ParentRest * ParentCurrent.Inverse() * Current * Rest.Inverse() * Alignment.Inverse()).GetNormalized();
+	}
+
 	FQuat ScaleRotation(const FQuat& Delta, double Amount)
 	{
 		// The shortest arc, so that scaling a small rotation never takes the long way round.

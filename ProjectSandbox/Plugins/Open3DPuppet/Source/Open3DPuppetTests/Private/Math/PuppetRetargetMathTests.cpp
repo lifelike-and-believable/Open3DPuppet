@@ -7,6 +7,10 @@
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Harness/PuppetTestFixtures.h"
+#include "PuppetModule.h"
+#include "PuppetPerformerCalibration.h"
+#include "PuppetPerformerPose.h"
+#include "PuppetPose.h"
 #include "PuppetRetargetMath.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetRotationDeltaRestTest, "Open3DPuppet.Math.RotationDelta.IdentityAtRest", OPEN3DPUPPET_TEST_FLAGS)
@@ -39,6 +43,43 @@ bool FPuppetRotationDeltaAlignmentTest::RunTest(const FString& Parameters)
 	const FQuat Current = PuppetTests::Rotation(FVector::XAxisVector, 30.0);
 	PuppetTests::TestRotation(*this, TEXT("Turn about Y"), PuppetRetarget::RotationDelta(Current, FQuat::Identity, Alignment),
 		PuppetTests::Rotation(FVector::YAxisVector, 30.0));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetRotationDeltaInParentTest, "Open3DPuppet.Math.RotationDeltaInParent.ParentMotionCancels", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetRotationDeltaInParentTest::RunTest(const FString& Parameters)
+{
+	// A finger (child) under a hand (parent), both at identity at rest. In component space the
+	// child is Parent * Local.
+	const FQuat Hand = PuppetTests::Rotation(FVector::ZAxisVector, 70.0);
+	const FQuat Curl = PuppetTests::Rotation(FVector::XAxisVector, 40.0);
+	PuppetTests::TestRotation(*this, TEXT("Hand turns, finger rides along: no change"),
+		PuppetRetarget::RotationDeltaInParent(Hand, FQuat::Identity, Hand, FQuat::Identity, FQuat::Identity), FQuat::Identity);
+	PuppetTests::TestRotation(*this, TEXT("Hand turns and finger curls: the curl"),
+		PuppetRetarget::RotationDeltaInParent(Hand * Curl, FQuat::Identity, Hand, FQuat::Identity, FQuat::Identity), Curl);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetSolveContextDeltaInParentTest, "Open3DPuppet.Math.SolveContext.JointDeltaInParent", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetSolveContextDeltaInParentTest::RunTest(const FString& Parameters)
+{
+	// The performer turns the upper arm and bends the elbow; relative to the upper arm, the forearm
+	// only bent.
+	PuppetTests::FPerformer Performer(PuppetTests::Biped());
+	const FPuppetPerformerCalibration Calibration = FPuppetPerformerCalibration::Capture(Performer.ToPose(), FRotator::ZeroRotator);
+	const FQuat Shoulder = PuppetTests::Rotation(FVector::XAxisVector, 30.0);
+	const FQuat Elbow = PuppetTests::Rotation(FVector::ZAxisVector, 50.0);
+	Performer.SetLocalRotation(TEXT("upperarm_l"), Shoulder);
+	Performer.SetLocalRotation(TEXT("lowerarm_l"), Elbow);
+	const FPuppetPerformerPose Pose = Performer.ToPose();
+
+	FPuppetPose Puppet;
+	Puppet.Initialize(PuppetTests::MakeReferenceSkeleton(PuppetTests::Biped()));
+	FPuppetSolveContext Context{ Puppet, Pose, Calibration };
+	const int32 Forearm = Pose.FindJoint(TEXT("lowerarm_l"));
+	PuppetTests::TestRotation(*this, TEXT("Relative to the upper arm"), Context.GetJointDeltaInParent(Forearm), Elbow);
+	PuppetTests::TestRotation(*this, TEXT("In component space, both"), Context.GetJointDelta(Forearm), Shoulder * Elbow);
+	PuppetTests::TestRotation(*this, TEXT("A root joint: its component-space delta"), Context.GetJointDeltaInParent(Pose.FindJoint(TEXT("root"))), FQuat::Identity);
 	return true;
 }
 

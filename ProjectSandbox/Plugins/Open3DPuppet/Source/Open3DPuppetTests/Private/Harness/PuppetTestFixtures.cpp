@@ -112,12 +112,31 @@ namespace PuppetTests
 		Local[Names.IndexOfByKey(Bone)].SetTranslation(Translation);
 	}
 
+	void FPerformer::SetCurve(FName Curve, float Value)
+	{
+		const int32 Index = CurveNames.IndexOfByKey(Curve);
+		if (Index == INDEX_NONE)
+		{
+			CurveNames.Add(Curve);
+			CurveValues.Add(Value);
+		}
+		else
+		{
+			CurveValues[Index] = Value;
+		}
+	}
+
 	FPuppetPerformerPose FPerformer::ToPose() const
 	{
 		FPuppetPerformerPose Pose;
-		FString Error;
-		verify(Pose.SetSkeleton(Names, Parents, nullptr, Error));
-		verify(Pose.SetLocalTransforms(Local));
+		if (Names.Num() > 0)
+		{
+			FString Error;
+			verify(Pose.SetSkeleton(Names, Parents, nullptr, Error));
+			verify(Pose.SetLocalTransforms(Local));
+		}
+		Pose.SetCurveNames(CurveNames, nullptr);
+		Pose.SetCurveValues(CurveValues);
 		return Pose;
 	}
 
@@ -134,9 +153,14 @@ namespace PuppetTests
 
 	void FPuppet::Drive(int32 Slot, const FPerformer& Performer)
 	{
-		FString Error;
-		verify(Instance.SetPerformerSkeleton(Slot, Performer.Names, Performer.Parents, nullptr, Error));
-		verify(Instance.SetPerformerTransforms(Slot, Performer.Local));
+		if (Performer.Names.Num() > 0)
+		{
+			FString Error;
+			verify(Instance.SetPerformerSkeleton(Slot, Performer.Names, Performer.Parents, nullptr, Error));
+			verify(Instance.SetPerformerTransforms(Slot, Performer.Local));
+		}
+		Instance.SetPerformerCurveNames(Slot, Performer.CurveNames, nullptr);
+		Instance.SetPerformerCurveValues(Slot, Performer.CurveValues);
 	}
 
 	void FPuppet::Calibrate(int32 Slot, const FPerformer& Performer, const FRotator& Alignment)

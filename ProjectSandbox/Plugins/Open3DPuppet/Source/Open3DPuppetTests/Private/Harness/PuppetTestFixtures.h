@@ -39,13 +39,17 @@ namespace PuppetTests
 
 	FReferenceSkeleton MakeReferenceSkeleton(TConstArrayView<FBone> Bones);
 
-	/** A performer as Live Link delivers it, starting in its rest pose. */
+	/** A performer as Live Link delivers it, starting in its rest pose: bones, curves, or both. */
 	struct FPerformer
 	{
+		/** A curve-only performer, as a Basic-role subject (a face). */
+		FPerformer() = default;
 		explicit FPerformer(TConstArrayView<FBone> Bones);
 
 		void SetLocalRotation(FName Bone, const FQuat& Rotation);
 		void SetLocalTranslation(FName Bone, const FVector& Translation);
+		/** Sets a curve's value, adding the curve if new. */
+		void SetCurve(FName Curve, float Value);
 
 		/** The pose as a performer pose (no profile). */
 		FPuppetPerformerPose ToPose() const;
@@ -53,6 +57,8 @@ namespace PuppetTests
 		TArray<FName> Names;
 		TArray<int32> Parents;
 		TArray<FTransform> Local;
+		TArray<FName> CurveNames;
+		TArray<float> CurveValues;
 	};
 
 	/** A puppet asset, a mesh skeleton and a running instance. */

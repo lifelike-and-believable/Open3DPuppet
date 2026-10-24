@@ -41,17 +41,21 @@ The solver has two functions:
 
 | Member | Meaning |
 |---|---|
-| `Puppet` | `FPuppetPose`: the puppet's bones by mesh index. `FindBone`, `GetChain`, `GetReferenceComponent` (rest), `GetComponent` and `GetLocal` (current), and in `Solve`: `SetComponent`, `SetComponentRotation`. |
-| `Performer` | `FPuppetPerformerPose`: `FindJoint(canonical name)`, `GetParents`, `GetComponent`. |
-| `Calibration` | `FPuppetPerformerCalibration`: `RestComponent[joint]`, the performer's rest pose. It always matches `Performer`'s skeleton. |
+| `Puppet` | `FPuppetPose`: the puppet's bones by mesh index. `FindBone`, `GetChain`, `GetReferenceComponent` (rest), `GetComponent` and `GetLocal` (current), and in `Solve`: `SetComponent`, `SetComponentRotation`, and `SetCurve(name, value)` for output curves (morph targets, material parameters). |
+| `Performer` | `FPuppetPerformerPose`: `FindJoint(canonical name)`, `GetParents`, `GetComponent`, and `FindCurve(canonical name)` for curves (ARKit names by default). A face slot has curves and no bones. |
+| `Calibration` | `FPuppetPerformerCalibration`: `RestComponent[joint]`, the performer's rest pose, and `GetRestCurve(name)`, the neutral value of a curve. It always matches `Performer`'s skeleton. |
 | `PuppetPelvis`, `PerformerPelvis`, `RootScale` | The pelvis on each side and the size ratio between them (puppet pelvis height over performer pelvis height). |
 | `bOwnsRoot` (bind only) | Whether the module's slot owns the root (ADR 0004). Only such a module may move the puppet in the world. |
 | `Alignment`, `DeltaTime` (solve only) | The calibration's facing correction, and the frame time for modules with state. |
 
 Solve-context helpers do the alignment for you: `GetJointDelta(joint)` (the joint's rotation change
-since calibration, in puppet space), `GetJointPosition(joint)` and `GetJointTranslation(joint)`
-(position, and change in position since calibration). Use them rather than reading `Performer` and
-`Calibration` directly, so that alignment is applied the same way everywhere.
+since calibration, in puppet space), `GetJointDeltaInParent(joint)` (the same, relative to the
+joint's parent: a finger's curl without the hand's motion; apply it under the puppet's own parent
+as `PuppetParentCurrent * PuppetParentRest^-1 * Delta * PuppetRest`), `GetJointPosition(joint)` and
+`GetJointTranslation(joint)` (position, and change in position since calibration), and
+`GetCurve(curve)` and `GetCurveDelta(curve)` (a curve's value, and its change from the performer's
+neutral value). Use them rather than reading `Performer` and `Calibration` directly, so that
+alignment and neutral values are applied the same way everywhere.
 
 ### Rules
 

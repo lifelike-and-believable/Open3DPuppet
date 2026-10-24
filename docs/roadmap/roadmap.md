@@ -8,7 +8,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-0 | Foundation: conventions, CI checks, design overview, ADRs 0001 to 0005, host project, plugin skeleton | | Done (#1) |
 | WP-1 | Solver core (performer pose, calibration, puppet pose, retarget math), module contract, Root, Chain and Two-bone limb modules, Puppet Solve AnimGraph node reading Live Link, calibration subsystem, solver tests, module authoring guide | WP-0, ADRs 0002 to 0004 | Done (#2) |
 | WP-9a | UE build and test CI on the shared self-hosted runner | WP-1 | Done (#3) |
-| WP-11 | Curves in the pipeline (ADR 0006): performer curves, Basic-role (curve-only) subjects, neutral calibration of curves, puppet output curves, parent-relative joint deltas | WP-1, ADR 0006 | Planned |
+| WP-11 | Curves in the pipeline (ADR 0006): performer curves, Basic-role (curve-only) subjects, neutral calibration of curves, puppet output curves, parent-relative joint deltas | WP-1, ADR 0006 | In review (#8) |
 | WP-12 | Digits module: fingers to toes, talons and feathers; derived finger-curl curves | WP-11 | Planned |
 | WP-13 | Face modules: curve to bone, curve remap, eyes | WP-11 | Planned |
 | WP-14 | Solver dynamics (ADR 0007, Tier 1): world motion in the solve context, `PuppetDynamics` (fixed-step integrator, spring-dampers, constrained chains, collision shapes), Physics Weight | WP-11 | Planned |

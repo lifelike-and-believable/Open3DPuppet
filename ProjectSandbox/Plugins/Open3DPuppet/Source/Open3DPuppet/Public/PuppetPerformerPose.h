@@ -12,9 +12,10 @@
 class UPuppetPerformerProfile;
 
 /**
- * One performer's pose, as a Live Link Animation-role subject delivers it: bone names, parent
- * indices and local transforms, plus component-space transforms and a lookup by canonical joint
- * name (ADR 0003). The skeleton comes from the network or a file, so SetSkeleton validates it.
+ * One performer's pose, as a Live Link subject delivers it: bone names, parent indices and local
+ * transforms, plus component-space transforms and a lookup by canonical joint name (ADR 0003), and
+ * curves (named values, ADR 0006). A Basic-role subject (a face) has curves and no bones. The data
+ * comes from the network or a file, so SetSkeleton and the setters validate it.
  */
 class OPEN3DPUPPET_API FPuppetPerformerPose
 {
@@ -44,6 +45,27 @@ public:
 	/** The bone index of a canonical joint (for example "upperarm_l"), or INDEX_NONE. */
 	int32 FindJoint(FName CanonicalJoint) const;
 
+	/**
+	 * Sets the curve names (Live Link static data). Canonical curve names resolve through Profile
+	 * (optional), then by the curve's own name. Allocates.
+	 */
+	void SetCurveNames(TConstArrayView<FName> InCurveNames, const UPuppetPerformerProfile* Profile);
+
+	/** True when the curve names are the ones SetCurveNames was last given. */
+	bool HasCurveNames(TConstArrayView<FName> InCurveNames) const;
+
+	/** Sets one value per curve. False on a count mismatch; the last values stay. */
+	bool SetCurveValues(TConstArrayView<float> InValues);
+
+	bool HasCurveValues() const { return bHasCurveValues; }
+	/** True when the performer has sent transforms or curve values. */
+	bool HasData() const { return bHasTransforms || bHasCurveValues; }
+	TConstArrayView<FName> GetCurveNames() const { return CurveNames; }
+	TConstArrayView<float> GetCurveValues() const { return CurveValues; }
+
+	/** The index of a canonical curve (for example "jawOpen"), or INDEX_NONE. */
+	int32 FindCurve(FName CanonicalCurve) const;
+
 private:
 	TArray<FName> Names;
 	TArray<int32> Parents;
@@ -53,4 +75,9 @@ private:
 	TArray<FTransform> Local;
 	TArray<FTransform> Component;
 	bool bHasTransforms = false;
+
+	TArray<FName> CurveNames;
+	TArray<float> CurveValues;
+	TMap<FName, int32> CanonicalToCurve;
+	bool bHasCurveValues = false;
 };

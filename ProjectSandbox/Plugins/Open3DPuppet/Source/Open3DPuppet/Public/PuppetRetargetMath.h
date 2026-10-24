@@ -21,6 +21,15 @@ namespace PuppetRetarget
 	 */
 	OPEN3DPUPPET_API FQuat RotationDelta(const FQuat& Current, const FQuat& Rest, const FQuat& Alignment);
 
+	/**
+	 * A joint's rotation change since calibration relative to its parent, in the puppet's component
+	 * space at the parent's rest orientation:
+	 * Alignment * (ParentRest * ParentCurrent^-1 * Current * Rest^-1) * Alignment^-1. A finger that
+	 * moves only with its hand has none. Apply it under the puppet's own parent:
+	 * PuppetParentCurrent * PuppetParentRest^-1 * Delta * PuppetRest.
+	 */
+	OPEN3DPUPPET_API FQuat RotationDeltaInParent(const FQuat& Current, const FQuat& Rest, const FQuat& ParentCurrent, const FQuat& ParentRest, const FQuat& Alignment);
+
 	/** Scales a rotation's angle about its own axis: 0 is identity, 1 is Delta, 2 doubles it. */
 	OPEN3DPUPPET_API FQuat ScaleRotation(const FQuat& Delta, double Amount);
 

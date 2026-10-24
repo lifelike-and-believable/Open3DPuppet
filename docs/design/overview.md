@@ -1,7 +1,7 @@
 # Open3DPuppet design overview
 
 - **Status:** Draft for maintainer review (2026-10-24)
-- **Decisions:** [ADR 0001](../adr/0001-platform-and-engine-scope.md) to [ADR 0005](../adr/0005-test-layout.md)
+- **Decisions:** [ADR 0001](../adr/0001-platform-and-engine-scope.md) to [ADR 0006](../adr/0006-fingers-face-and-curves.md)
 - **Plan:** [`docs/roadmap/roadmap.md`](../roadmap/roadmap.md)
 
 ## 1. Goal
@@ -27,6 +27,7 @@ Three properties follow from that goal and shape every decision below:
 |---|---|
 | Performer | A person, or a recorded take of one, whose motion arrives as a Live Link subject with the Animation role. |
 | Canonical joint | A performer joint named the way the UE5 mannequin names it (`pelvis`, `spine_01`, `upperarm_l`, ...). Modules address performer joints only by these names (ADR 0003). |
+| Curve | A named float value. Performers send them (facial expressions, from a face subject) and puppets receive them (morph targets, material parameters) (ADR 0006). |
 | Performer profile | An optional `UPuppetPerformerProfile` data asset that maps a source's own bone names to canonical joints. A source that already uses mannequin names needs none. |
 | Calibration | A performer's rest pose, captured once while the performer stands in the reference pose (T-pose by default), plus the rotation that aligns the performer's facing with the puppet's. |
 | Puppet | A `UPuppetAsset`: the target skeletal mesh, the performer slots, and an ordered list of modules. |
@@ -114,6 +115,10 @@ frame, so a change in the details panel shows up live in the viewport.
 | Tail / dynamic chain | Pelvis motion plus springs, or a performer chain or prop | Stiffness, damping, amplitude, input mix | WP-5 |
 | Wing | Performer arm (shoulder to wing root, elbow to fold) | Fold/spread curve, flap amplification, feather fan | WP-6 |
 | Prop-driven | Tracked rigid body (Live Link Transform role) | Mapping space, filtering | WP-7 |
+| Digits (fingers, toes, talons, feathers) | Performer fingers, relative to the hand | Finger-to-digit mapping, curl and spread gains, chain resampling | WP-12 |
+| Curve to bone | A performer curve (face, finger curl) | Source range to bone rotation or translation range, dead zone, smoothing | WP-13 |
+| Curve remap | Performer curves | Per-curve remap, combination, smoothing to puppet curves (morph targets) | WP-13 |
+| Eyes | Eye-look curves or eye bones | Range limits, convergence | WP-13 |
 | Control Rig adapter | A Control Rig asset with a known interface | The rig's own controls | WP-10 |
 
 ## 6. Several performers
@@ -155,6 +160,41 @@ solved puppet pose can be recorded too, as an ordinary animation.
 
 ## 9. Out of scope for now
 
-- Facial capture: Live Link face sources already drive curves; a face module may come later.
 - Physics-based creatures (ragdoll-blended puppets).
 - Platforms other than Win64 and engines before 5.8 (ADR 0001).
+
+## 10. First characters: Wolf and Eagle
+
+The first puppets are the Wolf and the Eagle from *Mamaawi Together Through the Fire*
+(maintainer, 2026-10-24). They set the order of the module work (roadmap) and are the end-to-end
+tests of the toolkit. The mappings below are a starting proposal, to be confirmed with the
+maintainer and the meshes; each line names the module that carries it.
+
+### Wolf
+
+| Puppet | Performer | Module |
+|---|---|---|
+| Pelvis, place in the world | Pelvis | Root |
+| Spine, neck, head | Spine, neck, head | Chain |
+| Front legs | Arms (shoulder, elbow, wrist to the paw) | Digitigrade leg (WP-4) |
+| Hind legs | Legs | Digitigrade leg (WP-4) |
+| Front paw toes | Fingers | Digits (WP-12) |
+| Tail | Pelvis motion with springs; a hand gesture or a second performer can take it over | Tail (WP-5) |
+| Jaw, lips (snarl) | `jawOpen`, `noseSneer`, `mouthUpperUp` | Curve to bone, curve remap (WP-13) |
+| Ears | Brow curves | Curve to bone (WP-13) |
+| Eyes, eyelids | Eye-look and blink curves | Eyes, curve to bone (WP-13) |
+
+### Eagle
+
+| Puppet | Performer | Module |
+|---|---|---|
+| Pelvis, place in the world | Pelvis | Root |
+| Spine, neck, head | Spine, neck, head | Chain |
+| Wings | Arms (shoulder to wing root, elbow and wrist to the fold) | Wing (WP-6) |
+| Primary feathers, alula | Finger spread and curl, thumb | Digits (WP-12) |
+| Legs | Legs | Two-bone limb or digitigrade leg |
+| Talons | A finger-curl or face curve chosen by the puppeteer | Curve to bone (WP-13) |
+| Tail fan | Pelvis motion, or finger spread | Tail (WP-5), Digits (WP-12) |
+| Beak | `jawOpen` | Curve to bone (WP-13) |
+| Crest and head feathers | Brow curves | Curve to bone (WP-13) |
+| Eyes, eyelids | Eye-look and blink curves | Eyes, curve to bone (WP-13) |

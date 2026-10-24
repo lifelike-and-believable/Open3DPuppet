@@ -11,11 +11,17 @@ public class Open3DPuppetEditor : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+		// AnimGraph and BlueprintGraph: UAnimGraphNode_PuppetSolve and its UK2Node base, as the engine's
+		// LiveLinkGraphNode module does for the Live Link Pose node.
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"Core",
 			"CoreUObject",
 			"Engine",
+			"AnimGraph",
+			"BlueprintGraph",
+			"LiveLinkInterface",
+			"UnrealEd",
 			"Open3DPuppet"
 		});
 	}

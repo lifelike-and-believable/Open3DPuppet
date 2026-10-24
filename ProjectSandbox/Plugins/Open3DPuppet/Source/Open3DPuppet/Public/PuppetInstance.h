@@ -1,0 +1,119 @@
+// Copyright 2026 Lifelike & Believable. All Rights Reserved.
+
+#pragma once
+
+#include "Containers/Array.h"
+#include "Containers/ArrayView.h"
+#include "Misc/CoreMiscDefines.h"
+#include "PuppetPerformerCalibration.h"
+#include "PuppetPerformerPose.h"
+#include "PuppetPose.h"
+#include "Templates/UniquePtr.h"
+#include "UObject/ObjectPtr.h"
+
+class FPuppetModuleSolver;
+class UPuppetAsset;
+class UPuppetModule;
+class UPuppetPerformerProfile;
+struct FReferenceSkeleton;
+
+/** Why a performer slot is or is not driving its modules. */
+enum class EPuppetSlotState : uint8
+{
+	/** No performer data has arrived. */
+	NoData,
+	/** Data, but no calibration for the performer. */
+	NotCalibrated,
+	/** The calibration was captured from a different skeleton. */
+	CalibrationMismatch,
+	/** Driving its modules. */
+	Ready,
+};
+
+/**
+ * One running puppet: the puppet pose, the performers' poses and calibrations per slot, and a
+ * solver per module (design overview §3). The Puppet Solve node owns one; tests drive it directly.
+ * Not thread-safe: one thread at a time, the animation worker in a running node.
+ */
+class OPEN3DPUPPET_API FPuppetInstance
+{
+public:
+	FPuppetInstance();
+	~FPuppetInstance();
+	UE_NONCOPYABLE(FPuppetInstance)
+
+	/**
+	 * Sets up the puppet for a mesh's reference skeleton and creates the modules' solvers. The
+	 * caller keeps Asset and Modules alive while the instance uses them. Allocates.
+	 */
+	void Initialize(const UPuppetAsset& Asset, TConstArrayView<TObjectPtr<UPuppetModule>> Modules, const FReferenceSkeleton& RefSkeleton);
+
+	bool IsInitialized() const { return Puppet.Num() > 0; }
+
+	/** The slot's index in the asset's PerformerSlots, or INDEX_NONE. */
+	int32 FindSlot(FName Slot) const;
+	int32 NumSlots() const { return Slots.Num(); }
+	FName GetSlotName(int32 Slot) const { return Slots[Slot].Name; }
+	EPuppetSlotState GetSlotState(int32 Slot) const;
+
+	/**
+	 * Gives a slot its performer's skeleton (from Live Link static data). Does nothing when the
+	 * skeleton is unchanged; otherwise the slot's modules bind again. False, with OutError, when
+	 * the skeleton is invalid; the slot then has no data. The same invalid skeleton again returns
+	 * false with OutError empty, so a caller logs each rejection once.
+	 */
+	bool SetPerformerSkeleton(int32 Slot, TConstArrayView<FName> BoneNames, TConstArrayView<int32> BoneParents, const UPuppetPerformerProfile* Profile, FString& OutError);
+
+	/** Gives a slot this frame's local bone transforms. False on a count mismatch; the slot keeps its last pose. */
+	bool SetPerformerTransforms(int32 Slot, TConstArrayView<FTransform> LocalTransforms);
+
+	/** Sets or clears a slot's calibration; its modules bind again. */
+	void SetCalibration(int32 Slot, const FPuppetPerformerCalibration& Calibration);
+	void ClearCalibration(int32 Slot);
+
+	/** The slot's current performer pose (for capturing a calibration). */
+	const FPuppetPerformerPose& GetPerformerPose(int32 Slot) const { return Slots[Slot].Performer; }
+
+	/**
+	 * Solves one frame: starts from InputLocal (one local transform per reference-skeleton bone)
+	 * and runs every enabled module whose slot is ready, binding first where needed.
+	 */
+	void Solve(TConstArrayView<FTransform> InputLocal, float DeltaTime);
+
+	/** The solved pose. */
+	const FPuppetPose& GetPose() const { return Puppet; }
+
+private:
+	struct FSlot
+	{
+		FName Name;
+		FPuppetPerformerPose Performer;
+		FPuppetPerformerCalibration Calibration;
+		bool bHasCalibration = false;
+		FQuat Alignment = FQuat::Identity;
+		int32 PerformerPelvis = INDEX_NONE;
+		double RootScale = 1.0;
+		bool bNeedsBind = true;
+		/** The skeleton last rejected by SetPerformerSkeleton, so it is reported once. */
+		TArray<FName> RejectedNames;
+		TArray<int32> RejectedParents;
+	};
+
+	struct FModuleEntry
+	{
+		const UPuppetModule* Module = nullptr;
+		TUniquePtr<FPuppetModuleSolver> Solver;
+		int32 Slot = INDEX_NONE;
+		bool bBound = false;
+	};
+
+	void InvalidateSlot(int32 Slot);
+	void BindSlot(int32 Slot);
+
+	FPuppetPose Puppet;
+	TArray<FSlot> Slots;
+	TArray<FModuleEntry> Entries;
+	int32 RootSlot = INDEX_NONE;
+	int32 PuppetPelvis = INDEX_NONE;
+	FName AssetName;
+};

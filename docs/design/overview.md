@@ -80,7 +80,7 @@ Modules share one small set of operations, implemented once in the solver core:
   (puppet hip height over performer hip height by default) and overridable per module.
 - **End-effector placement.** Limb modules can follow the performer's FK, or place the end
   effector (hand, foot, paw) with two-bone IK at a target computed in one of several modes:
-  scaled reach (relative to the limb root, scaled by limb length), hip-relative (relative to the
+  scaled reach (relative to the limb root, scaled by limb length), pelvis-relative (relative to the
   pelvis, scaled like the root, which keeps feet planted when the puppet is taller or shorter), or
   absolute (the performer's position, for contact with props and other performers).
 - **Weights.** Every module has a weight that blends its result over the pose it received, so a
@@ -90,7 +90,7 @@ Modules share one small set of operations, implemented once in the solver core:
 
 ### 5.1 Contract
 
-A module is two pieces (ADR 0002; the authoring guide has the details and a worked example):
+A module is two pieces (ADR 0002; the [authoring guide](../guides/authoring-puppet-modules.md) has the details and a worked example):
 
 - `UPuppetModule` (a `UObject`, instanced inside the puppet asset): the editable settings, the
   performer slot it reads, and `CreateSolver()`. It is shared by every actor that uses the
@@ -108,8 +108,8 @@ frame, so a change in the details panel shows up live in the viewport.
 | Module | Drive | Retarget controls | Work package |
 |---|---|---|---|
 | Root (pelvis) | Performer pelvis | Horizontal and vertical scale (auto from hip heights), height offset | WP-1 |
-| Chain (spine, neck, head, generic FK) | Any performer chain | Weight, chain resampling, per-bone rotation offset | WP-1 |
-| Two-bone limb (arm, leg) | Performer limb | FK, scaled reach, hip-relative or absolute IK; pole from FK; stretch limits | WP-1 |
+| Chain (spine, neck, head, generic FK) | Any performer chain | Weight, chain resampling, amplification | WP-1 |
+| Two-bone limb (arm, leg) | Performer limb | FK, scaled reach, pelvis-relative or absolute IK; pole direction; stretch limits | WP-1 |
 | Digitigrade leg (3-bone) | Performer leg | Knee-to-hock ratio, heel lift, stride scale, foot contact | WP-4 |
 | Tail / dynamic chain | Pelvis motion plus springs, or a performer chain or prop | Stiffness, damping, amplitude, input mix | WP-5 |
 | Wing | Performer arm (shoulder to wing root, elbow to fold) | Fold/spread curve, flap amplification, feather fan | WP-6 |
@@ -148,8 +148,8 @@ solved puppet pose can be recorded too, as an ordinary animation.
    topology and proposes modules.)
 3. In the character's Animation Blueprint, add the **Puppet Solve** node, choose the puppet, and
    bind each performer slot to a Live Link subject.
-4. Have the performer stand in the reference pose and call **Calibrate Performer** (Blueprint or
-   the editor button from WP-2).
+4. Have the performer stand in the reference pose and call **Calibrate Performer** on the Puppet
+   Calibration subsystem (from Blueprint now; an editor button comes in WP-2).
 5. Puppeteer. Adjust module controls live in the details panel; WP-8 adds a control panel for
    session use.
 

@@ -16,7 +16,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-5 | Tail and dynamic chain module: springs, input mix (Wolf tail, ears, mane; Eagle tail fan, feathers) | WP-14 | Planned |
 | WP-15 | Engine physics hand-off (ADR 0007, Tier 2): optional `Open3DPuppetPhysics` module, Physics Region module, Rigid Body With Control parameters from curves, setup guide. The Wolf and Eagle need physics assets first (none exist yet) | WP-11 | Planned |
 | WP-6 | Wing module (Eagle) | WP-12 | Planned |
-| WP-16 | Hand-offs (ADR 0008): control blend per slot, `UPuppetPerformanceComponent` transitions with easing, root anchoring that converges on the performer's position (by time, while moving) | WP-1 | Planned |
+| WP-16 | Hand-offs (ADR 0008): control blend per slot, `UPuppetPerformanceComponent` transitions with easing, root anchoring that converges on the performer's position (by time, while moving), manual re-centre | WP-1 | Planned |
 | WP-17 | Hand-off triggers: Sequencer cue, operator input (input action, Remote Control), performer gesture | WP-16 | Planned |
 | WP-3 | Performer clips as a cast source (ADR 0008): AnimSequence playback (rate, loop, start, time pin), calibration from a frame, re-solving a recorded take. Not needed for the show's entrances, which are creature clips | WP-1 | Planned |
 | WP-M1 | Wolf: puppet asset, profiles and calibration for the show's capture setup, run-in entrance (a clip authored on the Wolf) and hand-off; live session at the desk | WP-4, WP-5, WP-12, WP-13, WP-15, WP-16 | Planned |
@@ -37,8 +37,7 @@ ahead when a session needs it.
 Items that need a person at the desk or a maintainer decision:
 
 - Physics assets for the Wolf and the Eagle, before WP-15 (ADR 0007; none exist yet).
-- ADR 0008: which hand-off triggers the show uses (question 1), and whether the hand-off offset
-  should also be settable by hand mid-scene (question 2).
+- ADR 0008: which hand-off triggers the show uses (question 1).
 - WP-1 at the desk: a mannequin driven live through Live Link (Open3DBroadcast or a capture
   system), calibrated with the subsystem, with Root, Chain and Two-Bone Limb modules.
 - Wolf and Eagle: the skeletal meshes (or their bone hierarchies and reference poses), their morph

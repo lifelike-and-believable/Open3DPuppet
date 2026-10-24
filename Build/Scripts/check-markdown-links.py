@@ -5,7 +5,7 @@ WP-D4 (docs stay honest): every git-tracked .md file is scanned for links, and
 a link fails when
 
   - it is relative (or a GitHub link into this repository's own tree, such as
-    https://github.com/atgoldberg/Open3DPuppet/blob/develop/docs/design/overview.md)
+    https://github.com/lifelike-and-believable/Open3DPuppet/blob/develop/docs/design/overview.md)
     and the file or folder it names is not in this checkout;
   - it has a #fragment into a Markdown file (or the same file) that has no
     heading or explicit anchor (<a name="..."> or id="...") with that slug.
@@ -34,7 +34,7 @@ import urllib.parse
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OWN_TREE_RE = re.compile(
-    r"^https://github\.com/atgoldberg/Open3DPuppet/(?:blob|tree)/[^/]+/(?P<path>[^#?]*)(?:#(?P<frag>.*))?$",
+    r"^https://github\.com/lifelike-and-believable/Open3DPuppet/(?:blob|tree)/[^/]+/(?P<path>[^#?]*)(?:#(?P<frag>.*))?$",
     re.IGNORECASE)
 INLINE_LINK_RE = re.compile(r"!?\[(?:[^\[\]]|\[[^\]]*\])*\]\(\s*<?(?P<target>[^)\s>]+)>?(?:\s+\"[^\"]*\")?\s*\)")
 REFERENCE_DEF_RE = re.compile(r"^\s{0,3}\[[^\]]+\]:\s*<?(?P<target>\S+?)>?(?:\s+.*)?$")
@@ -168,10 +168,10 @@ def self_test():
     write(os.path.join(root, "ThirdParty", "lib", "README.md"), "[gone](missing.md)\n")
     good = ("[g](docs/guide.md) [q](docs/guide.md#quick-start) [q1](docs/guide.md#quick-start-1) "
             "[o](docs/guide.md#options-udpmtu) [c](docs/guide.md#custom) [d](docs/) [self](#top)\n\n# Top\n\n"
-            "[web](https://example.com/x) [own](https://github.com/atgoldberg/Open3DPuppet/blob/develop/docs/guide.md#guide)\n"
+            "[web](https://example.com/x) [own](https://github.com/lifelike-and-believable/Open3DPuppet/blob/develop/docs/guide.md#guide)\n"
             "`[code](missing.md)`\n\n```\n[fenced](missing.md)\n```\n\n[ref]: docs/guide.md\n")
     bad = ("[f](docs/missing.md) [a](docs/guide.md#nope) [s](#nope) [u](../outside.md)\n"
-           "[own](https://github.com/atgoldberg/Open3DPuppet/blob/develop/docs/missing.md)\n\n[ref]: missing.md\n")
+           "[own](https://github.com/lifelike-and-believable/Open3DPuppet/blob/develop/docs/missing.md)\n\n[ref]: missing.md\n")
     write(os.path.join(root, "good.md"), good)
     subprocess.run(["git", "add", "-A"], cwd=root, check=True)
     clean = check(root)

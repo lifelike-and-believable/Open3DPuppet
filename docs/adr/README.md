@@ -15,7 +15,7 @@ from it. ADRs need maintainer sign-off before coding work that depends on them i
 | [0005](0005-test-layout.md) | Test layout | Accepted |
 | [0006](0006-fingers-face-and-curves.md) | Fingers, face and curves | Accepted |
 | [0007](0007-physics-driven-modules.md) | Physics-driven modules | Accepted |
-| [0008](0008-animation-sources-and-handoffs.md) | Animation sources and hand-offs | Proposed |
+| [0008](0008-animation-sources-and-handoffs.md) | Animation sources and hand-offs | Accepted |
 
 ## Answers to open questions
 

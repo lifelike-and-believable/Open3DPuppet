@@ -37,7 +37,8 @@ ahead when a session needs it.
 Items that need a person at the desk or a maintainer decision:
 
 - Physics assets for the Wolf and the Eagle, before WP-15 (ADR 0007; none exist yet).
-- Sign-off on ADR 0008, and which hand-off triggers the show uses (its open question 1).
+- ADR 0008: which hand-off triggers the show uses (question 1), and whether the hand-off offset
+  should also be settable by hand mid-scene (question 2).
 - WP-1 at the desk: a mannequin driven live through Live Link (Open3DBroadcast or a capture
   system), calibrated with the subsystem, with Root, Chain and Two-Bone Limb modules.
 - Wolf and Eagle: the skeletal meshes (or their bone hierarchies and reference poses), their morph

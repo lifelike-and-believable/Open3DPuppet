@@ -1,6 +1,6 @@
 # 0008: Animation sources and hand-offs
 
-- **Status:** Proposed (pending maintainer sign-off)
+- **Status:** Accepted (maintainer sign-off 2026-10-24)
 - **Date:** 2026-10-24
 - **Related:** [ADR 0002](0002-puppet-module-architecture.md) and [ADR 0004](0004-multiple-performers.md) (amends the cast and the solve context), [ADR 0003](0003-performer-input-and-calibration.md), [design overview](../design/overview.md) §7 and §12
 

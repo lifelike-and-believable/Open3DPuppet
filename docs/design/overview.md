@@ -1,7 +1,7 @@
 # Open3DPuppet design overview
 
 - **Status:** Draft for maintainer review (2026-10-24)
-- **Decisions:** [ADR 0001](../adr/0001-platform-and-engine-scope.md) to [ADR 0005](../adr/0005-test-layout.md)
+- **Decisions:** [ADR 0001](../adr/0001-platform-and-engine-scope.md) to [ADR 0007](../adr/0007-physics-driven-modules.md)
 - **Plan:** [`docs/roadmap/roadmap.md`](../roadmap/roadmap.md)
 
 ## 1. Goal
@@ -27,6 +27,7 @@ Three properties follow from that goal and shape every decision below:
 |---|---|
 | Performer | A person, or a recorded take of one, whose motion arrives as a Live Link subject with the Animation role. |
 | Canonical joint | A performer joint named the way the UE5 mannequin names it (`pelvis`, `spine_01`, `upperarm_l`, ...). Modules address performer joints only by these names (ADR 0003). |
+| Curve | A named float value. Performers send them (facial expressions, from a face subject) and puppets receive them (morph targets, material parameters) (ADR 0006). |
 | Performer profile | An optional `UPuppetPerformerProfile` data asset that maps a source's own bone names to canonical joints. A source that already uses mannequin names needs none. |
 | Calibration | A performer's rest pose, captured once while the performer stands in the reference pose (T-pose by default), plus the rotation that aligns the performer's facing with the puppet's. |
 | Puppet | A `UPuppetAsset`: the target skeletal mesh, the performer slots, and an ordered list of modules. |
@@ -111,9 +112,14 @@ frame, so a change in the details panel shows up live in the viewport.
 | Chain (spine, neck, head, generic FK) | Any performer chain | Weight, chain resampling, amplification | WP-1 |
 | Two-bone limb (arm, leg) | Performer limb | FK, scaled reach, pelvis-relative or absolute IK; pole direction; stretch limits | WP-1 |
 | Digitigrade leg (3-bone) | Performer leg | Knee-to-hock ratio, heel lift, stride scale, foot contact | WP-4 |
-| Tail / dynamic chain | Pelvis motion plus springs, or a performer chain or prop | Stiffness, damping, amplitude, input mix | WP-5 |
+| Tail / dynamic chain | Pelvis motion plus springs, or a performer chain or prop | Stiffness, damping, amplitude, input mix, physics weight | WP-5 |
 | Wing | Performer arm (shoulder to wing root, elbow to fold) | Fold/spread curve, flap amplification, feather fan | WP-6 |
 | Prop-driven | Tracked rigid body (Live Link Transform role) | Mapping space, filtering | WP-7 |
+| Digits (fingers, toes, talons, feathers) | Performer fingers, relative to the hand | Finger-to-digit mapping, curl and spread gains, chain resampling | WP-12 |
+| Curve to bone | A performer curve (face, finger curl) | Source range to bone rotation or translation range, dead zone, smoothing | WP-13 |
+| Curve remap | Performer curves | Per-curve remap, combination, smoothing to puppet curves (morph targets) | WP-13 |
+| Eyes | Eye-look curves or eye bones | Range limits, convergence | WP-13 |
+| Physics Region (optional module) | Its controls or a performer curve | Strength and damping of a region in Rigid Body With Control | WP-15 |
 | Control Rig adapter | A Control Rig asset with a known interface | The rig's own controls | WP-10 |
 
 ## 6. Several performers
@@ -155,6 +161,87 @@ solved puppet pose can be recorded too, as an ordinary animation.
 
 ## 9. Out of scope for now
 
-- Facial capture: Live Link face sources already drive curves; a face module may come later.
-- Physics-based creatures (ragdoll-blended puppets).
 - Platforms other than Win64 and engines before 5.8 (ADR 0001).
+
+## 10. First characters: Wolf and Eagle
+
+The first puppets are the Wolf and the Eagle from *Mamaawi Together Through the Fire*
+(maintainer, 2026-10-24). They set the order of the module work (roadmap) and are the end-to-end
+tests of the toolkit. The mappings below are a starting proposal, to be confirmed with the
+maintainer and the meshes; each line names the module that carries it.
+
+### Wolf
+
+| Puppet | Performer | Module |
+|---|---|---|
+| Pelvis, place in the world | Pelvis | Root |
+| Spine, neck, head | Spine, neck, head | Chain |
+| Front legs | Arms (shoulder, elbow, wrist to the paw) | Digitigrade leg (WP-4) |
+| Hind legs | Legs | Digitigrade leg (WP-4) |
+| Front paw toes | Fingers | Digits (WP-12) |
+| Tail | Pelvis motion with springs; a hand gesture or a second performer can take it over | Tail (WP-5) |
+| Jaw, lips (snarl) | `jawOpen`, `noseSneer`, `mouthUpperUp` | Curve to bone, curve remap (WP-13) |
+| Ears | Brow curves | Curve to bone (WP-13) |
+| Eyes, eyelids | Eye-look and blink curves | Eyes, curve to bone (WP-13) |
+
+### Eagle
+
+| Puppet | Performer | Module |
+|---|---|---|
+| Pelvis, place in the world | Pelvis | Root |
+| Spine, neck, head | Spine, neck, head | Chain |
+| Wings | Arms (shoulder to wing root, elbow and wrist to the fold) | Wing (WP-6) |
+| Primary feathers, alula | Finger spread and curl, thumb | Digits (WP-12) |
+| Legs | Legs | Two-bone limb or digitigrade leg |
+| Talons | A finger-curl or face curve chosen by the puppeteer | Curve to bone (WP-13) |
+| Tail fan | Pelvis motion, or finger spread | Tail (WP-5), Digits (WP-12) |
+| Beak | `jawOpen` | Curve to bone (WP-13) |
+| Crest and head feathers | Brow curves | Curve to bone (WP-13) |
+| Eyes, eyelids | Eye-look and blink curves | Eyes, curve to bone (WP-13) |
+
+## 11. Addendum: physics-driven modules
+
+Added 2026-10-24 at the maintainer's request; the decision is
+[ADR 0007](../adr/0007-physics-driven-modules.md). Physics gives a puppet what a performer cannot
+provide directly: secondary motion that follows from the body's movement (a tail that swings
+and settles, ears and a mane that lag a head turn, feathers that ruffle on landing), and weight
+and contact (a paw that stops on the ground, a body that reacts to a push, a region that goes
+limp and recovers on cue).
+
+It comes in two tiers:
+
+```
+ performers ──► Puppet Solve ───────────────────────────────► (Rigid Body With Control) ──► output
+                 modules, in order:                              optional, Tier 2: bodies of the
+                 kinematic (retarget) and dynamic (Tier 1)       physics asset follow the solved
+                 Physics Region modules publish curves ───────►  pose with the strengths the
+                                                                 curves ask for
+```
+
+- **Tier 1, solver dynamics, in the core plugin.** Dynamic modules simulate inside Puppet Solve
+  with shared, tested building blocks (`PuppetDynamics`): a fixed-step integrator, angular
+  spring-dampers, length-constrained chains, and collision with spheres and capsules on the
+  puppet's own bones and a ground plane. The solve context gives the component's world motion,
+  so a tail swings when the wolf turns or stops. Each dynamic module has a **Physics Weight**
+  between following the retargeted pose and simulating, and a curve can drive it, so it is
+  playable live. It is deterministic, so re-solving a take reproduces it.
+- **Tier 2, engine physics hand-off, in the optional `Open3DPuppetPhysics` module.** For contact
+  with the world and reactions to impacts, Puppet Solve feeds the engine's Rigid Body With Control
+  node (Physics Control plugin). Physics Region modules publish each region's strength and
+  damping as curves, and a function library turns them into the node's control parameters. A
+  puppeteer can make the wolf's legs heavy and grounded, or let the whole body go limp and pull
+  it back. Enabled only in projects that enable Physics Control, so the core plugin does not
+  depend on it. Takes that use it also record the solved pose, because engine physics is not
+  deterministic.
+
+For the first characters:
+
+| Character | Tier 1 | Tier 2 |
+|---|---|---|
+| Wolf | Tail, ears, mane or ruff | Paws and legs on contact with the ground; reactions and falls |
+| Eagle | Tail fan, primary and covert feathers, crest | Landing and perching contact; wing reactions |
+
+Writing a dynamic module follows the authoring guide, with two additions that land with WP-14:
+the solver keeps its simulation state and resets it in `Bind` and on teleports, and its tests
+step the solver with a fixed `DeltaTime` and check settling, stability at different frame rates,
+and the Physics Weight blend.

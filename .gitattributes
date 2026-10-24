@@ -1,6 +1,5 @@
-# Line endings (WP-R2; mid-project review BC-11). Text files are stored with LF; a checkout gets
-# the platform's line endings (core.autocrlf), except where eol= below fixes them. Before this
-# file, git stored whatever each editor wrote, so the repository held both LF and CRLF files.
+# Line endings. Text files are stored with LF; a checkout gets the platform's line endings
+# (core.autocrlf), except where eol= below fixes them.
 
 * text=auto
 

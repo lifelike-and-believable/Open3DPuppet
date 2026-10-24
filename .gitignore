@@ -1,0 +1,30 @@
+# Unreal build output
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+*.sln
+*.VC.db
+*.VC.opendb
+.vs/
+.vscode/
+.idea/
+
+# Packaging output
+/Artifacts/
+*.zip
+
+# Secrets
+*.pem
+*.key
+*.p12
+*.pfx
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Personal Claude Code settings (permissions, hooks); shared settings are in .claude/settings.json
+.claude/settings.local.json
+.claude/scheduled_tasks.lock

@@ -11,11 +11,13 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-11 | Curves in the pipeline (ADR 0006): performer curves, Basic-role (curve-only) subjects, neutral calibration of curves, puppet output curves, parent-relative joint deltas | WP-1, ADR 0006 | Planned |
 | WP-12 | Digits module: fingers to toes, talons and feathers; derived finger-curl curves | WP-11 | Planned |
 | WP-13 | Face modules: curve to bone, curve remap, eyes | WP-11 | Planned |
+| WP-14 | Solver dynamics (ADR 0007, Tier 1): world motion in the solve context, `PuppetDynamics` (fixed-step integrator, spring-dampers, constrained chains, collision shapes), Physics Weight | WP-11 | Planned |
 | WP-4 | Digitigrade leg module (Wolf front and hind legs) | WP-1 | Planned |
-| WP-5 | Tail and dynamic chain module: springs, input mix (Wolf tail, Eagle tail fan) | WP-1 | Planned |
+| WP-5 | Tail and dynamic chain module: springs, input mix (Wolf tail, ears, mane; Eagle tail fan, feathers) | WP-14 | Planned |
+| WP-15 | Engine physics hand-off (ADR 0007, Tier 2): optional `Open3DPuppetPhysics` module, Physics Region module, Rigid Body With Control parameters from curves, setup guide | WP-11 | Planned |
 | WP-6 | Wing module (Eagle) | WP-12 | Planned |
-| WP-M1 | Wolf: puppet asset, profiles and calibration for the show's capture setup; live session at the desk | WP-4, WP-5, WP-12, WP-13 | Planned |
-| WP-M2 | Eagle: puppet asset, profiles and calibration; live session at the desk | WP-5, WP-6, WP-12, WP-13 | Planned |
+| WP-M1 | Wolf: puppet asset, profiles and calibration for the show's capture setup; live session at the desk | WP-4, WP-5, WP-12, WP-13, WP-15 | Planned |
+| WP-M2 | Eagle: puppet asset, profiles and calibration; live session at the desk | WP-5, WP-6, WP-12, WP-13, WP-15 | Planned |
 | WP-2 | Calibration and profiles in the editor: calibrate button, save calibrations to assets, choice of reference pose, profile auto-mapping by name | WP-1 | Planned |
 | WP-3 | Recorded motion: confirm Take Recorder record and playback of Live Link subjects on 5.8; AnimSequence player as a Live Link source; re-solving a recorded take | WP-1 | Planned |
 | WP-7 | Prop-driven module (Live Link Transform role) and a multi-performer sample | WP-1 | Planned |
@@ -31,8 +33,9 @@ anatomy modules each needs. WP-2 and WP-3 can move ahead when a session needs th
 
 Items that need a person at the desk or a maintainer decision:
 
-- Sign-off on ADRs 0001 to 0006 and their open questions (licence, Fab, canonical joint names,
-  C++-first module contract, the show's finger and face capture systems).
+- Sign-off on ADRs 0001 to 0007 and their open questions (licence, Fab, canonical joint names,
+  C++-first module contract, the show's finger and face capture systems, which regions are
+  physical and whether the characters have physics assets).
 - Runner access: the shared `[self-hosted, ue5, windows]` runner must serve this repository
   (move it into the organization, or register the runner for it). Until it does, nothing in WP-0
   or WP-1 has been built with Unreal Build Tool or run.

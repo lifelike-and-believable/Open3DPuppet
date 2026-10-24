@@ -14,7 +14,8 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-6 | Wing module | WP-1 | Planned |
 | WP-7 | Prop-driven module (Live Link Transform role) and a multi-performer sample | WP-1 | Planned |
 | WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | Planned |
-| WP-9 | Fab readiness: packaging script, icon, UE build and test CI on a Windows runner, zero-warning build | WP-1 | Planned |
+| WP-9a | UE build and test CI on the shared self-hosted runner | WP-1 | In review |
+| WP-9 | Fab readiness: packaging script, icon | WP-1 | Planned |
 | WP-10 | Control Rig adapter module | WP-1 | Planned |
 
 ## Next

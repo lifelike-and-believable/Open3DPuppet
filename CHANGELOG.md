@@ -7,6 +7,10 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **UE build and test CI** (WP-9a): `.github/workflows/ue-build-test.yml` builds the plugin with
+  RunUAT BuildPlugin on UE 5.8 (warnings in plugin sources fail it) and runs the automation
+  tests against the package, on the self-hosted runner Open3DBroadcast uses.
+  `Build/Scripts/Build-Plugin.ps1` and `Run-AutomationTests.ps1` come from Open3DBroadcast.
 - **Solver core and first modules** (WP-1, ADRs 0002 to 0004): `UPuppetAsset` (performer slots,
   root slot, ordered modules), the module contract (`UPuppetModule`, `FPuppetModuleSolver`,
   `FPuppetBindContext`, `FPuppetSolveContext`), the shared retargeting math (`PuppetRetarget`),

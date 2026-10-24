@@ -14,6 +14,7 @@ Check whether an existing module already does the job with different settings:
 | Any FK chain (spine, neck, a tail that copies the spine, antennae) | Chain, with `Amplification` to damp or exaggerate |
 | An arm or leg with a hand or foot to place | Two-Bone Limb, choosing an `EffectorMode` |
 | The pelvis and the puppet's place in the world | Root |
+| Fingers onto fingers, toes, talons or feathers, relative to the hand or paw | Digits, with `CurlGain` and `SpreadGain` per digit |
 
 Write a new module when the anatomy needs behaviour these cannot express: a third limb segment
 (digitigrade legs), state between frames (springs on a tail), a mapping between different body

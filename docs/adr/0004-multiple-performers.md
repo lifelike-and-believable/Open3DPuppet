@@ -1,6 +1,6 @@
 # 0004: Several performers on one puppet
 
-- **Status:** Proposed (pending maintainer sign-off)
+- **Status:** Accepted (maintainer sign-off 2026-10-24)
 - **Date:** 2026-10-24
 - **Related:** [ADR 0002](0002-puppet-module-architecture.md), [ADR 0003](0003-performer-input-and-calibration.md), [design overview](../design/overview.md) §6
 

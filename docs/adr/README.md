@@ -8,11 +8,11 @@ from it. ADRs need maintainer sign-off before coding work that depends on them i
 
 | ADR | Title | Status |
 |---|---|---|
-| [0001](0001-platform-and-engine-scope.md) | Platform and engine scope | Proposed |
-| [0002](0002-puppet-module-architecture.md) | Puppet module architecture | Proposed |
-| [0003](0003-performer-input-and-calibration.md) | Performer input and calibration | Proposed |
-| [0004](0004-multiple-performers.md) | Several performers on one puppet | Proposed |
-| [0005](0005-test-layout.md) | Test layout | Proposed |
+| [0001](0001-platform-and-engine-scope.md) | Platform and engine scope | Accepted |
+| [0002](0002-puppet-module-architecture.md) | Puppet module architecture | Accepted |
+| [0003](0003-performer-input-and-calibration.md) | Performer input and calibration | Accepted |
+| [0004](0004-multiple-performers.md) | Several performers on one puppet | Accepted |
+| [0005](0005-test-layout.md) | Test layout | Accepted |
 
 ## Conventions
 

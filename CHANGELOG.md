@@ -13,6 +13,10 @@ Until then changes collect under `## Unreleased`.
 - **Physics-driven modules** (ADR 0007): solver dynamics in the core plugin and an optional
   hand-off to the engine's Rigid Body With Control node (design overview §11, roadmap WP-14,
   WP-15).
+- **Animation sources and hand-offs** (ADR 0008): AnimSequences of human motion as a cast source,
+  creature clips through the input pose, per-slot control blends with timed transitions, and root
+  anchoring that converges on the performer's position, for entrances such as the Wolf's run-in and the Eagle's fly-in (design overview §12,
+  roadmap WP-3, WP-16, WP-17).
 
 ### Added
 

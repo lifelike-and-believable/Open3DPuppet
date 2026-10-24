@@ -1,7 +1,7 @@
 # Open3DPuppet design overview
 
 - **Status:** Draft for maintainer review (2026-10-24)
-- **Decisions:** [ADR 0001](../adr/0001-platform-and-engine-scope.md) to [ADR 0007](../adr/0007-physics-driven-modules.md)
+- **Decisions:** [ADR 0001](../adr/0001-platform-and-engine-scope.md) to [ADR 0008](../adr/0008-animation-sources-and-handoffs.md)
 - **Plan:** [`docs/roadmap/roadmap.md`](../roadmap/roadmap.md)
 
 ## 1. Goal
@@ -139,13 +139,14 @@ the front and back of one creature. Examples:
 
 Live: any Live Link source, including Open3DBroadcast's receiver.
 
-Recorded: Take Recorder records Live Link subjects, and the recording plays back into Live Link
-from Sequencer, so a recorded take drives the puppet exactly as the live performer did
-(**needs-verification** on UE 5.8; ADR 0003 open question 2). Because the raw performer data is
-what gets recorded, a take can be solved again later with different module settings, which matters
-most for creatures, where the mapping is usually tuned after the shoot. An AnimSequence player that
-publishes an existing animation as a Live Link subject (for mocap delivered as FBX) is WP-3. The
-solved puppet pose can be recorded too, as an ordinary animation.
+Recorded: a cast entry can name an AnimSequence of human motion instead of a Live Link subject
+(ADR 0008, WP-3), so a recorded take or mocap delivered as FBX drives the puppet through the same
+modules as a live performer, and can be solved again later with different module settings, which
+matters most for creatures, where the mapping is usually tuned after the shoot. Takes recorded as
+Live Link subjects with Take Recorder play back into Live Link from Sequencer
+(**needs-verification** on UE 5.8; ADR 0003 open question 2). The solved puppet pose can be
+recorded too, as an ordinary animation. Section 12 covers clips authored on the creature itself,
+and handing control between a clip and a performer.
 
 ## 8. Setting up a puppet (target workflow)
 
@@ -245,3 +246,29 @@ Writing a dynamic module follows the authoring guide, with two additions that la
 the solver keeps its simulation state and resets it in `Bind` and on teleports, and its tests
 step the solver with a fixed `DeltaTime` and check settling, stability at different frame rates,
 and the Physics Weight blend.
+
+## 12. Animation sources and hand-offs
+
+Added 2026-10-24; the decision is [ADR 0008](../adr/0008-animation-sources-and-handoffs.md). In
+*Mamaawi* the Wolf runs in and the Eagle flies in on an AnimSequence authored on their own
+skeletons, then pass to the performer.
+
+- **Two kinds of clip.** A creature clip (authored on the Wolf or Eagle skeleton) plays into the
+  Puppet Solve node's input pose. A performer clip (human motion) is a cast source like a Live
+  Link subject and is retargeted through the modules.
+- **Control blend per slot.** From 0, the input pose (the clip), to 1, the performer. It scales
+  the weights of the slot's modules, so the body can take over before the tail.
+- **Transitions.** `UPuppetPerformanceComponent` moves a slot's blend over a duration with an
+  easing curve, towards the performer or back to the animation. Triggers call it: a Sequencer cue,
+  an operator's button, or a performer gesture (a held pose, a mark on the stage, a curve over a
+  threshold). The show's choice is still open, so all three are planned.
+- **Anchoring, then converging.** At a hand-off to the performer, the creature starts from where
+  the clip left it, facing the same way, so nothing snaps. The offset to the performer's own stage
+  position then blends out over a convergence time, by default only while the performer moves, so
+  the correction hides inside their motion and a standing creature never slides.
+
+```
+ Wolf run clip ──► input pose ──┐
+                                ├─ control blend 0 ──(transition, anchor captured)──► 1
+ performer (Live Link) ─► modules┘     clip                                          performer
+```

@@ -228,10 +228,15 @@ void FPuppetInstance::Solve(TConstArrayView<FTransform> InputLocal, float DeltaT
 
 	for (int32 Slot = 0; Slot < Slots.Num(); ++Slot)
 	{
-		if (Slots[Slot].bNeedsBind && GetSlotState(Slot) == EPuppetSlotState::Ready)
+		if (GetSlotState(Slot) != EPuppetSlotState::Ready)
+		{
+			continue;
+		}
+		if (Slots[Slot].bNeedsBind)
 		{
 			BindSlot(Slot);
 		}
+		Slots[Slot].Performer.UpdateDerivedCurves(Slots[Slot].Calibration);
 	}
 
 	for (FModuleEntry& Entry : Entries)

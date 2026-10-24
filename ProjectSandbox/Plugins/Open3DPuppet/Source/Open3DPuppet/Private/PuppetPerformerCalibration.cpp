@@ -31,3 +31,8 @@ bool FPuppetPerformerCalibration::Matches(const FPuppetPerformerPose& Pose) cons
 	}
 	return true;
 }
+
+float FPuppetPerformerCalibration::GetRestCurve(FName CurveName) const
+{
+	return 0.0f;
+}

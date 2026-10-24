@@ -50,6 +50,18 @@ public:
 	 */
 	bool GetChain(int32 Start, int32 End, TArray<int32>& OutChain) const;
 
+	/** Writes an output curve (a morph target or material parameter), adding it if new. */
+	void SetCurve(FName Name, float Value);
+
+	/** The output curve's value, or null when no module wrote it this frame. */
+	const float* FindCurve(FName Name) const;
+
+	TConstArrayView<FName> GetCurveNames() const { return CurveNames; }
+	TConstArrayView<float> GetCurveValues() const { return CurveValues; }
+
+	/** Forgets this frame's output curves; keeps their memory. */
+	void ResetCurves();
+
 private:
 	/** Recomputes component space for every bone after FirstChanged; parents precede children. */
 	void PropagateFrom(int32 FirstChanged);
@@ -59,4 +71,6 @@ private:
 	TArray<FTransform> Local;
 	TArray<FTransform> Component;
 	TArray<FTransform> ReferenceComponent;
+	TArray<FName> CurveNames;
+	TArray<float> CurveValues;
 };

@@ -28,12 +28,23 @@ struct OPEN3DPUPPET_API FPuppetPerformerCalibration
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Calibration")
 	TArray<FTransform> RestComponent;
 
+	/** The performer's curve names when the calibration was captured. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Calibration")
+	TArray<FName> CurveNames;
+
+	/** Each curve's value at rest (the performer's neutral face), in the order of CurveNames. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Calibration")
+	TArray<float> RestCurveValues;
+
 	/** Rotation from the performer's component space to the puppet's (for example a yaw when the performer faced another way while calibrating). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Calibration")
 	FRotator Alignment = FRotator::ZeroRotator;
 
 	/** A calibration of Pose's current transforms, with InAlignment. */
 	static FPuppetPerformerCalibration Capture(const FPuppetPerformerPose& Pose, const FRotator& InAlignment);
+
+	/** The curve's value at rest, or 0 when the calibration has no such curve. */
+	float GetRestCurve(FName CurveName) const;
 
 	/** True when this calibration was captured from a skeleton with Pose's bone names, in the same order. */
 	bool Matches(const FPuppetPerformerPose& Pose) const;

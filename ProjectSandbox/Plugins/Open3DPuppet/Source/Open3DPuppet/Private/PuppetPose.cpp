@@ -66,3 +66,16 @@ void FPuppetPose::PropagateFrom(int32 FirstChanged)
 		Component[Bone] = Parent == INDEX_NONE ? Local[Bone] : Local[Bone] * Component[Parent];
 	}
 }
+
+void FPuppetPose::SetCurve(FName Name, float Value)
+{
+}
+
+const float* FPuppetPose::FindCurve(FName Name) const
+{
+	return nullptr;
+}
+
+void FPuppetPose::ResetCurves()
+{
+}

@@ -119,6 +119,15 @@ bool FPuppetInstance::SetPerformerTransforms(int32 Slot, TConstArrayView<FTransf
 	return Slots[Slot].Performer.SetLocalTransforms(LocalTransforms);
 }
 
+void FPuppetInstance::SetPerformerCurveNames(int32 Slot, TConstArrayView<FName> CurveNames, const UPuppetPerformerProfile* Profile)
+{
+}
+
+bool FPuppetInstance::SetPerformerCurveValues(int32 Slot, TConstArrayView<float> Values)
+{
+	return true;
+}
+
 void FPuppetInstance::SetCalibration(int32 Slot, const FPuppetPerformerCalibration& Calibration)
 {
 	FSlot& State = Slots[Slot];

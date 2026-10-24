@@ -20,4 +20,12 @@ public:
 	/** Canonical joint name (for example "upperarm_l") to the source's bone name (for example "LeftArm"). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Profile", meta = (ForceInlineRow))
 	TMap<FName, FName> CanonicalToSource;
+
+	/**
+	 * Canonical curve name to the source's curve name. The canonical curves are ARKit's 52 blend
+	 * shapes, as Live Link Face sends them (for example "jawOpen" to a source's "JawOpen"); a curve
+	 * this does not map is looked up by its own name.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Profile", meta = (ForceInlineRow))
+	TMap<FName, FName> CurveCanonicalToSource;
 };

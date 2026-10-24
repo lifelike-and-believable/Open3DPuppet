@@ -116,3 +116,22 @@ int32 FPuppetPerformerPose::FindJoint(FName CanonicalJoint) const
 	const int32* Bone = CanonicalToBone.Find(CanonicalJoint);
 	return Bone ? *Bone : INDEX_NONE;
 }
+
+void FPuppetPerformerPose::SetCurveNames(TConstArrayView<FName> InCurveNames, const UPuppetPerformerProfile* Profile)
+{
+}
+
+bool FPuppetPerformerPose::HasCurveNames(TConstArrayView<FName> InCurveNames) const
+{
+	return false;
+}
+
+bool FPuppetPerformerPose::SetCurveValues(TConstArrayView<float> InValues)
+{
+	return true;
+}
+
+int32 FPuppetPerformerPose::FindCurve(FName CanonicalCurve) const
+{
+	return INDEX_NONE;
+}

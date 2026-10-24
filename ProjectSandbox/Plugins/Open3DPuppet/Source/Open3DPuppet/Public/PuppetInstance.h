@@ -67,6 +67,12 @@ public:
 	/** Gives a slot this frame's local bone transforms. False on a count mismatch; the slot keeps its last pose. */
 	bool SetPerformerTransforms(int32 Slot, TConstArrayView<FTransform> LocalTransforms);
 
+	/** Gives a slot its performer's curve names (Live Link static data). The slot's modules bind again when they change. */
+	void SetPerformerCurveNames(int32 Slot, TConstArrayView<FName> CurveNames, const UPuppetPerformerProfile* Profile);
+
+	/** Gives a slot this frame's curve values. False on a count mismatch; the slot keeps its last values. */
+	bool SetPerformerCurveValues(int32 Slot, TConstArrayView<float> Values);
+
 	/** Sets or clears a slot's calibration; its modules bind again. */
 	void SetCalibration(int32 Slot, const FPuppetPerformerCalibration& Calibration);
 	void ClearCalibration(int32 Slot);
@@ -94,6 +100,8 @@ private:
 		int32 PerformerPelvis = INDEX_NONE;
 		double RootScale = 1.0;
 		bool bNeedsBind = true;
+		/** Neutral value per performer curve, from the calibration (ADR 0006). */
+		TArray<float> CurveNeutral;
 		/** The skeleton last rejected by SetPerformerSkeleton, so it is reported once. */
 		TArray<FName> RejectedNames;
 		TArray<int32> RejectedParents;

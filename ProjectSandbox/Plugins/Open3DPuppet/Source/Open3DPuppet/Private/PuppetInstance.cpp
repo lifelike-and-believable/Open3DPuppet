@@ -9,6 +9,23 @@
 namespace PuppetInstance
 {
 	const FName PerformerPelvisJoint(TEXT("pelvis"));
+
+	template <typename T>
+	bool SameElements(const TArray<T>& A, TConstArrayView<T> B)
+	{
+		if (A.Num() != B.Num())
+		{
+			return false;
+		}
+		for (int32 Index = 0; Index < A.Num(); ++Index)
+		{
+			if (A[Index] != B[Index])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 }
 
 FPuppetInstance::FPuppetInstance() = default;
@@ -80,8 +97,21 @@ bool FPuppetInstance::SetPerformerSkeleton(int32 Slot, TConstArrayView<FName> Bo
 	{
 		return true;
 	}
+	if (PuppetInstance::SameElements(State.RejectedNames, BoneNames) && PuppetInstance::SameElements(State.RejectedParents, BoneParents))
+	{
+		OutError.Reset();
+		return false;
+	}
 	InvalidateSlot(Slot);
-	return State.Performer.SetSkeleton(BoneNames, BoneParents, Profile, OutError);
+	if (!State.Performer.SetSkeleton(BoneNames, BoneParents, Profile, OutError))
+	{
+		State.RejectedNames = BoneNames;
+		State.RejectedParents = BoneParents;
+		return false;
+	}
+	State.RejectedNames.Reset();
+	State.RejectedParents.Reset();
+	return true;
 }
 
 bool FPuppetInstance::SetPerformerTransforms(int32 Slot, TConstArrayView<FTransform> LocalTransforms)

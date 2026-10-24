@@ -32,8 +32,8 @@ struct OPEN3DPUPPET_API FPuppetPerformerCalibration
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Calibration")
 	FRotator Alignment = FRotator::ZeroRotator;
 
-	/** A calibration of Pose's current transforms. */
-	static FPuppetPerformerCalibration Capture(const FPuppetPerformerPose& Pose, const FRotator& Alignment);
+	/** A calibration of Pose's current transforms, with InAlignment. */
+	static FPuppetPerformerCalibration Capture(const FPuppetPerformerPose& Pose, const FRotator& InAlignment);
 
 	/** True when this calibration was captured from a skeleton with Pose's bone names, in the same order. */
 	bool Matches(const FPuppetPerformerPose& Pose) const;

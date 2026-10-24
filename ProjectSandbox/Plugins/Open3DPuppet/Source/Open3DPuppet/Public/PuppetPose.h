@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Containers/Array.h"
+#include "Containers/ArrayView.h"
 #include "Math/Transform.h"
 #include "UObject/NameTypes.h"
 

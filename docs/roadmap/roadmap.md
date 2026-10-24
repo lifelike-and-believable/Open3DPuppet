@@ -40,6 +40,8 @@ Items that need a person at the desk or a maintainer decision:
 - ADR 0008: which hand-off triggers the show uses (question 1).
 - WP-16 at the desk: a creature clip into a performer hand-off and back, and a manual re-centre,
   with a live performer; tune the default convergence time and moving speed.
+- WP-11 at the desk: Live Link Face (ARKit curves) cast into a curve-only slot, its neutral
+  calibrated, and output curves reaching the puppet's morph targets.
 - WP-1 at the desk: a mannequin driven live through Live Link (Open3DBroadcast or a capture
   system), calibrated with the subsystem, with Root, Chain and Two-Bone Limb modules.
 - Wolf and Eagle: the skeletal meshes (or their bone hierarchies and reference poses), their morph

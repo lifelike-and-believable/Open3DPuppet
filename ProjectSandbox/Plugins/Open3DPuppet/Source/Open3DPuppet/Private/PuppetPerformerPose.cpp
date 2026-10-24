@@ -176,3 +176,17 @@ int32 FPuppetPerformerPose::FindCurve(FName CanonicalCurve) const
 	const int32* Curve = CanonicalToCurve.Find(CanonicalCurve);
 	return Curve ? *Curve : INDEX_NONE;
 }
+
+TConstArrayView<FName> FPuppetPerformerPose::GetSourceCurveNames() const
+{
+	return CurveNames;
+}
+
+TConstArrayView<float> FPuppetPerformerPose::GetSourceCurveValues() const
+{
+	return CurveValues;
+}
+
+void FPuppetPerformerPose::UpdateDerivedCurves(const FPuppetPerformerCalibration& Calibration)
+{
+}

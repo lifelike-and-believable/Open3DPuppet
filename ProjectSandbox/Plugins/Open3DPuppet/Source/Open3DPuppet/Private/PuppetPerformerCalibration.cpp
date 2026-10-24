@@ -11,8 +11,9 @@ FPuppetPerformerCalibration FPuppetPerformerCalibration::Capture(const FPuppetPe
 	FPuppetPerformerCalibration Calibration;
 	Calibration.BoneNames = Pose.GetBoneNames();
 	Calibration.RestComponent = Pose.GetComponentTransforms();
-	Calibration.CurveNames = Pose.GetCurveNames();
-	Calibration.RestCurveValues = Pose.GetCurveValues();
+	// Derived curves are measured from the calibration itself, so their neutral is 0 (ADR 0009).
+	Calibration.CurveNames = Pose.GetSourceCurveNames();
+	Calibration.RestCurveValues = Pose.GetSourceCurveValues();
 	Calibration.Alignment = InAlignment;
 	return Calibration;
 }

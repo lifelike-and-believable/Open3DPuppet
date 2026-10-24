@@ -10,12 +10,17 @@
 #include "UObject/NameTypes.h"
 
 class UPuppetPerformerProfile;
+struct FPuppetPerformerCalibration;
 
 /**
  * One performer's pose, as a Live Link subject delivers it: bone names, parent indices and local
  * transforms, plus component-space transforms and a lookup by canonical joint name (ADR 0003), and
  * curves (named values, ADR 0006). A Basic-role subject (a face) has curves and no bones. The data
  * comes from the network or a file, so SetSkeleton and the setters validate it.
+ *
+ * The curves are the source's own, then the derived finger-curl curves (ADR 0009):
+ * curl_<finger>_<side> for each finger whose three canonical joints the skeleton has, unless a
+ * source curve already has that name.
  */
 class OPEN3DPUPPET_API FPuppetPerformerPose
 {
@@ -54,14 +59,26 @@ public:
 	/** True when the curve names are the ones SetCurveNames was last given. */
 	bool HasCurveNames(TConstArrayView<FName> InCurveNames) const;
 
-	/** Sets one value per curve. False on a count mismatch; the last values stay. */
+	/** Sets one value per source curve. False on a count mismatch; the last values stay. */
 	bool SetCurveValues(TConstArrayView<float> InValues);
 
 	bool HasCurveValues() const { return bHasCurveValues; }
 	/** True when the performer has sent transforms or curve values. */
 	bool HasData() const { return bHasTransforms || bHasCurveValues; }
+	/** Every curve: the source's, then the derived ones. */
 	TConstArrayView<FName> GetCurveNames() const { return CurveNames; }
 	TConstArrayView<float> GetCurveValues() const { return CurveValues; }
+	/** The source's curves only, as SetCurveNames and SetCurveValues gave them. */
+	TConstArrayView<FName> GetSourceCurveNames() const;
+	TConstArrayView<float> GetSourceCurveValues() const;
+
+	/**
+	 * Computes the derived finger-curl curves from the current transforms (ADR 0009): each finger's
+	 * three joints' unsigned bends relative to their parents since Calibration, summed, over 270
+	 * degrees. Calibration must match the skeleton (FPuppetPerformerCalibration::Matches). Does not
+	 * allocate.
+	 */
+	void UpdateDerivedCurves(const FPuppetPerformerCalibration& Calibration);
 
 	/** The index of a canonical curve (for example "jawOpen"), or INDEX_NONE. */
 	int32 FindCurve(FName CanonicalCurve) const;

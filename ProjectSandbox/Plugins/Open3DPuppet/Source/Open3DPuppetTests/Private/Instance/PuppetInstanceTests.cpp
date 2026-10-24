@@ -89,6 +89,28 @@ bool FPuppetInstanceTwoPerformersTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetInstanceRejectedSkeletonTest, "Open3DPuppet.Instance.Slots.InvalidSkeletonReportedOnce", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetInstanceRejectedSkeletonTest::RunTest(const FString& Parameters)
+{
+	// Live Link delivers the same static data every frame; its rejection is reported once.
+	PuppetTests::FPuppet Puppet(PuppetTests::Biped());
+	Puppet.Build();
+	const TArray<FName> Names = { TEXT("a"), TEXT("b") };
+	const TArray<int32> Cycle = { 1, 0 };
+	FString Error;
+	TestFalse(TEXT("Rejected"), Puppet.Instance.SetPerformerSkeleton(0, Names, Cycle, nullptr, Error));
+	TestFalse(TEXT("With a reason"), Error.IsEmpty());
+	TestFalse(TEXT("Rejected again"), Puppet.Instance.SetPerformerSkeleton(0, Names, Cycle, nullptr, Error));
+	TestTrue(TEXT("Without a second report"), Error.IsEmpty());
+	TestTrue(TEXT("No data"), Puppet.Instance.GetSlotState(0) == EPuppetSlotState::NoData);
+
+	PuppetTests::FPerformer Performer(PuppetTests::Biped());
+	TestTrue(TEXT("A valid skeleton is accepted"), Puppet.Instance.SetPerformerSkeleton(0, Performer.Names, Performer.Parents, nullptr, Error));
+	Puppet.Instance.SetPerformerSkeleton(0, Names, Cycle, nullptr, Error);
+	TestFalse(TEXT("The invalid one is reported again after a valid one"), Error.IsEmpty());
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetInstanceUndeclaredSlotTest, "Open3DPuppet.Instance.Slots.UndeclaredSlotModuleDoesNotRun", OPEN3DPUPPET_TEST_FLAGS)
 bool FPuppetInstanceUndeclaredSlotTest::RunTest(const FString& Parameters)
 {

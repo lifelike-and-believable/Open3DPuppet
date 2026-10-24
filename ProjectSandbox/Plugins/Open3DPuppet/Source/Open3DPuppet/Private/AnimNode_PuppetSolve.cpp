@@ -175,7 +175,8 @@ void FAnimNode_PuppetSolve::ReadPerformers()
 		FString Error;
 		if (!Instance->SetPerformerSkeleton(Slot, Skeleton->BoneNames, Skeleton->BoneParents, Entry.Profile, Error))
 		{
-			UE_LOG(LogOpen3DPuppet, Warning, TEXT("Puppet %s, slot %s: Live Link subject %s has an invalid skeleton: %s"),
+			// Empty when this skeleton was already reported.
+			UE_CLOG(!Error.IsEmpty(), LogOpen3DPuppet, Warning, TEXT("Puppet %s, slot %s: Live Link subject %s has an invalid skeleton: %s"),
 				*BoundPuppet->GetName(), *Entry.Slot.ToString(), *Entry.Subject.ToString(), *Error);
 			continue;
 		}

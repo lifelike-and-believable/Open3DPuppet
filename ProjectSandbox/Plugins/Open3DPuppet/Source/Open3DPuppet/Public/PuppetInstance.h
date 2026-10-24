@@ -3,6 +3,8 @@
 #pragma once
 
 #include "Containers/Array.h"
+#include "Containers/ArrayView.h"
+#include "Misc/CoreMiscDefines.h"
 #include "PuppetPerformerCalibration.h"
 #include "PuppetPerformerPose.h"
 #include "PuppetPose.h"
@@ -38,6 +40,7 @@ class OPEN3DPUPPET_API FPuppetInstance
 public:
 	FPuppetInstance();
 	~FPuppetInstance();
+	UE_NONCOPYABLE(FPuppetInstance)
 
 	/**
 	 * Sets up the puppet for a mesh's reference skeleton and creates the modules' solvers. The
@@ -56,7 +59,8 @@ public:
 	/**
 	 * Gives a slot its performer's skeleton (from Live Link static data). Does nothing when the
 	 * skeleton is unchanged; otherwise the slot's modules bind again. False, with OutError, when
-	 * the skeleton is invalid; the slot then has no data.
+	 * the skeleton is invalid; the slot then has no data. The same invalid skeleton again returns
+	 * false with OutError empty, so a caller logs each rejection once.
 	 */
 	bool SetPerformerSkeleton(int32 Slot, TConstArrayView<FName> BoneNames, TConstArrayView<int32> BoneParents, const UPuppetPerformerProfile* Profile, FString& OutError);
 
@@ -90,6 +94,9 @@ private:
 		int32 PerformerPelvis = INDEX_NONE;
 		double RootScale = 1.0;
 		bool bNeedsBind = true;
+		/** The skeleton last rejected by SetPerformerSkeleton, so it is reported once. */
+		TArray<FName> RejectedNames;
+		TArray<int32> RejectedParents;
 	};
 
 	struct FModuleEntry

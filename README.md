@@ -28,3 +28,8 @@ Status: early development. See the [roadmap](docs/roadmap/roadmap.md).
 | `Build/` | CI check scripts. |
 
 Coding agents: start with [`AGENTS.md`](AGENTS.md).
+
+## License
+
+MIT, as Open3DBroadcast. See [LICENSE](LICENSE); the plugin carries the same file at
+`ProjectSandbox/Plugins/Open3DPuppet/LICENSE`, and its package includes it.

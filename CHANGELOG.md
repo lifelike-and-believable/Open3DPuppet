@@ -7,6 +7,8 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Licence:** MIT, as Open3DBroadcast (maintainer, 2026-10-24), at the repository root and the
+  plugin root; `Config/FilterPlugin.ini` puts it in the plugin package.
 - **UE build and test CI** (WP-9a): `.github/workflows/ue-build-test.yml` builds the plugin with
   RunUAT BuildPlugin on UE 5.8 (warnings in plugin sources fail it) and runs the automation
   tests against the package, on the self-hosted runner Open3DBroadcast uses.

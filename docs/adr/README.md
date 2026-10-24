@@ -16,6 +16,19 @@ from it. ADRs need maintainer sign-off before coding work that depends on them i
 | [0006](0006-fingers-face-and-curves.md) | Fingers, face and curves | Accepted |
 | [0007](0007-physics-driven-modules.md) | Physics-driven modules | Accepted |
 
+## Answers to open questions
+
+An accepted ADR is not edited (see Conventions), so the maintainer's answers to the open
+questions of accepted ADRs are recorded here.
+
+| ADR | Question | Answer (maintainer, 2026-10-24) |
+|---|---|---|
+| 0001 | Licence and `LICENSE` file; Fab | As Open3DBroadcast: MIT licence, and the plugin is prepared for Fab under the same rules (packaging in WP-9, following Open3DBroadcast's `fab-package.py`). |
+| 0003 | Canonical joint names | The Unreal standard skeleton's (UE5 mannequin) names, fingers included. |
+| 0006 | Finger capture | Standard Live Link: finger bones on an Animation-role subject, named as the Unreal standard skeleton. |
+| 0006 | Face capture | Configurable. The default is the most common source: ARKit's 52 blend-shape curves (`jawOpen`, `eyeBlinkLeft`, `browInnerUp`, ...) as Live Link Face sends them. Other sources map their curve names through the performer profile. |
+| 0007 | Physics assets for the Wolf and Eagle | None yet. Tier 1 (solver dynamics) needs none; Tier 2 (WP-15) needs them authored first. |
+
 ## Conventions
 
 - **File name:** `NNNN-short-slug.md`, numbered in the order they are written. Numbers are never reused.

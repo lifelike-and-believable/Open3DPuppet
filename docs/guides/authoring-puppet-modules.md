@@ -57,7 +57,10 @@ since calibration, in puppet space), `GetJointPosition(joint)` and `GetJointTran
 
 1. **Canonical joints.** Name performer joints the way the UE5 mannequin names its bones
    (`pelvis`, `spine_01` to `spine_05`, `neck_01`, `neck_02`, `head`, `clavicle_l`, `upperarm_l`,
-   `lowerarm_l`, `hand_l`, `thigh_l`, `calf_l`, `foot_l`, `ball_l`, and `_r`). Performer profiles
+   `lowerarm_l`, `hand_l`, `thigh_l`, `calf_l`, `foot_l`, `ball_l`, and `_r`; fingers
+   `thumb_01_l` to `thumb_03_l`, then `index_metacarpal_l` and `index_01_l` to `index_03_l`, and
+   the same for `middle`, `ring` and `pinky`). Fingers arrive as ordinary Animation-role bones, in
+   the body subject or a hand subject of their own (maintainer, 2026-10-24). Performer profiles
    map other sources onto these names (ADR 0003). Use the same names as the defaults for puppet
    bones, so a mannequin-like mesh works without setup.
 2. **Claim your bones.** Write only the bones your settings name. Bones you do not write keep

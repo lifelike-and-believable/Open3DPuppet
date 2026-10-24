@@ -9,7 +9,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-1 | Solver core (performer pose, calibration, puppet pose, retarget math), module contract, Root, Chain and Two-bone limb modules, Puppet Solve AnimGraph node reading Live Link, calibration subsystem, solver tests, module authoring guide | WP-0, ADRs 0002 to 0004 | Done (#2) |
 | WP-9a | UE build and test CI on the shared self-hosted runner | WP-1 | Done (#3) |
 | WP-11 | Curves in the pipeline (ADR 0006): performer curves, Basic-role (curve-only) subjects, neutral calibration of curves, puppet output curves, parent-relative joint deltas | WP-1, ADR 0006 | Done (#8) |
-| WP-12 | Digits module: fingers to toes, talons and feathers; derived finger-curl curves | WP-11 | In progress: Digits module done (#13); derived finger-curl curves wait on a decision (Next) |
+| WP-12 | Digits module: fingers to toes, talons and feathers; derived finger-curl curves | WP-11 | Done (#13, #14; ADR 0009) |
 | WP-13 | Face modules: curve to bone, curve remap, eyes | WP-11 | Planned |
 | WP-14 | Solver dynamics (ADR 0007, Tier 1): world motion in the solve context, `PuppetDynamics` (fixed-step integrator, spring-dampers, constrained chains, collision shapes), Physics Weight | WP-11 | Planned |
 | WP-4 | Digitigrade leg module (Wolf front and hind legs) | WP-1 | Planned |
@@ -36,13 +36,8 @@ ahead when a session needs it.
 
 Items that need a person at the desk or a maintainer decision:
 
-- WP-12, derived finger-curl curves (ADR 0006 item 7): how `curl_index_l` and the others are
-  defined (proposal: the summed bend of the finger's three joints since calibration, relative to
-  the hand, 0 at neutral and 1 at 270 degrees, unsigned), and whether they belong in the
-  performer pose (a contract type, so FindCurve finds them) or in the solve context. Nothing
-  reads them until WP-13's curve modules.
 - WP-12 at the desk: a glove or suit with finger bones driving a mannequin hand with the Digits
-  module, and the Wolf's paw toes once the mesh exists; tune the default gains.
+  module, and its `curl_*` curves reading 0 flat and about 1 in a fist, and the Wolf's paw toes once the mesh exists; tune the default gains.
 - Physics assets for the Wolf and the Eagle, before WP-15 (ADR 0007; none exist yet).
 - ADR 0008: which hand-off triggers the show uses (question 1).
 - WP-16 at the desk: a creature clip into a performer hand-off and back, and a manual re-centre,

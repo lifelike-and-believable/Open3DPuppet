@@ -84,6 +84,15 @@ public:
 	int32 FindCurve(FName CanonicalCurve) const;
 
 private:
+	/** A derived finger-curl curve: the finger's three joints, base first. */
+	struct FFingerCurl
+	{
+		int32 Joints[3] = { INDEX_NONE, INDEX_NONE, INDEX_NONE };
+	};
+
+	/** Replaces the derived curves after the source curves, for the current skeleton (ADR 0009). */
+	void RebuildDerivedCurves();
+
 	TArray<FName> Names;
 	TArray<int32> Parents;
 	/** Bone indices with every parent before its children. */
@@ -97,4 +106,8 @@ private:
 	TArray<float> CurveValues;
 	TMap<FName, int32> CanonicalToCurve;
 	bool bHasCurveValues = false;
+	/** The source's curves are the first NumSourceCurves of CurveNames; the derived ones follow. */
+	int32 NumSourceCurves = 0;
+	/** One per derived curve, in CurveNames order after the source curves. */
+	TArray<FFingerCurl> FingerCurls;
 };

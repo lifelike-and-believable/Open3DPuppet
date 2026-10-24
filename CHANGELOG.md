@@ -20,6 +20,13 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Derived finger-curl curves** (WP-12, ADR 0009): a performer with finger bones has a curve
+  per finger, `curl_<finger>_<side>` (`curl_index_l` and so on), found with `FindCurve` like any
+  source curve: the unsigned bend of the finger's three joints relative to their parents since
+  calibration, summed, over 270 degrees (0 as calibrated, 1 for a fist). Curve modules can use
+  hand gestures as controls. A source curve of the same name wins. Calibrations capture source
+  curves only. `FPuppetPerformerPose` gains `UpdateDerivedCurves`, `GetSourceCurveNames` and
+  `GetSourceCurveValues`. 5 new tests (66).
 - **Digits module** (WP-12, ADR 0006): `UPuppetModule_Digits` drives puppet fingers, toes, talons
   or feathers from the performer's fingers, relative to the hand, so a digit curls the same way
   whatever the hand or paw is doing. Each entry in `Digits` maps a finger chain onto a digit chain

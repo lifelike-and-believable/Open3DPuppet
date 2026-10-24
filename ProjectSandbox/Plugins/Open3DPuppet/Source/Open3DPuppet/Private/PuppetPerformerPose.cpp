@@ -3,7 +3,17 @@
 #include "PuppetPerformerPose.h"
 
 #include "Algo/StableSort.h"
+#include "PuppetPerformerCalibration.h"
 #include "PuppetPerformerProfile.h"
+#include "PuppetRetargetMath.h"
+
+namespace PuppetPerformerPose
+{
+	const TCHAR* const Fingers[] = { TEXT("thumb"), TEXT("index"), TEXT("middle"), TEXT("ring"), TEXT("pinky") };
+	const TCHAR* const Sides[] = { TEXT("l"), TEXT("r") };
+	/** The bend that makes a curl of 1: each of a finger's three joints bent 90 degrees. */
+	constexpr double FullCurl = 3.0 * UE_HALF_PI;
+}
 
 bool FPuppetPerformerPose::SetSkeleton(TConstArrayView<FName> InNames, TConstArrayView<int32> InParents, const UPuppetPerformerProfile* Profile, FString& OutError)
 {
@@ -14,6 +24,7 @@ bool FPuppetPerformerPose::SetSkeleton(TConstArrayView<FName> InNames, TConstArr
 	Local.Reset();
 	Component.Reset();
 	bHasTransforms = false;
+	RebuildDerivedCurves();
 
 	const int32 NumBones = InNames.Num();
 	if (NumBones == 0)
@@ -76,6 +87,7 @@ bool FPuppetPerformerPose::SetSkeleton(TConstArrayView<FName> InNames, TConstArr
 
 	Local.SetNum(NumBones);
 	Component.SetNum(NumBones);
+	RebuildDerivedCurves();
 	return true;
 }
 
@@ -120,7 +132,9 @@ int32 FPuppetPerformerPose::FindJoint(FName CanonicalJoint) const
 void FPuppetPerformerPose::SetCurveNames(TConstArrayView<FName> InCurveNames, const UPuppetPerformerProfile* Profile)
 {
 	CurveNames = InCurveNames;
-	CurveValues.SetNumZeroed(CurveNames.Num());
+	NumSourceCurves = CurveNames.Num();
+	CurveValues.Reset();
+	CurveValues.SetNumZeroed(NumSourceCurves);
 	bHasCurveValues = false;
 
 	CanonicalToCurve.Reset();
@@ -139,15 +153,16 @@ void FPuppetPerformerPose::SetCurveNames(TConstArrayView<FName> InCurveNames, co
 			}
 		}
 	}
+	RebuildDerivedCurves();
 }
 
 bool FPuppetPerformerPose::HasCurveNames(TConstArrayView<FName> InCurveNames) const
 {
-	if (CurveNames.Num() != InCurveNames.Num())
+	if (NumSourceCurves != InCurveNames.Num())
 	{
 		return false;
 	}
-	for (int32 Curve = 0; Curve < CurveNames.Num(); ++Curve)
+	for (int32 Curve = 0; Curve < NumSourceCurves; ++Curve)
 	{
 		if (CurveNames[Curve] != InCurveNames[Curve])
 		{
@@ -159,7 +174,7 @@ bool FPuppetPerformerPose::HasCurveNames(TConstArrayView<FName> InCurveNames) co
 
 bool FPuppetPerformerPose::SetCurveValues(TConstArrayView<float> InValues)
 {
-	if (InValues.Num() != CurveNames.Num())
+	if (InValues.Num() != NumSourceCurves)
 	{
 		return false;
 	}
@@ -179,14 +194,74 @@ int32 FPuppetPerformerPose::FindCurve(FName CanonicalCurve) const
 
 TConstArrayView<FName> FPuppetPerformerPose::GetSourceCurveNames() const
 {
-	return CurveNames;
+	return TConstArrayView<FName>(CurveNames.GetData(), NumSourceCurves);
 }
 
 TConstArrayView<float> FPuppetPerformerPose::GetSourceCurveValues() const
 {
-	return CurveValues;
+	return TConstArrayView<float>(CurveValues.GetData(), NumSourceCurves);
+}
+
+void FPuppetPerformerPose::RebuildDerivedCurves()
+{
+	for (int32 Curve = NumSourceCurves; Curve < CurveNames.Num(); ++Curve)
+	{
+		CanonicalToCurve.Remove(CurveNames[Curve]);
+	}
+	CurveNames.SetNum(NumSourceCurves);
+	CurveValues.SetNum(NumSourceCurves);
+	FingerCurls.Reset();
+
+	for (const TCHAR* Side : PuppetPerformerPose::Sides)
+	{
+		for (const TCHAR* Finger : PuppetPerformerPose::Fingers)
+		{
+			const FName Name(*FString::Printf(TEXT("curl_%s_%s"), Finger, Side));
+			if (CanonicalToCurve.Contains(Name))
+			{
+				continue;
+			}
+			FFingerCurl Curl;
+			bool bHasJoints = true;
+			for (int32 Joint = 0; Joint < 3; ++Joint)
+			{
+				Curl.Joints[Joint] = FindJoint(*FString::Printf(TEXT("%s_%02d_%s"), Finger, Joint + 1, Side));
+				bHasJoints &= Curl.Joints[Joint] != INDEX_NONE;
+			}
+			if (bHasJoints)
+			{
+				FingerCurls.Add(Curl);
+				CanonicalToCurve.Add(Name, CurveNames.Add(Name));
+				CurveValues.Add(0.0f);
+			}
+		}
+	}
 }
 
 void FPuppetPerformerPose::UpdateDerivedCurves(const FPuppetPerformerCalibration& Calibration)
 {
+	if (!bHasTransforms || Calibration.RestComponent.Num() != Names.Num())
+	{
+		return;
+	}
+	for (int32 Index = 0; Index < FingerCurls.Num(); ++Index)
+	{
+		double Bend = 0.0;
+		for (const int32 Joint : FingerCurls[Index].Joints)
+		{
+			const int32 Parent = Parents[Joint];
+			const FQuat Current = Component[Joint].GetRotation();
+			const FQuat Rest = Calibration.RestComponent[Joint].GetRotation();
+			FQuat Delta = Parent == INDEX_NONE
+				? PuppetRetarget::RotationDelta(Current, Rest, FQuat::Identity)
+				: PuppetRetarget::RotationDeltaInParent(Current, Rest, Component[Parent].GetRotation(), Calibration.RestComponent[Parent].GetRotation(), FQuat::Identity);
+			// The shortest arc, so a small bend reads as small whichever sign the quaternion has.
+			if (Delta.W < 0.0)
+			{
+				Delta = -Delta;
+			}
+			Bend += Delta.GetAngle();
+		}
+		CurveValues[NumSourceCurves + Index] = static_cast<float>(Bend / PuppetPerformerPose::FullCurl);
+	}
 }

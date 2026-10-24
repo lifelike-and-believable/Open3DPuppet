@@ -113,6 +113,7 @@ private:
 		float ControlBlend = 1.0f;
 		/** A re-centre waiting for the slot's modules to run. */
 		bool bRecentre = false;
+		bool bRecentreDelivered = false;
 		/** Neutral value per performer curve, from the calibration (ADR 0006). */
 		TArray<float> CurveNeutral;
 		/** The skeleton last rejected by SetPerformerSkeleton, so it is reported once. */
@@ -135,6 +136,8 @@ private:
 	TArray<FSlot> Slots;
 	TArray<FModuleEntry> Entries;
 	int32 RootSlot = INDEX_NONE;
+	/** The hand-off offset (ADR 0008), puppet-wide: written by the root slot's Root module, read by every module. */
+	FTransform HandoffOffset = FTransform::Identity;
 	int32 PuppetPelvis = INDEX_NONE;
 	FName AssetName;
 };

@@ -47,6 +47,7 @@ void FPuppetInstance::Initialize(const UPuppetAsset& Asset, TConstArrayView<TObj
 		Slots.AddDefaulted_GetRef().Name = SlotName;
 	}
 	RootSlot = FindSlot(Asset.RootSlot);
+	HandoffOffset = FTransform::Identity;
 
 	Entries.Reset();
 	for (const TObjectPtr<UPuppetModule>& Module : Modules)
@@ -137,15 +138,17 @@ bool FPuppetInstance::SetPerformerCurveValues(int32 Slot, TConstArrayView<float>
 
 void FPuppetInstance::SetControlBlend(int32 Slot, float Blend)
 {
+	Slots[Slot].ControlBlend = FMath::Clamp(Blend, 0.0f, 1.0f);
 }
 
 float FPuppetInstance::GetControlBlend(int32 Slot) const
 {
-	return 1.0f;
+	return Slots[Slot].ControlBlend;
 }
 
 void FPuppetInstance::RequestRecentre(int32 Slot)
 {
+	Slots[Slot].bRecentre = true;
 }
 
 void FPuppetInstance::SetCalibration(int32 Slot, const FPuppetPerformerCalibration& Calibration)
@@ -179,6 +182,11 @@ void FPuppetInstance::BindSlot(int32 Slot)
 {
 	FSlot& State = Slots[Slot];
 	State.bNeedsBind = false;
+	if (Slot == RootSlot)
+	{
+		// The Root module's convergence state starts over with the new binding.
+		HandoffOffset = FTransform::Identity;
+	}
 	const TConstArrayView<FName> CurveNames = State.Performer.GetCurveNames();
 	State.CurveNeutral.SetNum(CurveNames.Num());
 	for (int32 Curve = 0; Curve < CurveNames.Num(); ++Curve)
@@ -228,12 +236,33 @@ void FPuppetInstance::Solve(TConstArrayView<FTransform> InputLocal, float DeltaT
 
 	for (FModuleEntry& Entry : Entries)
 	{
-		if (!Entry.bBound || !Entry.Module->bEnabled || Entry.Module->Weight <= 0.0f || GetSlotState(Entry.Slot) != EPuppetSlotState::Ready)
+		if (!Entry.bBound || !Entry.Module->bEnabled || GetSlotState(Entry.Slot) != EPuppetSlotState::Ready)
 		{
 			continue;
 		}
-		const FSlot& State = Slots[Entry.Slot];
-		FPuppetSolveContext Context{ Puppet, State.Performer, State.Calibration, State.Alignment, PuppetPelvis, State.PerformerPelvis, State.RootScale, DeltaTime, State.CurveNeutral };
+		FSlot& State = Slots[Entry.Slot];
+		const float Weight = Entry.Module->Weight * State.ControlBlend;
+		if (Weight <= 0.0f)
+		{
+			continue;
+		}
+		FPuppetSolveContext Context{ Puppet, State.Performer, State.Calibration, State.Alignment, PuppetPelvis, State.PerformerPelvis, State.RootScale, DeltaTime,
+			State.CurveNeutral, Weight, State.bRecentre, HandoffOffset };
 		Entry.Solver->Solve(Context);
+		if (Entry.Slot == RootSlot)
+		{
+			HandoffOffset = Context.HandoffOffset;
+		}
+		State.bRecentreDelivered |= State.bRecentre;
+	}
+
+	// Cleared only once every module of the slot that runs this frame has seen it.
+	for (FSlot& State : Slots)
+	{
+		if (State.bRecentreDelivered)
+		{
+			State.bRecentre = false;
+			State.bRecentreDelivered = false;
+		}
 	}
 }

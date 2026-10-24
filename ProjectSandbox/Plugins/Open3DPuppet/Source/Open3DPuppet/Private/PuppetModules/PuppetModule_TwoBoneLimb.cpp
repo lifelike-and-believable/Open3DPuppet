@@ -117,13 +117,13 @@ namespace PuppetModuleTwoBoneLimb
 				Puppet.SetComponent(Bones[2], End);
 			}
 
-			if (Settings.Weight < 1.0f)
+			if (Context.Weight < 1.0f)
 			{
 				// Absolute transforms, root of the limb first, so each blend sees its final parent.
 				for (int32 Index = 0; Index < 3; ++Index)
 				{
 					FTransform Blended;
-					Blended.Blend(Original[Index], Puppet.GetComponent(Bones[Index]), Settings.Weight);
+					Blended.Blend(Original[Index], Puppet.GetComponent(Bones[Index]), Context.Weight);
 					Puppet.SetComponent(Bones[Index], Blended);
 				}
 			}

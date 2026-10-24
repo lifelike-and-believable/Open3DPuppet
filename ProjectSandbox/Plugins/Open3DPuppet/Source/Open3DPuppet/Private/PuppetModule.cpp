@@ -11,7 +11,7 @@
 
 FQuat FPuppetSolveContext::GetJointDelta(int32 Joint) const
 {
-	return PuppetRetarget::RotationDelta(Performer.GetComponent(Joint).GetRotation(), Calibration.RestComponent[Joint].GetRotation(), Alignment);
+	return HandoffOffset.GetRotation() * PuppetRetarget::RotationDelta(Performer.GetComponent(Joint).GetRotation(), Calibration.RestComponent[Joint].GetRotation(), Alignment);
 }
 
 FQuat FPuppetSolveContext::GetJointDeltaInParent(int32 Joint) const
@@ -37,12 +37,12 @@ float FPuppetSolveContext::GetCurveDelta(int32 Curve) const
 
 FVector FPuppetSolveContext::GetJointPosition(int32 Joint) const
 {
-	return Alignment.RotateVector(Performer.GetComponent(Joint).GetTranslation());
+	return HandoffOffset.TransformPosition(Alignment.RotateVector(Performer.GetComponent(Joint).GetTranslation()));
 }
 
 FVector FPuppetSolveContext::GetJointTranslation(int32 Joint) const
 {
-	return Alignment.RotateVector(Performer.GetComponent(Joint).GetTranslation() - Calibration.RestComponent[Joint].GetTranslation());
+	return HandoffOffset.GetRotation().RotateVector(Alignment.RotateVector(Performer.GetComponent(Joint).GetTranslation() - Calibration.RestComponent[Joint].GetTranslation()));
 }
 
 #if WITH_EDITOR

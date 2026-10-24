@@ -96,6 +96,5 @@ The animation instance proxy gives the component's world transform on worker thr
 1. Which regions of the Wolf and the Eagle should be physical in the show (tail, ears, mane,
    feathers, legs on contact, whole-body falls)?
 2. Do the characters already have physics assets?
-3. Physics Control is no longer Beta in 5.8.4. Should Tier 2 stay an optional module, or move into
-   the core plugin? This ADR keeps it optional so that projects without physics assets carry no
-   physics dependency.
+3. Decided (maintainer, 2026-10-24): Tier 2 stays an optional module for now, although Physics
+   Control is no longer Beta in 5.8.4. To be revisited later.

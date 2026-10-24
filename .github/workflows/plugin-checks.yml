@@ -1,0 +1,53 @@
+name: Plugin checks
+
+# Cheap source checks on every PR and push (Build/README.md, "CI"). The UE build and the
+# automation tests need a Windows runner with UE 5.8 and are added in WP-9.
+
+on:
+  # Any base branch, so stacked PRs (one work package on top of another) are checked too.
+  pull_request:
+  push:
+    branches: [ develop, main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-checks-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  copyright-headers:
+    name: Copyright headers
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check copyright headers
+        run: python3 Build/Scripts/check-copyright-headers.py
+
+  runtime-editor-deps:
+    name: Runtime modules free of editor code
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Self-test the check
+        run: python3 Build/Scripts/check-runtime-editor-deps.py --self-test
+      - name: Check runtime modules
+        run: python3 Build/Scripts/check-runtime-editor-deps.py
+
+  doc-links:
+    name: Markdown links resolve
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Self-test the check
+        run: python3 Build/Scripts/check-markdown-links.py --self-test
+      - name: Check Markdown links
+        run: python3 Build/Scripts/check-markdown-links.py

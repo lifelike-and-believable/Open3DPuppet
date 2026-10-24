@@ -1,0 +1,160 @@
+# Open3DPuppet design overview
+
+- **Status:** Draft for maintainer review (2026-10-24)
+- **Decisions:** [ADR 0001](../adr/0001-platform-and-engine-scope.md) to [ADR 0005](../adr/0005-test-layout.md)
+- **Plan:** [`docs/roadmap/roadmap.md`](../roadmap/roadmap.md)
+
+## 1. Goal
+
+Make it as simple as possible to take a skeletal mesh, attach a set of puppet modules to it, and
+start puppeteering it from live motion capture or recorded motion. The toolkit targets creatures
+and characters whose proportions or anatomy differ from the performer's: wings, tails, dog legs,
+long or short limbs, extra limbs, and puppets driven by more than one performer at once.
+
+Three properties follow from that goal and shape every decision below:
+
+1. **Modular.** A puppet is a list of modules, each responsible for one region of the skeleton.
+   New anatomy means a new module, not a new rig.
+2. **Retargeting lives in the module.** Each module owns the controls that map the performer's
+   motion onto its region (scale, offsets, amplification, contact handling). Those controls are
+   what a puppeteer or technical director adjusts during a session.
+3. **Source-agnostic.** Performers arrive through Live Link, so Vicon, OptiTrack, Xsens, Rokoko,
+   Open3DBroadcast and recorded takes all look the same to a module.
+
+## 2. Vocabulary
+
+| Term | Meaning |
+|---|---|
+| Performer | A person, or a recorded take of one, whose motion arrives as a Live Link subject with the Animation role. |
+| Canonical joint | A performer joint named the way the UE5 mannequin names it (`pelvis`, `spine_01`, `upperarm_l`, ...). Modules address performer joints only by these names (ADR 0003). |
+| Performer profile | An optional `UPuppetPerformerProfile` data asset that maps a source's own bone names to canonical joints. A source that already uses mannequin names needs none. |
+| Calibration | A performer's rest pose, captured once while the performer stands in the reference pose (T-pose by default), plus the rotation that aligns the performer's facing with the puppet's. |
+| Puppet | A `UPuppetAsset`: the target skeletal mesh, the performer slots, and an ordered list of modules. |
+| Performer slot | A named role in a puppet, for example `Body`, or `Front` and `Back` for a two-person quadruped. |
+| Cast | The binding of each performer slot to a Live Link subject (and optional profile), set on the AnimGraph node, so one puppet asset works with any performer. |
+| Puppet module | A `UPuppetModule`: configuration for one region of the puppet, and a factory for the solver that drives it. |
+| Solver | The per-instance object a module creates. It caches bone indices and any state (springs, filters) and runs every frame. |
+
+## 3. Frame pipeline
+
+Every evaluation of the `Puppet Solve` AnimGraph node runs the same four stages, on the animation
+worker thread:
+
+```
+ Live Link subject(s) ──► 1. Source ──► 2. Normalize ──► 3. Module solve ──► 4. Output pose
+   (live or recorded)     evaluate      profile +         modules in         local-space pose
+                          per slot      calibration       list order         to the AnimGraph
+```
+
+1. **Source.** For each performer slot, evaluate the bound Live Link subject
+   (`ILiveLinkClient::EvaluateFrame_AnyThread` with `ULiveLinkAnimationRole`), giving bone names,
+   parents and local transforms. A slot with no data this frame keeps its last pose; a slot that
+   has never had data (or is not calibrated) leaves its modules' bones in the pose the node
+   received. Each change of slot state is logged once.
+2. **Normalize.** Build an `FPuppetPerformerPose`: canonical joint lookup through the profile, and
+   component-space transforms. Pair it with the slot's calibration. Everything after this stage
+   works in calibrated, canonical performer space.
+3. **Module solve.** Start from the puppet's reference pose and run each enabled module's solver
+   in list order. A module reads the performer channels it declares and writes the puppet bones
+   it claims. Order matters by design: the root module runs first, limbs run after the spine they
+   hang from, and secondary modules (tails, ears) run last so they see the final body pose.
+4. **Output.** The solved pose is converted to local space and returned to the AnimGraph, so it
+   can be blended, layered and recorded like any other pose. Bones no module claims keep their
+   reference-pose local transforms and follow their parents.
+
+## 4. Retargeting model
+
+Modules share one small set of operations, implemented once in the solver core:
+
+- **Rotation delta (FK).** For a puppet bone mapped to a performer joint, the puppet bone's
+  component-space rotation is the performer joint's rotation change since calibration, applied to
+  the puppet bone's own rest rotation:
+  `Q_puppet = A · (Q_performer · Q_performerRest⁻¹) · A⁻¹ · Q_puppetRest`, where `A` is the
+  calibration's alignment. This is independent of how either skeleton orients its bone axes,
+  which is what lets any capture skeleton drive any mesh.
+- **Chain resampling.** A performer chain and a puppet chain need not have the same number of
+  bones. Each puppet bone sits at a normalized position along its chain (by rest length), and its
+  delta is interpolated (slerp) between the performer deltas at the neighbouring positions. Three
+  performer spine joints can drive a five-bone spine or a twelve-bone tail.
+- **Translation scaling.** Positions are mapped with scale factors derived from rest proportions
+  (puppet hip height over performer hip height by default) and overridable per module.
+- **End-effector placement.** Limb modules can follow the performer's FK, or place the end
+  effector (hand, foot, paw) with two-bone IK at a target computed in one of several modes:
+  scaled reach (relative to the limb root, scaled by limb length), hip-relative (relative to the
+  pelvis, scaled like the root, which keeps feet planted when the puppet is taller or shorter), or
+  absolute (the performer's position, for contact with props and other performers).
+- **Weights.** Every module has a weight that blends its result over the pose it received, so a
+  region can be faded between performer control and the reference pose (or an upstream pose).
+
+## 5. Puppet modules
+
+### 5.1 Contract
+
+A module is two pieces (ADR 0002; the authoring guide has the details and a worked example):
+
+- `UPuppetModule` (a `UObject`, instanced inside the puppet asset): the editable settings, the
+  performer slot it reads, and `CreateSolver()`. It is shared by every actor that uses the
+  puppet, so it holds no per-frame state.
+- `FPuppetModuleSolver` (plain C++): created once per AnimGraph node instance. `Bind()` resolves
+  bone names to indices against the puppet's reference skeleton and the performer's joints and
+  reports what is missing; `Solve()` runs every frame, reads the performer pose and calibration
+  through `FPuppetSolveContext`, and writes the puppet pose. `Solve()` must not allocate.
+
+Retargeting controls are ordinary `UPROPERTY` members of the module, read by the solver each
+frame, so a change in the details panel shows up live in the viewport.
+
+### 5.2 Library roadmap
+
+| Module | Drive | Retarget controls | Work package |
+|---|---|---|---|
+| Root (pelvis) | Performer pelvis | Horizontal and vertical scale (auto from hip heights), height offset | WP-1 |
+| Chain (spine, neck, head, generic FK) | Any performer chain | Weight, chain resampling, per-bone rotation offset | WP-1 |
+| Two-bone limb (arm, leg) | Performer limb | FK, scaled reach, hip-relative or absolute IK; pole from FK; stretch limits | WP-1 |
+| Digitigrade leg (3-bone) | Performer leg | Knee-to-hock ratio, heel lift, stride scale, foot contact | WP-4 |
+| Tail / dynamic chain | Pelvis motion plus springs, or a performer chain or prop | Stiffness, damping, amplitude, input mix | WP-5 |
+| Wing | Performer arm (shoulder to wing root, elbow to fold) | Fold/spread curve, flap amplification, feather fan | WP-6 |
+| Prop-driven | Tracked rigid body (Live Link Transform role) | Mapping space, filtering | WP-7 |
+| Control Rig adapter | A Control Rig asset with a known interface | The rig's own controls | WP-10 |
+
+## 6. Several performers
+
+A puppet declares its performer slots, and each module names the slot it reads (ADR 0004). The
+cast on the AnimGraph node binds slots to Live Link subjects. Exactly one slot owns the root:
+the root module reads it, and the other slots' modules work in rotations, or in positions relative
+to their own performer's pelvis, so two performers standing apart on the stage can still drive
+the front and back of one creature. Examples:
+
+- A two-person quadruped: `Front` drives the spine front half, neck, head and front legs; `Back`
+  owns the root and drives the hind legs and tail.
+- A dragon: `Body` drives the biped core; a second performer's arms drive the wings.
+- A creature with a puppeteered tail: `Body` plus a `Tail` slot bound to a tracked rod (WP-7).
+
+## 7. Live and recorded motion
+
+Live: any Live Link source, including Open3DBroadcast's receiver.
+
+Recorded: Take Recorder records Live Link subjects, and the recording plays back into Live Link
+from Sequencer, so a recorded take drives the puppet exactly as the live performer did
+(**needs-verification** on UE 5.8; ADR 0003 open question 2). Because the raw performer data is
+what gets recorded, a take can be solved again later with different module settings, which matters
+most for creatures, where the mapping is usually tuned after the shoot. An AnimSequence player that
+publishes an existing animation as a Live Link subject (for mocap delivered as FBX) is WP-3. The
+solved puppet pose can be recorded too, as an ordinary animation.
+
+## 8. Setting up a puppet (target workflow)
+
+1. Create a Puppet asset (Data Asset > Puppet Asset) and pick the skeletal mesh.
+2. Add modules and set their bones. (WP-8 adds a setup assistant that finds chains by name and
+   topology and proposes modules.)
+3. In the character's Animation Blueprint, add the **Puppet Solve** node, choose the puppet, and
+   bind each performer slot to a Live Link subject.
+4. Have the performer stand in the reference pose and call **Calibrate Performer** (Blueprint or
+   the editor button from WP-2).
+5. Puppeteer. Adjust module controls live in the details panel; WP-8 adds a control panel for
+   session use.
+
+## 9. Out of scope for now
+
+- Facial capture: Live Link face sources already drive curves; a face module may come later.
+- Physics-based creatures (ragdoll-blended puppets).
+- Platforms other than Win64 and engines before 5.8 (ADR 0001).

@@ -1,0 +1,42 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "Open3DPuppet",
+	"Description": "Modular, mocap-driven virtual puppetry. Attach puppet modules (biped core, limbs, tails, wings and more) to a skeletal mesh and drive it from live or recorded Live Link motion, with retargeting controls in every module and support for several performers on one puppet. Unreal Engine 5.8 and later, Win64 only.",
+	"Category": "Animation",
+	"CreatedBy": "Lifelike & Believable",
+	"CreatedByURL": "",
+	"DocsURL": "https://github.com/lifelike-and-believable/Open3DPuppet/blob/develop/docs/design/overview.md",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/lifelike-and-believable/Open3DPuppet/issues",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": true,
+	"Installed": false,
+	"Plugins": [
+		{ "Name": "LiveLink", "Enabled": true }
+	],
+	"SupportedTargetPlatforms": [ "Win64" ],
+	"Modules": [
+		{
+			"Name": "Open3DPuppet",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ],
+			"TargetDenyList": [ "Server", "Program" ]
+		},
+		{
+			"Name": "Open3DPuppetEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ]
+		},
+		{
+			"Name": "Open3DPuppetTests",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ]
+		}
+	]
+}

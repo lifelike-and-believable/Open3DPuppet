@@ -1,6 +1,6 @@
 # 0006: Fingers, face and curves
 
-- **Status:** Proposed (pending maintainer sign-off)
+- **Status:** Accepted (maintainer sign-off 2026-10-24)
 - **Date:** 2026-10-24
 - **Related:** [ADR 0002](0002-puppet-module-architecture.md) (amends the module contract), [ADR 0003](0003-performer-input-and-calibration.md), [ADR 0004](0004-multiple-performers.md), [design overview](../design/overview.md) §5 and §10
 

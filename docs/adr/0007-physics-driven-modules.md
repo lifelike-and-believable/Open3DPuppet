@@ -1,6 +1,6 @@
 # 0007: Physics-driven modules
 
-- **Status:** Proposed (pending maintainer sign-off)
+- **Status:** Accepted (maintainer sign-off 2026-10-24)
 - **Date:** 2026-10-24
 - **Related:** [ADR 0002](0002-puppet-module-architecture.md) (amends the solve context), [ADR 0006](0006-fingers-face-and-curves.md) (output curves), [design overview](../design/overview.md) §11
 

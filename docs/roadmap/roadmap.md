@@ -33,9 +33,10 @@ anatomy modules each needs. WP-2 and WP-3 can move ahead when a session needs th
 
 Items that need a person at the desk or a maintainer decision:
 
-- Sign-off on ADRs 0001 to 0007 and their open questions (licence, Fab, canonical joint names,
-  C++-first module contract, the show's finger and face capture systems, which regions are
-  physical and whether the characters have physics assets).
+- The open questions in the accepted ADRs: licence and `LICENSE` file, Fab distribution (0001),
+  the canonical joint names (0003), the show's finger and face capture systems and the meshes'
+  morph targets (0006), which regions are physical and whether the characters have physics
+  assets (0007).
 - WP-1 at the desk: a mannequin driven live through Live Link (Open3DBroadcast or a capture
   system), calibrated with the subsystem, with Root, Chain and Two-Bone Limb modules.
 - Wolf and Eagle: the skeletal meshes (or their bone hierarchies and reference poses), their morph

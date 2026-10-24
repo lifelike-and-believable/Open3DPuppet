@@ -1,6 +1,6 @@
 # 0001: Platform and engine scope
 
-- **Status:** Proposed (pending maintainer sign-off)
+- **Status:** Accepted (maintainer sign-off 2026-10-24)
 - **Date:** 2026-10-24
 - **Related:** Open3DBroadcast ADR 0001 (Win64) and ADR 0014 (engine versions), whose conventions this project follows
 

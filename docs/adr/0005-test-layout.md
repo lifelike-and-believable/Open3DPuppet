@@ -1,6 +1,6 @@
 # 0005: Test layout
 
-- **Status:** Proposed (pending maintainer sign-off)
+- **Status:** Accepted (maintainer sign-off 2026-10-24)
 - **Date:** 2026-10-24
 - **Related:** Open3DBroadcast ADR 0006, whose layout this follows; rules OP-003, OP-004
 

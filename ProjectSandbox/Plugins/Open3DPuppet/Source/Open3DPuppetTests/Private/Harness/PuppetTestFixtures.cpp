@@ -173,6 +173,18 @@ namespace PuppetTests
 		Instance.Solve(RefSkeleton.GetRefBonePose(), 1.0f / 30.0f);
 	}
 
+	void FPuppet::Solve(TConstArrayView<FTransform> InputLocal, float DeltaTime)
+	{
+		Instance.Solve(InputLocal, DeltaTime);
+	}
+
+	TArray<FTransform> FPuppet::InputWith(const TCHAR* Bone, const FTransform& Local) const
+	{
+		TArray<FTransform> Input = RefSkeleton.GetRefBonePose();
+		Input[RefSkeleton.FindBoneIndex(Bone)] = Local;
+		return Input;
+	}
+
 	FTransform FPuppet::Component(const TCHAR* Bone) const
 	{
 		const FPuppetPose& Pose = Instance.GetPose();

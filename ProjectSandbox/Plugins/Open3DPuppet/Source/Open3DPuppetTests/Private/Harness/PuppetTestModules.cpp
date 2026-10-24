@@ -27,7 +27,7 @@ namespace PuppetTestModuleCurveCopy
 
 		virtual void Solve(FPuppetSolveContext& Context) override
 		{
-			Context.Puppet.SetCurve(Settings.PuppetCurve, Context.GetCurveDelta(Curve) * Settings.Weight);
+			Context.Puppet.SetCurve(Settings.PuppetCurve, Context.GetCurveDelta(Curve) * Context.Weight);
 		}
 
 	private:

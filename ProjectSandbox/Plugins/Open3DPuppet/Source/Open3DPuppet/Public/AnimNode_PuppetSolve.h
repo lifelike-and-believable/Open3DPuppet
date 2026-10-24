@@ -77,7 +77,17 @@ private:
 		bool bDirty = true;
 	};
 
+	/** A slot's hand-off state from the actor's UPuppetPerformanceComponent (ADR 0008), copied in PreUpdate. */
+	struct FSlotControl
+	{
+		float ControlBlend = 1.0f;
+		int32 RecentreCount = 0;
+		/** The RecentreCount the instance last re-centred for. */
+		int32 AppliedRecentreCount = 0;
+	};
+
 	void InitializeInstance(const FReferenceSkeleton& RefSkeleton);
+	void ApplySlotControls();
 	void ReadPerformers();
 	void LogSlotStates();
 
@@ -97,6 +107,8 @@ private:
 
 	TSharedPtr<FPuppetInstance> Instance;
 	TArray<FCastCalibration> CastCalibrations;
+	/** Indexed like the bound puppet's performer slots. */
+	TArray<FSlotControl> SlotControls;
 	TArray<FTransform> InputLocal;
 	/** The EPuppetSlotState last logged per slot. */
 	TArray<int32> LoggedSlotStates;

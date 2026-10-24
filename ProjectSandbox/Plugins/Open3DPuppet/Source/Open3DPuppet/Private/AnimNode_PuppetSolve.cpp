@@ -2,13 +2,16 @@
 
 #include "AnimNode_PuppetSolve.h"
 
+#include "Animation/AnimInstance.h"
 #include "Animation/AnimInstanceProxy.h"
 #include "Engine/Engine.h"
+#include "GameFramework/Actor.h"
 #include "Open3DPuppetLog.h"
 #include "PuppetAsset.h"
 #include "PuppetCalibrationSubsystem.h"
 #include "PuppetInstance.h"
 #include "PuppetLiveLink.h"
+#include "PuppetPerformanceComponent.h"
 #include "Roles/LiveLinkAnimationTypes.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AnimNode_PuppetSolve)
@@ -67,6 +70,18 @@ void FAnimNode_PuppetSolve::PreUpdate(const UAnimInstance* InAnimInstance)
 			Entry.bDirty = true;
 		}
 	}
+
+	// Without a performance component every slot is under its performer.
+	const AActor* Owner = InAnimInstance ? InAnimInstance->GetOwningActor() : nullptr;
+	const UPuppetPerformanceComponent* Performance = Owner ? Owner->FindComponentByClass<UPuppetPerformanceComponent>() : nullptr;
+	const int32 NumSlots = BoundPuppet ? BoundPuppet->PerformerSlots.Num() : 0;
+	SlotControls.SetNum(NumSlots);
+	for (int32 Slot = 0; Slot < NumSlots; ++Slot)
+	{
+		const FName SlotName = BoundPuppet->PerformerSlots[Slot];
+		SlotControls[Slot].ControlBlend = Performance ? Performance->GetControlBlend(SlotName) : 1.0f;
+		SlotControls[Slot].RecentreCount = Performance ? Performance->GetRecentreCount(SlotName) : SlotControls[Slot].AppliedRecentreCount;
+	}
 }
 
 void FAnimNode_PuppetSolve::CacheBones_AnyThread(const FAnimationCacheBonesContext& Context)
@@ -114,6 +129,7 @@ void FAnimNode_PuppetSolve::Evaluate_AnyThread(FPoseContext& Output)
 	}
 
 	ReadPerformers();
+	ApplySlotControls();
 	Instance->Solve(InputLocal, DeltaTime);
 	LogSlotStates();
 
@@ -143,6 +159,20 @@ void FAnimNode_PuppetSolve::InitializeInstance(const FReferenceSkeleton& RefSkel
 	for (FCastCalibration& Entry : CastCalibrations)
 	{
 		Entry.bDirty = true;
+	}
+}
+
+void FAnimNode_PuppetSolve::ApplySlotControls()
+{
+	for (int32 Slot = 0; Slot < Instance->NumSlots() && Slot < SlotControls.Num(); ++Slot)
+	{
+		FSlotControl& Control = SlotControls[Slot];
+		Instance->SetControlBlend(Slot, Control.ControlBlend);
+		if (Control.RecentreCount != Control.AppliedRecentreCount)
+		{
+			Control.AppliedRecentreCount = Control.RecentreCount;
+			Instance->RequestRecentre(Slot);
+		}
 	}
 }
 

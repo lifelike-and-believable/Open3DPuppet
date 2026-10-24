@@ -55,7 +55,9 @@ namespace PuppetModuleChain
 			for (int32 Index = 0; Index < PerformerChain.Num(); ++Index)
 			{
 				const FQuat Delta = Context.GetJointDelta(PerformerChain[Index]);
-				Deltas[Index] = Settings.Amplification == 1.0f ? Delta : PuppetRetarget::ScaleRotation(Delta, Settings.Amplification);
+				// Amplify the performer's motion, not the hand-off turn the delta carries.
+				const FQuat Turn = Context.HandoffOffset.GetRotation();
+				Deltas[Index] = Settings.Amplification == 1.0f ? Delta : Turn * PuppetRetarget::ScaleRotation(Turn.Inverse() * Delta, Settings.Amplification);
 			}
 			// Before any write: writing a bone moves its descendants.
 			for (int32 Index = 0; Index < PuppetChain.Num(); ++Index)
@@ -67,7 +69,7 @@ namespace PuppetModuleChain
 				const int32 Bone = PuppetChain[Index];
 				const FQuat Delta = PuppetRetarget::SampleChain(Deltas, PerformerPositions, PuppetPositions[Index]);
 				const FQuat Target = (Delta * Context.Puppet.GetReferenceComponent(Bone).GetRotation()).GetNormalized();
-				Context.Puppet.SetComponentRotation(Bone, FQuat::Slerp(Original[Index], Target, Settings.Weight));
+				Context.Puppet.SetComponentRotation(Bone, FQuat::Slerp(Original[Index], Target, Context.Weight));
 			}
 		}
 

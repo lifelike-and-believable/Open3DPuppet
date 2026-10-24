@@ -20,6 +20,17 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Hand-offs between an animation and the performer** (WP-16, ADR 0008): each performer slot
+  has a control blend (0 the Puppet Solve node's input pose, 1 the performer) that scales every
+  module weight of the slot; modules blend with the new `FPuppetSolveContext::Weight`.
+  `UPuppetPerformanceComponent` on the puppet's actor runs timed, eased transitions per slot
+  (`TransitionToPerformer`, `TransitionToAnimation`, `SetControlBlend`, `Recentre`, an event when
+  a transition ends; slots can start on the animation). A hand-off to the performer or a manual
+  re-centre captures a hand-off offset (a yaw turn and a horizontal move, in the solve context as
+  `HandoffOffset`) so the puppet continues from where the animation left it; the Root module
+  converges it on the performer over `ConvergenceTime`, by default only while the performer moves,
+  or holds it. The context helpers apply the offset, so every module turns with the puppet.
+  11 new tests (53).
 - **Curves in the pipeline** (WP-11, ADR 0006): performers carry curves from Live Link (curve
   names from static data, values per frame), looked up by canonical name with an optional
   mapping in the performer profile (`CurveCanonicalToSource`). Curve-only (Basic-role) subjects,

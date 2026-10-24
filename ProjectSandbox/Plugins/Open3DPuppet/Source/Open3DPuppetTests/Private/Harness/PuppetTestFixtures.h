@@ -87,6 +87,12 @@ namespace PuppetTests
 		/** Solves one frame from the reference pose. */
 		void Solve();
 
+		/** Solves one frame from InputLocal, the pose an animation feeds the node. */
+		void Solve(TConstArrayView<FTransform> InputLocal, float DeltaTime = 1.0f / 30.0f);
+
+		/** The reference pose with Bone's local transform replaced, as an input pose. */
+		TArray<FTransform> InputWith(const TCHAR* Bone, const FTransform& Local) const;
+
 		FTransform Component(const TCHAR* Bone) const;
 		FTransform Reference(const TCHAR* Bone) const;
 

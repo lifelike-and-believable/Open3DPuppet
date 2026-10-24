@@ -35,7 +35,7 @@ The solver has two functions:
 | Function | When | Rules |
 |---|---|---|
 | `bool Bind(const FPuppetBindContext&, FString& OutError)` | When the puppet's skeleton, the performer's skeleton, the calibration or the asset's settings change | Resolve every bone and joint name to an index and check that it exists. Return `false` with a sentence in `OutError` if the module cannot run; the instance logs it once and skips the module until the next bind. Precompute anything that depends only on rest poses. Size every array `Solve` will use. May allocate. |
-| `void Solve(FPuppetSolveContext&)` | Every frame, on an animation worker thread | Read the performer through the context; write only the puppet bones the module claims. No allocation, no logging, no game-thread objects. Apply `Settings.Weight`. |
+| `void Solve(FPuppetSolveContext&)` | Every frame, on an animation worker thread | Read the performer through the context; write only the puppet bones the module claims. No allocation, no logging, no game-thread objects. Blend with `Context.Weight`. |
 
 `FPuppetBindContext` and `FPuppetSolveContext` carry:
 
@@ -47,6 +47,8 @@ The solver has two functions:
 | `PuppetPelvis`, `PerformerPelvis`, `RootScale` | The pelvis on each side and the size ratio between them (puppet pelvis height over performer pelvis height). |
 | `bOwnsRoot` (bind only) | Whether the module's slot owns the root (ADR 0004). Only such a module may move the puppet in the world. |
 | `Alignment`, `DeltaTime` (solve only) | The calibration's facing correction, and the frame time for modules with state. |
+| `Weight` (solve only) | How much of the module's result to blend over the pose it received: the module's `Weight` times its slot's control blend (ADR 0008), so a hand-off between an animation and the performer fades every module of the slot. Never 0: a module with no weight does not run. |
+| `bRecentre`, `HandoffOffset` (solve only) | The hand-off offset (ADR 0008): a turn about the vertical axis and a horizontal move that keep the puppet where an animation left it, then converge on the performer. The Root module on the root slot captures it when `bRecentre` is set and converges it; other modules only read it, through the helpers. |
 
 Solve-context helpers do the alignment for you: `GetJointDelta(joint)` (the joint's rotation change
 since calibration, in puppet space), `GetJointDeltaInParent(joint)` (the same, relative to the
@@ -55,7 +57,10 @@ as `PuppetParentCurrent * PuppetParentRest^-1 * Delta * PuppetRest`), `GetJointP
 `GetJointTranslation(joint)` (position, and change in position since calibration), and
 `GetCurve(curve)` and `GetCurveDelta(curve)` (a curve's value, and its change from the performer's
 neutral value). Use them rather than reading `Performer` and `Calibration` directly, so that
-alignment and neutral values are applied the same way everywhere.
+alignment, the hand-off offset and neutral values are applied the same way everywhere. The
+offset's turn is part of `GetJointDelta`; to scale a performer's rotation, scale it without the
+turn: `Turn * PuppetRetarget::ScaleRotation(Turn.Inverse() * Delta, Amount)`, with
+`Turn = Context.HandoffOffset.GetRotation()`.
 
 ### Rules
 
@@ -72,7 +77,8 @@ alignment and neutral values are applied the same way everywhere.
    limb module placed.
 3. **Write parents before children,** and capture any "before" state you blend against before the
    first write: writing a bone moves all its descendants.
-4. **Blend with `Settings.Weight`** over the pose you received, so a puppeteer can fade the module.
+4. **Blend with `Context.Weight`** over the pose you received, so a puppeteer can fade the module
+   and a hand-off can fade the slot (ADR 0008). Do not read `Settings.Weight` in `Solve`.
 5. **Use the shared math** (section 4). If you need an operation that is not there and another
    module could use it, add it to `PuppetRetarget` with its own tests.
 6. **Controls are `UPROPERTY`s** with `EditAnywhere`, `BlueprintReadOnly`, a `Category`
@@ -164,10 +170,11 @@ namespace PuppetModuleSingleBone
 
 		virtual void Solve(FPuppetSolveContext& Context) override
 		{
-			const FQuat Delta = PuppetRetarget::ScaleRotation(Context.GetJointDelta(Joint), Settings.Amplification);
+			const FQuat Turn = Context.HandoffOffset.GetRotation();
+			const FQuat Delta = Turn * PuppetRetarget::ScaleRotation(Turn.Inverse() * Context.GetJointDelta(Joint), Settings.Amplification);
 			const FQuat Target = Settings.Offset.Quaternion() * Delta * Context.Puppet.GetReferenceComponent(Bone).GetRotation();
 			const FQuat Original = Context.Puppet.GetComponent(Bone).GetRotation();
-			Context.Puppet.SetComponentRotation(Bone, FQuat::Slerp(Original, Target.GetNormalized(), Settings.Weight));
+			Context.Puppet.SetComponentRotation(Bone, FQuat::Slerp(Original, Target.GetNormalized(), Context.Weight));
 		}
 
 	private:

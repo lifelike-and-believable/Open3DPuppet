@@ -2,12 +2,12 @@
 
 #pragma once
 
+#include "PuppetAsset.h"
 #include "PuppetInstance.h"
 #include "ReferenceSkeleton.h"
 #include "UObject/StrongObjectPtr.h"
 
 class FAutomationTestBase;
-class UPuppetAsset;
 
 // Fixtures for solver tests (ADR 0005): skeletons built in code, and performers that carry the
 // same data a Live Link Animation-role subject does (bone names, parent indices, local transforms).

@@ -6,12 +6,12 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PuppetPerformerCalibration)
 
-FPuppetPerformerCalibration FPuppetPerformerCalibration::Capture(const FPuppetPerformerPose& Pose, const FRotator& Alignment)
+FPuppetPerformerCalibration FPuppetPerformerCalibration::Capture(const FPuppetPerformerPose& Pose, const FRotator& InAlignment)
 {
 	FPuppetPerformerCalibration Calibration;
 	Calibration.BoneNames = Pose.GetBoneNames();
 	Calibration.RestComponent = Pose.GetComponentTransforms();
-	Calibration.Alignment = Alignment;
+	Calibration.Alignment = InAlignment;
 	return Calibration;
 }
 

@@ -13,7 +13,7 @@ Until then changes collect under `## Unreleased`.
   `FPuppetInstance`, and the Root, Chain and Two-Bone Limb modules. The **Puppet Solve** AnimGraph
   node reads each performer slot from a Live Link Animation-role subject; `UPuppetPerformerProfile`
   maps other naming schemes to the canonical (mannequin) joint names; the Puppet Calibration
-  subsystem captures and holds each performer's calibration. 33 automation tests. The guide
+  subsystem captures and holds each performer's calibration. 34 automation tests. The guide
   `docs/guides/authoring-puppet-modules.md` explains how to add modules.
 - **Foundation** (WP-0): coding-agent instructions (`AGENTS.md`, rules in `.claude/rules/`),
   CI checks for copyright headers, editor dependencies in runtime modules and Markdown links,

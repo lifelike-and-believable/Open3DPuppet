@@ -50,6 +50,42 @@ namespace PuppetTests
 		return Result;
 	}
 
+	TArray<FBone> Hand()
+	{
+		TArray<FBone> Bones = Biped();
+		Bones.Append({
+			{ TEXT("thumb_01_l"), TEXT("hand_l"), FVector(4, 10, 0) },
+			{ TEXT("thumb_02_l"), TEXT("thumb_01_l"), FVector(0, 4, 0) },
+			{ TEXT("thumb_03_l"), TEXT("thumb_02_l"), FVector(0, 4, 0) },
+			{ TEXT("index_01_l"), TEXT("hand_l"), FVector(2, 10, 0) },
+			{ TEXT("index_02_l"), TEXT("index_01_l"), FVector(0, 4, 0) },
+			{ TEXT("index_03_l"), TEXT("index_02_l"), FVector(0, 4, 0) },
+			{ TEXT("middle_01_l"), TEXT("hand_l"), FVector(0, 10, 0) },
+			{ TEXT("middle_02_l"), TEXT("middle_01_l"), FVector(0, 4, 0) },
+			{ TEXT("middle_03_l"), TEXT("middle_02_l"), FVector(0, 4, 0) },
+			{ TEXT("ring_01_l"), TEXT("hand_l"), FVector(-2, 10, 0) },
+			{ TEXT("ring_02_l"), TEXT("ring_01_l"), FVector(0, 4, 0) },
+			{ TEXT("ring_03_l"), TEXT("ring_02_l"), FVector(0, 4, 0) },
+			{ TEXT("pinky_01_l"), TEXT("hand_l"), FVector(-4, 10, 0) },
+			{ TEXT("pinky_02_l"), TEXT("pinky_01_l"), FVector(0, 4, 0) },
+			{ TEXT("pinky_03_l"), TEXT("pinky_02_l"), FVector(0, 4, 0) },
+		});
+		return Bones;
+	}
+
+	TArray<FBone> Paw()
+	{
+		TArray<FBone> Bones = Biped();
+		Bones.Append({
+			{ TEXT("digit_01"), TEXT("hand_l"), FVector(0, 2, 0) },
+			{ TEXT("digit_02"), TEXT("digit_01"), FVector(0, 2, 0) },
+			{ TEXT("digit_03"), TEXT("digit_02"), FVector(0, 2, 0) },
+			{ TEXT("digit_04"), TEXT("digit_03"), FVector(0, 2, 0) },
+			{ TEXT("digit_05"), TEXT("digit_04"), FVector(0, 2, 0) },
+		});
+		return Bones;
+	}
+
 	TArray<FBone> Tail()
 	{
 		return {

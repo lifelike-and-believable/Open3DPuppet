@@ -20,6 +20,12 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Digits module** (WP-12, ADR 0006): `UPuppetModule_Digits` drives puppet fingers, toes, talons
+  or feathers from the performer's fingers, relative to the hand, so a digit curls the same way
+  whatever the hand or paw is doing. Each entry in `Digits` maps a finger chain onto a digit chain
+  of any length (the finger's whole bend is spread along the digit) with a `CurlGain` and a
+  `SpreadGain`; `SpreadAxis` (the palm's normal) separates spread from curl. The defaults map a
+  mannequin's left hand onto the same names. 8 new tests (61).
 - **Hand-offs between an animation and the performer** (WP-16, ADR 0008): each performer slot
   has a control blend (0 the Puppet Solve node's input pose, 1 the performer) that scales every
   module weight of the slot; modules blend with the new `FPuppetSolveContext::Weight`.

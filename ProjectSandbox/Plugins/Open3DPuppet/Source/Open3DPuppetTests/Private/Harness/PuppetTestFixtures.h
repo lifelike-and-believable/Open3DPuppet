@@ -34,6 +34,16 @@ namespace PuppetTests
 	/** Bones with Name's offset replaced. */
 	TArray<FBone> WithOffset(TConstArrayView<FBone> Bones, const TCHAR* Name, const FVector& Offset);
 
+	/**
+	 * The biped with a mannequin-named left hand: thumb, index, middle, ring and pinky, each three
+	 * bones along +Y (01 10 cm from hand_l, then 4 cm and 4 cm), side by side along X. The palm
+	 * faces down, so fingers curl about X and spread about Z.
+	 */
+	TArray<FBone> Hand();
+
+	/** The biped with a five-bone digit under hand_l, digit_01 to digit_05, 2 cm apart along +Y. */
+	TArray<FBone> Paw();
+
 	/** Root and pelvis (at 100 cm) and a five-bone tail, tail_01 to tail_05, 10 cm apart, upwards. */
 	TArray<FBone> Tail();
 

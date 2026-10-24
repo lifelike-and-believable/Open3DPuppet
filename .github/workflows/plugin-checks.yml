@@ -4,8 +4,8 @@ name: Plugin checks
 # automation tests need a Windows runner with UE 5.8 and are added in WP-9.
 
 on:
+  # Any base branch, so stacked PRs (one work package on top of another) are checked too.
   pull_request:
-    branches: [ develop, main ]
   push:
     branches: [ develop, main ]
   workflow_dispatch:

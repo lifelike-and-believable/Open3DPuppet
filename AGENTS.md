@@ -38,7 +38,7 @@ directly). Rules for Claude Code are in `.claude/rules/` (rules-for-robots core 
 
 ## External sources of truth
 
-- Unreal APIs: the installed UE 5.8 engine source (`C:\Program Files\Epic Games\UE_5.8\Engine\Source`), or `lifelike-and-believable/UnrealEngine` on GitHub. Compiler output beats memory.
+- Unreal APIs: the installed UE 5.8 engine source (`C:\Program Files\Epic Games\UE_5.8\Engine\Source`), or `lifelike-and-believable/UnrealEngine` on GitHub: branch `release` is UE 5.8 (5.8.4 on 2026-10-24), branch `5.7` is 5.7.4. A sparse, blob-filtered clone of only the paths you need is enough. Compiler output beats memory.
 - Live Link: `Engine/Source/Runtime/LiveLinkInterface` (`ILiveLinkClient`, `Roles/LiveLinkAnimationTypes.h`) and, as the reference for reading a subject inside an AnimGraph node, `Engine/Source/Runtime/LiveLinkAnimationCore/Private/AnimNode_LiveLinkPose.cpp`.
 
 ## Git and pull requests

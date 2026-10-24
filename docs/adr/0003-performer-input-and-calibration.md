@@ -13,8 +13,10 @@ bone names and parent indices as static data
 transforms per frame (`LiveLinkAnimationTypes.h:57`). The stock Live Link Pose node reads a subject
 by fetching the `ILiveLinkClient` modular feature on the game thread in `PreUpdate`
 (`Engine/Source/Runtime/LiveLinkAnimationCore/Private/AnimNode_LiveLinkPose.cpp:65-71`) and calling
-`EvaluateFrame_AnyThread` with `ULiveLinkAnimationRole` during evaluation (`:124`). (UE 5.7.4
-source; needs-verification on 5.8.)
+`EvaluateFrame_AnyThread` with `ULiveLinkAnimationRole` during evaluation (`:124`). (Read in UE
+5.7.4; these APIs are unchanged in 5.8.4, which also adds a Character role,
+`Roles/LiveLinkCharacterRole.h`, that extends the Animation role, so its subjects are read the
+same way.)
 
 Capture systems name joints differently, and their rest poses differ from the puppet's.
 
@@ -62,5 +64,3 @@ Capture systems name joints differently, and their rest poses differ from the pu
 2. needs-verification: Take Recorder records Live Link subjects and Sequencer plays the recording
    back into Live Link on 5.8, so recorded takes drive the puppet like live ones (design overview
    §7). To be confirmed at the desk in WP-3.
-3. needs-verification: `ILiveLinkClient::EvaluateFrame_AnyThread` and the Animation-role types
-   are unchanged in 5.8 (read from 5.7.4 source).

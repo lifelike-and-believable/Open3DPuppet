@@ -15,6 +15,9 @@ Check whether an existing module already does the job with different settings:
 | An arm or leg with a hand or foot to place | Two-Bone Limb, choosing an `EffectorMode` |
 | The pelvis and the puppet's place in the world | Root |
 | Fingers onto fingers, toes, talons or feathers, relative to the hand or paw | Digits, with `CurlGain` and `SpreadGain` per digit |
+| A bone that follows one curve (a jaw from `jawOpen`, ears from brows, a talon from `curl_index_l`) | Curve to Bone |
+| Morph targets or material parameters from performer curves, alone or combined | Curve Remap |
+| Eyes from the performer's gaze (ARKit eye-look curves or eye joints) | Eyes |
 
 Write a new module when the anatomy needs behaviour these cannot express: a third limb segment
 (digitigrade legs), state between frames (springs on a tail), a mapping between different body
@@ -219,6 +222,8 @@ library; open a pull request.
 | `ChainLength(JointPositions)` | Limb and chain lengths, for reach scaling. |
 | `SampleChain(Rotations, Positions, T)` | The rotation at a normalized position along a chain. |
 | `CollectChain(Parents, Start, End, OutChain)` | Resolving a chain on the performer (`FPuppetPose::GetChain` does the same for the puppet). |
+| `RemapCurve(Value, InMin, InMax, DeadZone)` | A curve's place in an input range, 0 to 1, with a dead zone near neutral. |
+| `SmoothTowards(Current, Target, SmoothingTime, DeltaTime)` | Exponential smoothing of a value between frames, kept in the solver. |
 
 For two-bone IK, use `AnimationCore::SolveTwoBoneIK` (`TwoBoneIK.h`) as the Two-Bone Limb module
 does. Give it a pole that rides on the upper bone (computed in `Bind` from the reference pose's

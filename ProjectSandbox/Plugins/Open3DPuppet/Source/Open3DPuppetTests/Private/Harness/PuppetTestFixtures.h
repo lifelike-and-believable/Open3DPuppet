@@ -41,6 +41,9 @@ namespace PuppetTests
 	 */
 	TArray<FBone> Hand();
 
+	/** The biped with a jaw and two eyes under the head, all at identity rest rotations: jaw, eye_l (+Y side), eye_r. */
+	TArray<FBone> Face();
+
 	/** The biped with a five-bone digit under hand_l, digit_01 to digit_05, 2 cm apart along +Y. */
 	TArray<FBone> Paw();
 

@@ -55,4 +55,17 @@ namespace PuppetRetarget
 	 * of its descendants.
 	 */
 	OPEN3DPUPPET_API bool CollectChain(TConstArrayView<int32> Parents, int32 Start, int32 End, TArray<int32>& OutChain);
+
+	/**
+	 * A curve value's place in an input range, from 0 at InMin to 1 at InMax, clamped. The first
+	 * DeadZone of the range (0 to 1) also reads 0, and the rest is stretched to 0 to 1, so small
+	 * twitches near neutral do not move anything.
+	 */
+	OPEN3DPUPPET_API float RemapCurve(float Value, float InMin, float InMax, float DeadZone);
+
+	/**
+	 * Moves Current towards Target, exponentially with time constant SmoothingTime (seconds): after
+	 * SmoothingTime it has covered 1 - 1/e (63%) of the way. A SmoothingTime of 0 returns Target.
+	 */
+	OPEN3DPUPPET_API float SmoothTowards(float Current, float Target, float SmoothingTime, float DeltaTime);
 }

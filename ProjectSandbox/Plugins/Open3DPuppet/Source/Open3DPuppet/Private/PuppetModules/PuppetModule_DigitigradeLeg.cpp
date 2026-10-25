@@ -161,11 +161,16 @@ namespace PuppetModuleDigitigradeLeg
 
 			if (Context.Weight < 1.0f)
 			{
-				// Absolute transforms, root of the leg first, so each blend sees its final parent.
+				// Every solved transform is read before any is blended: setting a bone moves its descendants.
+				FTransform Solved[NumBones];
+				for (int32 Index = 0; Index < NumBones; ++Index)
+				{
+					Solved[Index] = Puppet.GetComponent(Bones[Index]);
+				}
 				for (int32 Index = 0; Index < NumBones; ++Index)
 				{
 					FTransform Blended;
-					Blended.Blend(Original[Index], Puppet.GetComponent(Bones[Index]), Context.Weight);
+					Blended.Blend(Original[Index], Solved[Index], Context.Weight);
 					Puppet.SetComponent(Bones[Index], Blended);
 				}
 			}

@@ -27,6 +27,12 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Dynamic Chain module** (WP-5, ADR 0007): a tail, ears, a mane or feathers that swing with the
+  puppet's motion and settle. The chain follows the pose it receives, optionally mixed with a
+  performer chain (`InputMix`, for a hand gesture or a second performer taking the tail over), and
+  simulates on it with `PuppetDynamics` at a fixed step: `Stiffness` towards that pose, `Damping`,
+  `Gravity`, `Amplitude` on the swing, a `PhysicsWeight` a performer curve can play, and collision
+  with spheres on bones and the ground. 10 new tests (118).
 - **Solver dynamics** (WP-14, ADR 0007, Tier 1): the solve context carries the puppet component's
   world transform this frame and last, and `bTeleport` (the first frame, or a jump beyond the
   asset's new `TeleportDistance`, 200 cm by default); `FPuppetInstance::Solve` takes the component

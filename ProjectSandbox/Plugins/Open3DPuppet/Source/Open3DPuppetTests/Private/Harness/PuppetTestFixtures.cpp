@@ -73,6 +73,18 @@ namespace PuppetTests
 		return Bones;
 	}
 
+	TArray<FBone> DigitigradeLeg()
+	{
+		return {
+			{ TEXT("root"), TEXT(""), FVector(0, 0, 0) },
+			{ TEXT("pelvis"), TEXT("root"), FVector(0, 0, 48) },
+			{ TEXT("thigh_l"), TEXT("pelvis"), FVector(0, 10, 0) },
+			{ TEXT("calf_l"), TEXT("thigh_l"), FVector(12, 0, -16) },
+			{ TEXT("foot_l"), TEXT("calf_l"), FVector(-12, 0, -16) },
+			{ TEXT("ball_l"), TEXT("foot_l"), FVector(12, 0, -16) },
+		};
+	}
+
 	TArray<FBone> Face()
 	{
 		TArray<FBone> Bones = Biped();

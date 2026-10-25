@@ -13,14 +13,14 @@ Check whether an existing module already does the job with different settings:
 |---|---|
 | Any FK chain (spine, neck, a tail that copies the spine, antennae) | Chain, with `Amplification` to damp or exaggerate |
 | An arm or leg with a hand or foot to place | Two-Bone Limb, choosing an `EffectorMode` |
+| A three-segment leg (a wolf's or a bird's: thigh, shin, metatarsal, paw) | Digitigrade Leg |
 | The pelvis and the puppet's place in the world | Root |
 | Fingers onto fingers, toes, talons or feathers, relative to the hand or paw | Digits, with `CurlGain` and `SpreadGain` per digit |
 | A bone that follows one curve (a jaw from `jawOpen`, ears from brows, a talon from `curl_index_l`) | Curve to Bone |
 | Morph targets or material parameters from performer curves, alone or combined | Curve Remap |
 | Eyes from the performer's gaze (ARKit eye-look curves or eye joints) | Eyes |
 
-Write a new module when the anatomy needs behaviour these cannot express: a third limb segment
-(digitigrade legs), state between frames (springs on a tail), a mapping between different body
+Write a new module when the anatomy needs behaviour these cannot express: state between frames (springs on a tail), a mapping between different body
 parts (arms to wings), or a different input (a tracked prop).
 
 ## 2. The contract
@@ -239,8 +239,9 @@ Every module has solver tests in
 
 The fixtures in `Harness/PuppetTestFixtures.h` build everything in code:
 
-- `PuppetTests::Biped()`, `Tail()`, `Scaled(...)` and `WithOffset(...)` give skeleton tables; add
-  one for your anatomy (for example a digitigrade leg) next to them.
+- `PuppetTests::Biped()`, `Tail()`, `Hand()`, `Paw()`, `Face()`, `DigitigradeLeg()`, `Scaled(...)`
+  and `WithOffset(...)` give skeleton tables; add one for your anatomy (for example a wing) next
+  to them.
 - `PuppetTests::FPuppet` holds a puppet asset, a reference skeleton and an `FPuppetInstance`.
   `Add<T>()` adds a module and returns it for setup; `Build()`, `Drive(slot, performer)`,
   `Calibrate(slot, performer)` and `Solve()` run it; `Component(bone)` and `Reference(bone)` read

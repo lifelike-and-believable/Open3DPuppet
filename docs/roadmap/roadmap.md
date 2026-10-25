@@ -12,7 +12,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-12 | Digits module: fingers to toes, talons and feathers; derived finger-curl curves | WP-11 | Done (#13, #14; ADR 0009) |
 | WP-13 | Face modules: curve to bone, curve remap, eyes | WP-11 | Done (#15) |
 | WP-14 | Solver dynamics (ADR 0007, Tier 1): world motion in the solve context, `PuppetDynamics` (fixed-step integrator, spring-dampers, constrained chains, collision shapes), Physics Weight | WP-11 | Planned |
-| WP-4 | Digitigrade leg module (Wolf front and hind legs) | WP-1 | Planned |
+| WP-4 | Digitigrade leg module (Wolf front and hind legs) | WP-1 | Done (#16) |
 | WP-5 | Tail and dynamic chain module: springs, input mix (Wolf tail, ears, mane; Eagle tail fan, feathers) | WP-14 | Planned |
 | WP-15 | Engine physics hand-off (ADR 0007, Tier 2): optional `Open3DPuppetPhysics` module, Physics Region module, Rigid Body With Control parameters from curves, setup guide. The Wolf and Eagle need physics assets first (none exist yet) | WP-11 | Planned |
 | WP-6 | Wing module (Eagle) | WP-12 | Planned |
@@ -36,6 +36,9 @@ ahead when a session needs it.
 
 Items that need a person at the desk or a maintainer decision:
 
+- WP-4 at the desk: a performer walking and crouching driving a digitigrade leg, hind legs from
+  the legs and front legs from the arms; tune the default Knee To Hock Ratio (0.5), Heel Lift and
+  Contact Height on the Wolf.
 - WP-13 at the desk: Live Link Face driving a jaw with Curve to Bone, a morph target with Curve
   Remap and the eyes with Eyes; tune the default ranges, smoothing and eye limits per creature.
 - WP-12 at the desk: a glove or suit with finger bones driving a mannequin hand with the Digits

@@ -36,7 +36,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
 	FName PelvisBone = TEXT("pelvis");
 
-	/** The modules, in the order they run: root first, then the bones each later module hangs from. */
+	/** A move of the puppet further than this in one frame, in centimetres, counts as a teleport: dynamic modules start again from the pose (ADR 0007). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dynamics", meta = (ClampMin = "0.0", Units = "cm"))
+	float TeleportDistance = 200.0f;
+
+		/** The modules, in the order they run: root first, then the bones each later module hangs from. */
 	UPROPERTY(EditAnywhere, Instanced, BlueprintReadOnly, Category = "Modules")
 	TArray<TObjectPtr<UPuppetModule>> Modules;
 

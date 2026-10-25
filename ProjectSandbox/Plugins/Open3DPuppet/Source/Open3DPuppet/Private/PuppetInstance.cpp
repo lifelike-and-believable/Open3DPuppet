@@ -221,7 +221,7 @@ void FPuppetInstance::BindSlot(int32 Slot)
 	}
 }
 
-void FPuppetInstance::Solve(TConstArrayView<FTransform> InputLocal, float DeltaTime)
+void FPuppetInstance::Solve(TConstArrayView<FTransform> InputLocal, float DeltaTime, const FTransform& ComponentToWorld)
 {
 	Puppet.SetLocalTransforms(InputLocal);
 	Puppet.ResetCurves();

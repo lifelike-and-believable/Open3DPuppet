@@ -93,8 +93,9 @@ public:
 	/**
 	 * Solves one frame: starts from InputLocal (one local transform per reference-skeleton bone)
 	 * and runs every enabled module whose slot is ready, binding first where needed.
+	 * ComponentToWorld is the puppet component's world transform, for dynamic modules (ADR 0007).
 	 */
-	void Solve(TConstArrayView<FTransform> InputLocal, float DeltaTime);
+	void Solve(TConstArrayView<FTransform> InputLocal, float DeltaTime, const FTransform& ComponentToWorld = FTransform::Identity);
 
 	/** The solved pose. */
 	const FPuppetPose& GetPose() const { return Puppet; }
@@ -140,4 +141,8 @@ private:
 	FTransform HandoffOffset = FTransform::Identity;
 	int32 PuppetPelvis = INDEX_NONE;
 	FName AssetName;
+	double TeleportDistance = 0.0;
+	/** The component's world transform at the last solve, and whether there was one. */
+	FTransform PreviousComponentToWorld = FTransform::Identity;
+	bool bHasPreviousComponentToWorld = false;
 };

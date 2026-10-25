@@ -1,12 +1,14 @@
 // Copyright 2026 Lifelike & Believable. All Rights Reserved.
 
-// FPuppetInstance: performer slots, calibration state and several performers (ADR 0003, ADR 0004).
+// FPuppetInstance: performer slots, calibration state and several performers (ADR 0003, ADR 0004),
+// and the component's world motion for dynamic modules (ADR 0007).
 
 #include "PuppetTestHarness.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Harness/PuppetTestFixtures.h"
+#include "Harness/PuppetTestModules.h"
 #include "PuppetAsset.h"
 #include "PuppetModules/PuppetModule_Chain.h"
 
@@ -125,6 +127,54 @@ bool FPuppetInstanceUndeclaredSlotTest::RunTest(const FString& Parameters)
 	Puppet.Drive(0, Performer);
 	Puppet.Solve();
 	TestEqual(TEXT("spine_03 left as the input"), Puppet.Component(TEXT("spine_03")), Puppet.Reference(TEXT("spine_03")), 1.e-3f);
+	return true;
+}
+
+namespace PuppetInstanceTests
+{
+	/** A calibrated biped whose only module records the world motion it is given. */
+	UPuppetTestModule_WorldMotion& BuildWorldMotion(PuppetTests::FPuppet& Puppet)
+	{
+		UPuppetTestModule_WorldMotion& Recorder = Puppet.Add<UPuppetTestModule_WorldMotion>();
+		PuppetTests::FPerformer Performer(PuppetTests::Biped());
+		Puppet.Build();
+		Puppet.Drive(0, Performer);
+		Puppet.Calibrate(0, Performer);
+		return Recorder;
+	}
+
+	void SolveAt(PuppetTests::FPuppet& Puppet, const FVector& Location)
+	{
+		Puppet.Instance.Solve(Puppet.RefSkeleton.GetRefBonePose(), 1.0f / 30.0f, FTransform(Location));
+	}
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetInstanceWorldMotionTest, "Open3DPuppet.Instance.WorldMotion.ReachesTheModules", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetInstanceWorldMotionTest::RunTest(const FString& Parameters)
+{
+	PuppetTests::FPuppet Puppet(PuppetTests::Biped());
+	UPuppetTestModule_WorldMotion& Recorder = PuppetInstanceTests::BuildWorldMotion(Puppet);
+
+	PuppetInstanceTests::SolveAt(Puppet, FVector(0, 0, 0));
+	TestTrue(TEXT("The first frame starts the simulation"), Recorder.bLastTeleport);
+
+	PuppetInstanceTests::SolveAt(Puppet, FVector(10, 0, 0));
+	TestFalse(TEXT("A 10 cm step is no teleport"), Recorder.bLastTeleport);
+	TestEqual(TEXT("This frame"), Recorder.LastComponentToWorld.GetTranslation(), FVector(10, 0, 0), 1.e-4f);
+	TestEqual(TEXT("Last frame"), Recorder.LastPreviousComponentToWorld.GetTranslation(), FVector(0, 0, 0), 1.e-4f);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetInstanceTeleportTest, "Open3DPuppet.Instance.WorldMotion.JumpIsATeleport", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetInstanceTeleportTest::RunTest(const FString& Parameters)
+{
+	// Further than the asset's Teleport Distance (200 cm by default) in one frame.
+	PuppetTests::FPuppet Puppet(PuppetTests::Biped());
+	UPuppetTestModule_WorldMotion& Recorder = PuppetInstanceTests::BuildWorldMotion(Puppet);
+	PuppetInstanceTests::SolveAt(Puppet, FVector(0, 0, 0));
+	PuppetInstanceTests::SolveAt(Puppet, FVector(1000, 0, 0));
+	TestTrue(TEXT("Teleport"), Recorder.bLastTeleport);
+	TestEqual(TEXT("Last frame is this frame"), Recorder.LastPreviousComponentToWorld.GetTranslation(), FVector(1000, 0, 0), 1.e-4f);
 	return true;
 }
 

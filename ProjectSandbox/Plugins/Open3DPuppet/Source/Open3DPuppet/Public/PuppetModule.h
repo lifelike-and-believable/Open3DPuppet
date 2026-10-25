@@ -65,6 +65,15 @@ struct OPEN3DPUPPET_API FPuppetSolveContext
 	 * converges it to identity; other modules only read it.
 	 */
 	FTransform HandoffOffset = FTransform::Identity;
+	/** The puppet component's world transform this frame (ADR 0007), so dynamic modules feel it move and turn. */
+	FTransform ComponentToWorld = FTransform::Identity;
+	/** The component's world transform last frame; equal to ComponentToWorld when bTeleport is set. */
+	FTransform PreviousComponentToWorld = FTransform::Identity;
+	/**
+	 * True on the first frame and when the component jumped further than the asset's Teleport
+	 * Distance since the last: dynamic modules start their simulation again from the pose.
+	 */
+	bool bTeleport = false;
 
 	/** A performer joint's rotation change since calibration, in puppet component space (PuppetRetarget::RotationDelta), turned by the hand-off offset. */
 	FQuat GetJointDelta(int32 Joint) const;

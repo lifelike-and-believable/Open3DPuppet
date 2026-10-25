@@ -130,7 +130,7 @@ void FAnimNode_PuppetSolve::Evaluate_AnyThread(FPoseContext& Output)
 
 	ReadPerformers();
 	ApplySlotControls();
-	Instance->Solve(InputLocal, DeltaTime);
+	Instance->Solve(InputLocal, DeltaTime, Output.AnimInstanceProxy->GetComponentTransform());
 	LogSlotStates();
 
 	const FPuppetPose& Solved = Instance->GetPose();

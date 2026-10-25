@@ -85,6 +85,17 @@ namespace PuppetTests
 		};
 	}
 
+	TArray<FBone> Wing()
+	{
+		TArray<FBone> Bones = Biped();
+		Bones.Append({
+			{ TEXT("feather_01"), TEXT("hand_l"), FVector(2, 10, 0) },
+			{ TEXT("feather_02"), TEXT("hand_l"), FVector(0, 10, 0) },
+			{ TEXT("feather_03"), TEXT("hand_l"), FVector(-2, 10, 0) },
+		});
+		return Bones;
+	}
+
 	TArray<FBone> Face()
 	{
 		TArray<FBone> Bones = Biped();

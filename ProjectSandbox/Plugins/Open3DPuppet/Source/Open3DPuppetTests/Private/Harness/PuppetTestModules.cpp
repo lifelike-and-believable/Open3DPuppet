@@ -39,3 +39,29 @@ TUniquePtr<FPuppetModuleSolver> UPuppetTestModule_CurveCopy::CreateSolver() cons
 {
 	return MakeUnique<PuppetTestModuleCurveCopy::FSolver>(*this);
 }
+
+namespace PuppetTestModuleWorldMotion
+{
+	class FSolver : public TPuppetModuleSolver<UPuppetTestModule_WorldMotion>
+	{
+	public:
+		using TPuppetModuleSolver<UPuppetTestModule_WorldMotion>::TPuppetModuleSolver;
+
+		virtual bool Bind(const FPuppetBindContext& Context, FString& OutError) override
+		{
+			return true;
+		}
+
+		virtual void Solve(FPuppetSolveContext& Context) override
+		{
+			Settings.LastComponentToWorld = Context.ComponentToWorld;
+			Settings.LastPreviousComponentToWorld = Context.PreviousComponentToWorld;
+			Settings.bLastTeleport = Context.bTeleport;
+		}
+	};
+}
+
+TUniquePtr<FPuppetModuleSolver> UPuppetTestModule_WorldMotion::CreateSolver() const
+{
+	return MakeUnique<PuppetTestModuleWorldMotion::FSolver>(*this);
+}

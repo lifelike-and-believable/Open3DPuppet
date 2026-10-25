@@ -27,6 +27,14 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Solver dynamics** (WP-14, ADR 0007, Tier 1): the solve context carries the puppet component's
+  world transform this frame and last, and `bTeleport` (the first frame, or a jump beyond the
+  asset's new `TeleportDistance`, 200 cm by default); `FPuppetInstance::Solve` takes the component
+  transform, which the Puppet Solve node passes. `PuppetDynamics` gives dynamic modules their
+  building blocks: a fixed-step integrator, an angular spring-damper, a length-constrained chain,
+  collision with spheres, capsules and the ground, the component's motion between frames, and a
+  Physics Weight control that a performer curve can drive. The authoring guide has a section on
+  dynamic modules. 13 new tests (108).
 - **Digitigrade Leg module** (WP-4): a three-segment leg (thigh, shin, metatarsal, paw), such as
   the Wolf's hind and front legs, from a performer's leg or arm. The paw follows the performer's
   ankle relative to the hip, scaled by leg length, with `StrideScale` on horizontal moves; the

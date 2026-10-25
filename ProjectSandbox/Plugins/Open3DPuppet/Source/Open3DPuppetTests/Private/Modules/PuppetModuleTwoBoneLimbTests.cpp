@@ -95,6 +95,18 @@ bool FPuppetLimbAbsoluteTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetLimbWeightTest, "Open3DPuppet.Modules.TwoBoneLimb.WeightBlendsOverInput", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetLimbWeightTest::RunTest(const FString& Parameters)
+{
+	// Half weight: the hand halfway between its reference, (0, 100, 130) at the end of the straight
+	// 60 + 25 cm arm, and where Absolute puts it, the performer's hand at (-25, 45, 130).
+	PuppetTests::FPuppet Puppet(PuppetLimbTests::LongUpperArm());
+	PuppetLimbTests::AddArm(Puppet, EPuppetEffectorMode::Absolute).Weight = 0.5f;
+	PuppetLimbTests::SolveWithElbowBent(Puppet);
+	TestEqual(TEXT("Hand halfway"), Puppet.Component(TEXT("hand_l")).GetTranslation(), FVector(-12.5, 72.5, 130), 1.e-2f);
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetLimbPelvisRelativeTest, "Open3DPuppet.Modules.TwoBoneLimb.PelvisRelativeFollowsTheScaledPelvis", OPEN3DPUPPET_TEST_FLAGS)
 bool FPuppetLimbPelvisRelativeTest::RunTest(const FString& Parameters)
 {

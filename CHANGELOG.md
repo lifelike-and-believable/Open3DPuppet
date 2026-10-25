@@ -20,6 +20,14 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Face modules** (WP-13, ADR 0006): **Curve to Bone** turns and moves one puppet bone from one
+  performer curve (input range, dead zone, smoothing; a jaw, beak, ears, eyelids, a talon from a
+  finger curl). **Curve Remap** writes puppet curves (morph targets, material parameters) from
+  performer curves, each mapping with its input and output range and dead zone; mappings onto the
+  same puppet curve add up; smoothing per curve. **Eyes** turns the puppet's eyes from ARKit's
+  eye-look curves or the performer's eye joints, with Max Yaw and Max Pitch and a Convergence that
+  lets both eyes share one gaze. New shared math: `PuppetRetarget::RemapCurve` and
+  `SmoothTowards`. 20 new tests (86).
 - **Derived finger-curl curves** (WP-12, ADR 0009): a performer with finger bones has a curve
   per finger, `curl_<finger>_<side>` (`curl_index_l` and so on), found with `FindCurve` like any
   source curve: the unsigned bend of the finger's three joints relative to their parents since

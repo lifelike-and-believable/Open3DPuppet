@@ -106,11 +106,20 @@ namespace PuppetRetarget
 
 	float RemapCurve(float Value, float InMin, float InMax, float DeadZone)
 	{
-		return 0.0f;
+		const float Position = InMax == InMin
+			? (Value >= InMax ? 1.0f : 0.0f)
+			: FMath::Clamp((Value - InMin) / (InMax - InMin), 0.0f, 1.0f);
+		// Below 1, so the rest of the range never has zero width.
+		const float Dead = FMath::Clamp(DeadZone, 0.0f, 0.95f);
+		return Position <= Dead ? 0.0f : (Position - Dead) / (1.0f - Dead);
 	}
 
 	float SmoothTowards(float Current, float Target, float SmoothingTime, float DeltaTime)
 	{
-		return Current;
+		if (SmoothingTime <= 0.0f)
+		{
+			return Target;
+		}
+		return Current + (Target - Current) * (1.0f - FMath::Exp(-DeltaTime / SmoothingTime));
 	}
 }

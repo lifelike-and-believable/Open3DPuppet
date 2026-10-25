@@ -27,6 +27,11 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Wing module** (WP-6): the Eagle's wings from the performer's arms. The wing root flaps with the
+  upper arm relative to the chest (`FlapAmplification`); the elbow bend, through
+  `FoldStartAngle` to `FoldEndAngle`, folds the forearm and hand towards `ForearmFold` and
+  `HandFold` (set per mesh) and closes the listed `Feathers` like a fan, the last by the whole
+  `FeatherFold`. 8 new tests (126).
 - **Dynamic Chain module** (WP-5, ADR 0007): a tail, ears, a mane or feathers that swing with the
   puppet's motion and settle. The chain follows the pose it receives, optionally mixed with a
   performer chain (`InputMix`, for a hand gesture or a second performer taking the tail over), and

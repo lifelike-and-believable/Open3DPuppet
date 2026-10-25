@@ -20,9 +20,10 @@ Check whether an existing module already does the job with different settings:
 | Morph targets or material parameters from performer curves, alone or combined | Curve Remap |
 | Eyes from the performer's gaze (ARKit eye-look curves or eye joints) | Eyes |
 | A tail, ears, a mane or feathers that swing with the puppet's motion and settle | Dynamic Chain (Tail), with Stiffness, Damping, Amplitude and Physics Weight |
+| A wing from the performer's arm: flap, fold, feather fan | Wing |
 
-Write a new module when the anatomy needs behaviour these cannot express: a mapping between
-different body parts (arms to wings), or a different input (a tracked prop).
+Write a new module when the anatomy needs behaviour these cannot express, or a different input
+(a tracked prop).
 
 ## 2. The contract
 

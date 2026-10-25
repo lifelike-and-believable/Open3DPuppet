@@ -19,9 +19,10 @@ Check whether an existing module already does the job with different settings:
 | A bone that follows one curve (a jaw from `jawOpen`, ears from brows, a talon from `curl_index_l`) | Curve to Bone |
 | Morph targets or material parameters from performer curves, alone or combined | Curve Remap |
 | Eyes from the performer's gaze (ARKit eye-look curves or eye joints) | Eyes |
+| A tail, ears, a mane or feathers that swing with the puppet's motion and settle | Dynamic Chain (Tail), with Stiffness, Damping, Amplitude and Physics Weight |
 
-Write a new module when the anatomy needs behaviour these cannot express: state between frames (springs on a tail), a mapping between different body
-parts (arms to wings), or a different input (a tracked prop).
+Write a new module when the anatomy needs behaviour these cannot express: a mapping between
+different body parts (arms to wings), or a different input (a tracked prop).
 
 ## 2. The contract
 

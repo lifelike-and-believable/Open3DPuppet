@@ -13,7 +13,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-13 | Face modules: curve to bone, curve remap, eyes | WP-11 | Done (#15) |
 | WP-14 | Solver dynamics (ADR 0007, Tier 1): world motion in the solve context, `PuppetDynamics` (fixed-step integrator, spring-dampers, constrained chains, collision shapes), Physics Weight | WP-11 | Done (#18) |
 | WP-4 | Digitigrade leg module (Wolf front and hind legs) | WP-1 | Done (#16) |
-| WP-5 | Tail and dynamic chain module: springs, input mix (Wolf tail, ears, mane; Eagle tail fan, feathers) | WP-14 | Planned |
+| WP-5 | Tail and dynamic chain module: springs, input mix (Wolf tail, ears, mane; Eagle tail fan, feathers) | WP-14 | Done (#19) |
 | WP-15 | Engine physics hand-off (ADR 0007, Tier 2): optional `Open3DPuppetPhysics` module, Physics Region module, Rigid Body With Control parameters from curves, setup guide. The Wolf and Eagle need physics assets first (none exist yet) | WP-11 | Planned |
 | WP-6 | Wing module (Eagle) | WP-12 | Planned |
 | WP-16 | Hand-offs (ADR 0008): control blend per slot, `UPuppetPerformanceComponent` transitions with easing, root anchoring that converges on the performer's position (by time, while moving), manual re-centre | WP-1 | Done (#9) |
@@ -36,6 +36,8 @@ ahead when a session needs it.
 
 Items that need a person at the desk or a maintainer decision:
 
+- WP-5 at the desk: the Wolf's tail, ears and mane swinging as the performer walks, turns and
+  stops; tune Stiffness, Damping and Amplitude per chain, and a curve playing Physics Weight.
 - WP-4 at the desk: a performer walking and crouching driving a digitigrade leg, hind legs from
   the legs and front legs from the arms; tune the default Knee To Hock Ratio (0.5), Heel Lift and
   Contact Height on the Wolf.

@@ -53,6 +53,7 @@ The solver has two functions:
 | `Alignment`, `DeltaTime` (solve only) | The calibration's facing correction, and the frame time for modules with state. |
 | `Weight` (solve only) | How much of the module's result to blend over the pose it received: the module's `Weight` times its slot's control blend (ADR 0008), so a hand-off between an animation and the performer fades every module of the slot. Never 0: a module with no weight does not run. |
 | `bRecentre`, `HandoffOffset` (solve only) | The hand-off offset (ADR 0008): a turn about the vertical axis and a horizontal move that keep the puppet where an animation left it, then converge on the performer. The Root module on the root slot captures it when `bRecentre` is set and converges it; other modules only read it, through the helpers. |
+| `ComponentToWorld`, `PreviousComponentToWorld`, `bTeleport` (solve only) | The puppet component's world transform this frame and last (ADR 0007), so a dynamic module feels the puppet move and turn. `bTeleport` is set on the first frame and after a jump further than the asset's `TeleportDistance`; the two transforms are then equal and a dynamic module starts again from the pose. |
 
 Solve-context helpers do the alignment for you: `GetJointDelta(joint)` (the joint's rotation change
 since calibration, in puppet space), `GetJointDeltaInParent(joint)` (the same, relative to the
@@ -202,6 +203,23 @@ A module that remembers something between frames (a spring, a filter) keeps it i
 size it in `Bind`, reset it there, and advance it in `Solve` with `Context.DeltaTime`. Never keep
 it in the settings object, which every actor shares.
 
+### Dynamic modules
+
+A module that simulates (a tail, ears, feathers; ADR 0007, Tier 1) builds on `PuppetDynamics.h`:
+
+- Step the simulation with an `FFixedStep` (a fixed rate, 120 Hz by default, whatever the frame
+  rate), so a take re-solved at another frame rate moves the same way, and interpolate the output
+  with `GetAlpha` (`FDynamicChain::Interpolate`).
+- Before stepping, move the state by `ComponentMotion(Context.PreviousComponentToWorld,
+  Context.ComponentToWorld)` (`FDynamicChain::Transform`), so it stays where it was in the world
+  and swings when the puppet moves or turns.
+- Reset the state in `Bind` and when `Context.bTeleport` is set: start from the pose, at rest.
+- Give the module an `FPuppetPhysicsWeight` control (resolve it in `Bind` with
+  `BindPhysicsWeight`, read it in `Solve` with `GetPhysicsWeight`) and blend the retargeted pose
+  towards the simulated one by it, then by `Context.Weight` as usual.
+- Test it by stepping the solver with a fixed `DeltaTime`: it settles, it moves the same at two
+  frame rates, and Physics Weight 0 gives the retargeted pose.
+
 ### Modules outside this plugin
 
 `UPuppetModule`, `FPuppetModuleSolver` and the context types are exported (`OPEN3DPUPPET_API`), so
@@ -224,6 +242,17 @@ library; open a pull request.
 | `CollectChain(Parents, Start, End, OutChain)` | Resolving a chain on the performer (`FPuppetPose::GetChain` does the same for the puppet). |
 | `RemapCurve(Value, InMin, InMax, DeadZone)` | A curve's place in an input range, 0 to 1, with a dead zone near neutral. |
 | `SmoothTowards(Current, Target, SmoothingTime, DeltaTime)` | Exponential smoothing of a value between frames, kept in the solver. |
+
+`PuppetDynamics.h`, namespace `PuppetDynamics`, for dynamic modules (see "Dynamic modules" above):
+
+| Function or type | Use it for |
+|---|---|
+| `FFixedStep` | Stepping a simulation at a fixed rate; `GetAlpha` for the output in between. |
+| `FAngularSpring` | A rotation that follows a target with a frequency (Hz) and a damping ratio (1 settles without overshoot). |
+| `FDynamicChain` | A chain of particles with fixed segment lengths, pinned at its root: ears, a mane, a tail. |
+| `Collide`, `FCollisionShapes` | Keeping particles out of spheres and capsules on the puppet's bones, and above the ground. |
+| `ComponentMotion` | Moving a simulation's state with the puppet between frames. |
+| `FPuppetPhysicsWeight`, `BindPhysicsWeight`, `GetPhysicsWeight` | The Physics Weight control, fixed or from a performer curve. |
 
 For two-bone IK, use `AnimationCore::SolveTwoBoneIK` (`TwoBoneIK.h`) as the Two-Bone Limb module
 does. Give it a pole that rides on the upper bone (computed in `Bind` from the reference pose's

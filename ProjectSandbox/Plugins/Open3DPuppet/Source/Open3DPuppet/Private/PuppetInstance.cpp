@@ -48,6 +48,8 @@ void FPuppetInstance::Initialize(const UPuppetAsset& Asset, TConstArrayView<TObj
 	}
 	RootSlot = FindSlot(Asset.RootSlot);
 	HandoffOffset = FTransform::Identity;
+	TeleportDistance = Asset.TeleportDistance;
+	bHasPreviousComponentToWorld = false;
 
 	Entries.Reset();
 	for (const TObjectPtr<UPuppetModule>& Module : Modules)
@@ -226,6 +228,13 @@ void FPuppetInstance::Solve(TConstArrayView<FTransform> InputLocal, float DeltaT
 	Puppet.SetLocalTransforms(InputLocal);
 	Puppet.ResetCurves();
 
+	// Dynamic modules start again from the pose on the first frame and after a jump (ADR 0007).
+	const bool bTeleport = !bHasPreviousComponentToWorld
+		|| FVector::Dist(ComponentToWorld.GetTranslation(), PreviousComponentToWorld.GetTranslation()) > TeleportDistance;
+	const FTransform Previous = bTeleport ? ComponentToWorld : PreviousComponentToWorld;
+	PreviousComponentToWorld = ComponentToWorld;
+	bHasPreviousComponentToWorld = true;
+
 	for (int32 Slot = 0; Slot < Slots.Num(); ++Slot)
 	{
 		if (GetSlotState(Slot) != EPuppetSlotState::Ready)
@@ -252,7 +261,7 @@ void FPuppetInstance::Solve(TConstArrayView<FTransform> InputLocal, float DeltaT
 			continue;
 		}
 		FPuppetSolveContext Context{ Puppet, State.Performer, State.Calibration, State.Alignment, PuppetPelvis, State.PerformerPelvis, State.RootScale, DeltaTime,
-			State.CurveNeutral, Weight, State.bRecentre, HandoffOffset };
+			State.CurveNeutral, Weight, State.bRecentre, HandoffOffset, ComponentToWorld, Previous, bTeleport };
 		Entry.Solver->Solve(Context);
 		if (Entry.Slot == RootSlot)
 		{

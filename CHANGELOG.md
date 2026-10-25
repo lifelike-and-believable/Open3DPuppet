@@ -20,6 +20,12 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Digitigrade Leg module** (WP-4): a three-segment leg (thigh, shin, metatarsal, paw), such as
+  the Wolf's hind and front legs, from a performer's leg or arm. The paw follows the performer's
+  ankle relative to the hip, scaled by leg length, with `StrideScale` on horizontal moves; the
+  metatarsal keeps its reference angle, flexed with the performer's knee (`KneeToHockRatio`) and
+  raised by `HeelLift`; two-bone IK places the thigh and shin at the hock; within `ContactHeight`
+  of the ground the paw stays level. 8 new tests (94).
 - **Face modules** (WP-13, ADR 0006): **Curve to Bone** turns and moves one puppet bone from one
   performer curve (input range, dead zone, smoothing; a jaw, beak, ears, eyelids, a talon from a
   finger curl). **Curve Remap** writes puppet curves (morph targets, material parameters) from

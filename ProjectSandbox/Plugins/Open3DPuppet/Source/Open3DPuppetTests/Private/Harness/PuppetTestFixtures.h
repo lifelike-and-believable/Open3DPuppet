@@ -41,6 +41,14 @@ namespace PuppetTests
 	 */
 	TArray<FBone> Hand();
 
+	/**
+	 * Root, pelvis at 48 cm and a left digitigrade leg in the XZ plane, every segment 20 cm and every
+	 * rest rotation identity: thigh_l at the hip (0, 10, 48), calf_l at the knee (12, 10, 32),
+	 * foot_l at the hock (0, 10, 16) and ball_l at the paw (12, 10, 0). The metatarsal (foot_l to
+	 * ball_l) points forward and down, (0.6, 0, -0.8).
+	 */
+	TArray<FBone> DigitigradeLeg();
+
 	/** The biped with a jaw and two eyes under the head, all at identity rest rotations: jaw, eye_l (+Y side), eye_r. */
 	TArray<FBone> Face();
 

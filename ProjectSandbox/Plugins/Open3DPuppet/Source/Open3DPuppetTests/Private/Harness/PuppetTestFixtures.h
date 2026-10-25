@@ -49,6 +49,9 @@ namespace PuppetTests
 	 */
 	TArray<FBone> DigitigradeLeg();
 
+	/** The biped with three feathers under hand_l, feather_01 to feather_03, 10 cm out along +Y and 2 cm apart along X. */
+	TArray<FBone> Wing();
+
 	/** The biped with a jaw and two eyes under the head, all at identity rest rotations: jaw, eye_l (+Y side), eye_r. */
 	TArray<FBone> Face();
 

@@ -135,4 +135,29 @@ bool FPuppetCollectChainTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetRemapCurveTest, "Open3DPuppet.Math.RemapCurve.RangeClampAndDeadZone", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetRemapCurveTest::RunTest(const FString& Parameters)
+{
+	TestNearlyEqual(TEXT("Halfway"), PuppetRetarget::RemapCurve(0.5f, 0.0f, 1.0f, 0.0f), 0.5f);
+	TestNearlyEqual(TEXT("Above the range"), PuppetRetarget::RemapCurve(2.0f, 0.0f, 1.0f, 0.0f), 1.0f);
+	TestNearlyEqual(TEXT("Below the range"), PuppetRetarget::RemapCurve(-1.0f, 0.0f, 1.0f, 0.0f), 0.0f);
+	TestNearlyEqual(TEXT("A shorter range"), PuppetRetarget::RemapCurve(0.25f, 0.0f, 0.5f, 0.0f), 0.5f);
+	TestNearlyEqual(TEXT("A reversed range"), PuppetRetarget::RemapCurve(0.25f, 1.0f, 0.0f, 0.0f), 0.75f);
+	// A dead zone of half the range: a quarter of the way reads 0, three quarters reads halfway.
+	TestNearlyEqual(TEXT("Inside the dead zone"), PuppetRetarget::RemapCurve(0.25f, 0.0f, 1.0f, 0.5f), 0.0f);
+	TestNearlyEqual(TEXT("Past the dead zone"), PuppetRetarget::RemapCurve(0.75f, 0.0f, 1.0f, 0.5f), 0.5f);
+	TestNearlyEqual(TEXT("An empty range, below"), PuppetRetarget::RemapCurve(0.5f, 1.0f, 1.0f, 0.0f), 0.0f);
+	TestNearlyEqual(TEXT("An empty range, at it"), PuppetRetarget::RemapCurve(1.0f, 1.0f, 1.0f, 0.0f), 1.0f);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetSmoothTowardsTest, "Open3DPuppet.Math.SmoothTowards.TimeConstant", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetSmoothTowardsTest::RunTest(const FString& Parameters)
+{
+	TestNearlyEqual(TEXT("No smoothing"), PuppetRetarget::SmoothTowards(0.0f, 1.0f, 0.0f, 1.0f / 30.0f), 1.0f);
+	TestNearlyEqual(TEXT("One time constant covers 1 - 1/e"), PuppetRetarget::SmoothTowards(0.0f, 1.0f, 0.1f, 0.1f), 1.0f - FMath::Exp(-1.0f), 1.e-5f);
+	TestNearlyEqual(TEXT("Already there"), PuppetRetarget::SmoothTowards(2.0f, 2.0f, 0.1f, 0.03f), 2.0f);
+	return true;
+}
+
 #endif

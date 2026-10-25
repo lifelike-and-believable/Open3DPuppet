@@ -103,4 +103,14 @@ namespace PuppetRetarget
 		OutChain.Reset();
 		return false;
 	}
+
+	float RemapCurve(float Value, float InMin, float InMax, float DeadZone)
+	{
+		return 0.0f;
+	}
+
+	float SmoothTowards(float Current, float Target, float SmoothingTime, float DeltaTime)
+	{
+		return Current;
+	}
 }

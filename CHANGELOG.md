@@ -18,6 +18,13 @@ Until then changes collect under `## Unreleased`.
   anchoring that converges on the performer's position, for entrances such as the Wolf's run-in and the Eagle's fly-in (design overview §12,
   roadmap WP-3, WP-16, WP-17).
 
+### Fixed
+
+- **Two-Bone Limb weight** (found in WP-4): with a weight below 1, including every hand-off fade
+  (ADR 0008), the module blended the lower and end bones from where blending the upper bone had
+  moved them, not from their solved transforms, so the hand or foot landed in the wrong place. It
+  now reads every solved transform before blending. 1 new test (95).
+
 ### Added
 
 - **Digitigrade Leg module** (WP-4): a three-segment leg (thigh, shin, metatarsal, paw), such as

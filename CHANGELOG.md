@@ -18,6 +18,13 @@ Until then changes collect under `## Unreleased`.
   anchoring that converges on the performer's position, for entrances such as the Wolf's run-in and the Eagle's fly-in (design overview §12,
   roadmap WP-3, WP-16, WP-17).
 
+### Changed
+
+- **CI in one workflow with a status comment:** `ci.yml` (was `ue-build-test.yml`) now also runs
+  the source checks (was `plugin-checks.yml`), and its last job posts a new comment on the PR
+  each time it finishes, through rules-for-robots' `rfr-ci-status.yml`, so a session waiting to
+  merge on green is woken. Drafts get no comment.
+
 ### Fixed
 
 - **Two-Bone Limb weight** (found in WP-4): with a weight below 1, including every hand-off fade

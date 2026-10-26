@@ -1,0 +1,122 @@
+name: CI
+
+# Every check in one workflow (Build/README.md, "CI"), so the last job sees them all and posts
+# one result on the PR:
+# - cheap source checks on ubuntu-latest;
+# - the plugin built with RunUAT BuildPlugin on UE 5.8 (ADR 0001) and its automation tests run
+#   against that package, on the self-hosted [self-hosted, ue5, windows] runner that
+#   Open3DBroadcast also uses. The runner takes one job at a time, so the two repositories' UE
+#   jobs queue rather than build at once (AGENTS.md);
+# - a new comment on the PR naming the head commit and each job's result, which wakes a session
+#   waiting to merge on green.
+#
+# Drafts skip the UE job so unfinished work does not hold the shared runner, and get no status
+# comment, since theirs would not mean the build passed: mark the PR ready for review, or run
+# this workflow by hand on the branch (Actions > CI > Run workflow).
+
+on:
+  # Any base branch, so stacked PRs (one work package on top of another) are checked too.
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+  push:
+    branches: [ develop, main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  copyright-headers:
+    name: Copyright headers
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check copyright headers
+        run: python3 Build/Scripts/check-copyright-headers.py
+
+  runtime-editor-deps:
+    name: Runtime modules free of editor code
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Self-test the check
+        run: python3 Build/Scripts/check-runtime-editor-deps.py --self-test
+      - name: Check runtime modules
+        run: python3 Build/Scripts/check-runtime-editor-deps.py
+
+  doc-links:
+    name: Markdown links resolve
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Self-test the check
+        run: python3 Build/Scripts/check-markdown-links.py --self-test
+      - name: Check Markdown links
+        run: python3 Build/Scripts/check-markdown-links.py
+
+  build-and-test:
+    name: UE build and tests
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: [ self-hosted, ue5, windows ]
+    timeout-minutes: 120
+    env:
+      UE_ROOT: 'C:\Program Files\Epic Games\UE_5.8'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Warnings in plugin sources fail the build (rule FAB-004).
+      - name: Build the plugin (Win64)
+        shell: powershell
+        run: |
+          $pkg = Join-Path $env:RUNNER_TEMP 'PluginPackage'
+          & .\Build\Scripts\Build-Plugin.ps1 `
+            -UEPath "$env:UE_ROOT" `
+            -PluginUPluginPath (Join-Path $PWD 'ProjectSandbox\Plugins\Open3DPuppet\Open3DPuppet.uplugin') `
+            -OutDir $pkg `
+            -FailOnWarnings
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run the automation tests against the package
+        shell: powershell
+        run: |
+          & .\Build\Scripts\Run-AutomationTests.ps1 `
+            -UEPath "$env:UE_ROOT" `
+            -PluginPackageDir (Join-Path $env:RUNNER_TEMP 'PluginPackage') `
+            -ResultsDir 'Artifacts\Tests' `
+            -MinTestsKey plugin
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload the test report and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Open3DPuppet-Tests-${{ github.sha }}
+          path: |
+            Artifacts/Tests
+            ${{ runner.temp }}/PluginPackage-BuildPlugin.log
+          if-no-files-found: warn
+
+  status:
+    # A new comment on the PR each time CI finishes ("Open3DPuppet CI completed successfully!"
+    # when every job passed), naming the full head SHA. Still confirm the checks on the current
+    # head before merging: a later push makes the comment stale.
+    needs: [copyright-headers, runtime-editor-deps, doc-links, build-and-test]
+    if: always() && !github.event.pull_request.draft
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: lifelike-and-believable/rules-for-robots/.github/workflows/rfr-ci-status.yml@main
+    with:
+      results: ${{ toJSON(needs) }}
+      workflow-name: Open3DPuppet CI

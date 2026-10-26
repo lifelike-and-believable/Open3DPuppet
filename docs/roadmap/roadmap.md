@@ -18,7 +18,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-6 | Wing module (Eagle) | WP-12 | Done (#20) |
 | WP-16 | Hand-offs (ADR 0008): control blend per slot, `UPuppetPerformanceComponent` transitions with easing, root anchoring that converges on the performer's position (by time, while moving), manual re-centre | WP-1 | Done (#9) |
 | WP-17 | Hand-off triggers: Sequencer cue, operator input (input action, Remote Control), performer gesture | WP-16 | Planned |
-| WP-3 | Performer clips as a cast source (ADR 0008): AnimSequence playback (rate, loop, start, time pin), calibration from a frame, re-solving a recorded take. Not needed for the show's entrances, which are creature clips | WP-1 | Done |
+| WP-3 | Performer clips as a cast source (ADR 0008): AnimSequence playback (rate, loop, start, time pin), calibration from a frame, re-solving a recorded take. Not needed for the show's entrances, which are creature clips | WP-1 | Done (#21) |
 | WP-M1 | Wolf: puppet asset, profiles and calibration for the show's capture setup, run-in entrance (a clip authored on the Wolf) and hand-off; live session at the desk | WP-4, WP-5, WP-12, WP-13, WP-15, WP-16 | Planned |
 | WP-M2 | Eagle: puppet asset, profiles and calibration, fly-in entrance (a clip authored on the Eagle) and hand-off; live session at the desk | WP-5, WP-6, WP-12, WP-13, WP-15, WP-16 | Planned |
 | WP-2 | Calibration and profiles in the editor: calibrate button, save calibrations to assets, choice of reference pose, profile auto-mapping by name | WP-1 | Planned |

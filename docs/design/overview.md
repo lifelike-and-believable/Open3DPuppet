@@ -32,7 +32,7 @@ Three properties follow from that goal and shape every decision below:
 | Calibration | A performer's rest pose, captured once while the performer stands in the reference pose (T-pose by default), plus the rotation that aligns the performer's facing with the puppet's. |
 | Puppet | A `UPuppetAsset`: the target skeletal mesh, the performer slots, and an ordered list of modules. |
 | Performer slot | A named role in a puppet, for example `Body`, or `Front` and `Back` for a two-person quadruped. |
-| Cast | The binding of each performer slot to a Live Link subject (and optional profile), set on the AnimGraph node, so one puppet asset works with any performer. |
+| Cast | The binding of each performer slot to a Live Link subject or a performer clip (and optional profile), set on the AnimGraph node, so one puppet asset works with any performer. |
 | Puppet module | A `UPuppetModule`: configuration for one region of the puppet, and a factory for the solver that drives it. |
 | Solver | The per-instance object a module creates. It caches bone indices and any state (springs, filters) and runs every frame. |
 
@@ -142,7 +142,10 @@ Live: any Live Link source, including Open3DBroadcast's receiver.
 Recorded: a cast entry can name an AnimSequence of human motion instead of a Live Link subject
 (ADR 0008, WP-3), so a recorded take or mocap delivered as FBX drives the puppet through the same
 modules as a live performer, and can be solved again later with different module settings, which
-matters most for creatures, where the mapping is usually tuned after the shoot. Takes recorded as
+matters most for creatures, where the mapping is usually tuned after the shoot. The clip plays
+at a rate, loops or holds, or shows a set time so Sequencer can scrub it through the Cast pin; it
+is calibrated from one of its frames (the first by default, for a take that starts in the T-pose)
+or its skeleton's reference pose. Only its bones are read, not its curves. Takes recorded as
 Live Link subjects with Take Recorder play back into Live Link from Sequencer
 (**needs-verification** on UE 5.8; ADR 0003 open question 2). The solved puppet pose can be
 recorded too, as an ordinary animation. Section 12 covers clips authored on the creature itself,

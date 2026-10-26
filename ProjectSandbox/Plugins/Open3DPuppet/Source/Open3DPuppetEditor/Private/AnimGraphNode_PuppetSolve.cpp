@@ -13,7 +13,7 @@ FText UAnimGraphNode_PuppetSolve::GetNodeTitle(ENodeTitleType::Type TitleType) c
 
 FText UAnimGraphNode_PuppetSolve::GetTooltipText() const
 {
-	return LOCTEXT("PuppetSolveTooltip", "Drives the mesh from Live Link performers through a puppet's modules. Bones no module writes pass through from Source.");
+	return LOCTEXT("PuppetSolveTooltip", "Drives the mesh from performers (Live Link subjects or recorded takes) through a puppet's modules. Bones no module writes pass through from Source.");
 }
 
 FText UAnimGraphNode_PuppetSolve::GetMenuCategory() const

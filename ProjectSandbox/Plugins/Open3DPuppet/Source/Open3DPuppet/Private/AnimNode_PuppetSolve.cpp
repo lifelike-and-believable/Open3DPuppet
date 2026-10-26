@@ -4,6 +4,7 @@
 
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimInstanceProxy.h"
+#include "Animation/AnimSequence.h"
 #include "Engine/Engine.h"
 #include "GameFramework/Actor.h"
 #include "Open3DPuppetLog.h"
@@ -38,6 +39,10 @@ void FAnimNode_PuppetSolve::Initialize_AnyThread(const FAnimationInitializeConte
 	{
 		Instance = MakeShared<FPuppetInstance>();
 	}
+	for (FCastClip& Clip : CastClips)
+	{
+		Clip.bRestart = true;
+	}
 }
 
 void FAnimNode_PuppetSolve::PreUpdate(const UAnimInstance* InAnimInstance)
@@ -52,17 +57,34 @@ void FAnimNode_PuppetSolve::PreUpdate(const UAnimInstance* InAnimInstance)
 		bNeedsInitialize = true;
 	}
 
-	// Cast can change through a pin; it is read here on the game thread for the calibrations only.
+	// Cast can change through a pin; it is read here on the game thread for the calibrations and
+	// to bind performer clips.
 	CastCalibrations.SetNum(Cast.Num());
+	CastClips.SetNum(Cast.Num());
+	BoundClips.SetNum(Cast.Num());
 	const UPuppetCalibrationSubsystem* Calibrations = GEngine ? GEngine->GetEngineSubsystem<UPuppetCalibrationSubsystem>() : nullptr;
 	for (int32 Index = 0; Index < Cast.Num(); ++Index)
 	{
+		if (Cast[Index].Source == EPuppetCastSource::Animation)
+		{
+			UpdateClip(Index);
+			continue;
+		}
+		if (CastClips[Index].Requested)
+		{
+			FString Unused;
+			CastClips[Index].Sampler.SetSequence(nullptr, Unused);
+			CastClips[Index].Requested = nullptr;
+			BoundClips[Index] = nullptr;
+		}
+
 		FCastCalibration& Entry = CastCalibrations[Index];
 		const FName Subject = Cast[Index].Subject.Name;
 		int32 Revision = 0;
 		const FPuppetPerformerCalibration* Calibration = Calibrations ? Calibrations->FindCalibration(Subject, Revision) : nullptr;
-		if (Subject != Entry.Subject || Revision != Entry.Revision)
+		if (Entry.Source != EPuppetCastSource::LiveLink || Subject != Entry.Subject || Revision != Entry.Revision)
 		{
+			Entry.Source = EPuppetCastSource::LiveLink;
 			Entry.Subject = Subject;
 			Entry.Revision = Revision;
 			Entry.bHasCalibration = Calibration != nullptr;
@@ -84,6 +106,43 @@ void FAnimNode_PuppetSolve::PreUpdate(const UAnimInstance* InAnimInstance)
 	}
 }
 
+void FAnimNode_PuppetSolve::UpdateClip(int32 Index)
+{
+	const FPuppetCastEntry& Entry = Cast[Index];
+	FCastClip& Clip = CastClips[Index];
+	FCastCalibration& Calibration = CastCalibrations[Index];
+
+	const bool bSequenceChanged = Entry.Animation != Clip.Requested;
+	if (bSequenceChanged)
+	{
+		Clip.Requested = Entry.Animation;
+		BoundClips[Index] = Entry.Animation;
+		Clip.bRestart = true;
+		FString Error;
+		if (!Clip.Sampler.SetSequence(Entry.Animation, Error))
+		{
+			UE_LOG(LogOpen3DPuppet, Warning, TEXT("Puppet %s, slot %s: animation %s cannot play as a performer: %s."),
+				*GetNameSafe(BoundPuppet), *Entry.Slot.ToString(), *GetNameSafe(Entry.Animation), *Error);
+		}
+		// Sized here so sampling on the worker thread does not allocate.
+		Clip.Local.SetNumUninitialized(Clip.Sampler.GetBoneNames().Num());
+	}
+
+	if (bSequenceChanged || Calibration.Source != EPuppetCastSource::Animation || Entry.ClipCalibration != Clip.CalibrationMode
+		|| Entry.CalibrationTime != Clip.CalibrationTime || !Entry.CalibrationAlignment.Equals(Clip.CalibrationAlignment, 0.0))
+	{
+		Clip.CalibrationMode = Entry.ClipCalibration;
+		Clip.CalibrationTime = Entry.CalibrationTime;
+		Clip.CalibrationAlignment = Entry.CalibrationAlignment;
+		Calibration.Source = EPuppetCastSource::Animation;
+		Calibration.Subject = NAME_None;
+		Calibration.Revision = 0;
+		Calibration.bHasCalibration = Clip.Sampler.CaptureCalibration(Entry.ClipCalibration == EPuppetClipCalibration::ReferencePose,
+			Entry.CalibrationTime, Entry.CalibrationAlignment, Calibration.Calibration);
+		Calibration.bDirty = true;
+	}
+}
+
 void FAnimNode_PuppetSolve::CacheBones_AnyThread(const FAnimationCacheBonesContext& Context)
 {
 	FAnimNode_Base::CacheBones_AnyThread(Context);
@@ -102,6 +161,30 @@ void FAnimNode_PuppetSolve::Update_AnyThread(const FAnimationUpdateContext& Cont
 	Source.Update(Context);
 	GetEvaluateGraphExposedInputs().Execute(Context);
 	AccumulatedDeltaTime += Context.GetDeltaTime();
+
+	for (int32 Index = 0; Index < Cast.Num() && Index < CastClips.Num(); ++Index)
+	{
+		const FPuppetCastEntry& Entry = Cast[Index];
+		FCastClip& Clip = CastClips[Index];
+		if (Entry.Source != EPuppetCastSource::Animation || !Clip.Sampler.IsBound())
+		{
+			continue;
+		}
+		const double Length = Clip.Sampler.GetPlayLength();
+		if (Entry.bUseTime)
+		{
+			Clip.Time = FPuppetClipSampler::PlaceTime(Entry.Time, Entry.bLoop, Length);
+		}
+		else if (Clip.bRestart)
+		{
+			Clip.Time = FPuppetClipSampler::PlaceTime(Entry.StartTime, Entry.bLoop, Length);
+		}
+		else
+		{
+			Clip.Time = FPuppetClipSampler::AdvanceTime(Clip.Time, Context.GetDeltaTime(), Entry.PlayRate, Entry.bLoop, Length);
+		}
+		Clip.bRestart = false;
+	}
 }
 
 void FAnimNode_PuppetSolve::Evaluate_AnyThread(FPoseContext& Output)
@@ -199,6 +282,29 @@ void FAnimNode_PuppetSolve::ReadPerformers()
 			{
 				Instance->ClearCalibration(Slot);
 			}
+		}
+
+		if (Entry.Source == EPuppetCastSource::Animation)
+		{
+			FCastClip& Clip = CastClips[Index];
+			if (!Clip.Sampler.Sample(Clip.Time, Clip.Local))
+			{
+				continue;
+			}
+			FString Error;
+			if (Instance->SetPerformerSkeleton(Slot, Clip.Sampler.GetBoneNames(), Clip.Sampler.GetParents(), Entry.Profile, Error))
+			{
+				Instance->SetPerformerTransforms(Slot, Clip.Local);
+			}
+			else
+			{
+				UE_CLOG(!Error.IsEmpty(), LogOpen3DPuppet, Warning, TEXT("Puppet %s, slot %s: animation %s has an invalid skeleton: %s"),
+					*BoundPuppet->GetName(), *Entry.Slot.ToString(), *GetNameSafe(Clip.Sampler.GetSequence()), *Error);
+			}
+			// A clip has no curves; none stay from a Live Link subject that played the slot before.
+			Instance->SetPerformerCurveNames(Slot, TConstArrayView<FName>(), Entry.Profile);
+			Instance->SetPerformerCurveValues(Slot, TConstArrayView<float>());
+			continue;
 		}
 
 		// No frame this time: the slot keeps the performer's last pose and curves.

@@ -84,6 +84,27 @@ bool FPuppetClipSkeletonTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetClipRetargetModeTest, "Open3DPuppet.Clips.Sampler.KeepsTheTakesTranslationsWhateverTheRetargetMode", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetClipRetargetModeTest::RunTest(const FString& Parameters)
+{
+	// Mocap skeletons often set bones to Skeleton translation retargeting, which takes a bone's
+	// translation from the reference pose; a performer clip must still give the take's own.
+	const TStrongObjectPtr<USkeleton> Skeleton = PuppetTests::MakeSkeleton(PuppetTests::Biped());
+	const int32 Pelvis = Skeleton->GetReferenceSkeleton().FindBoneIndex(TEXT("pelvis"));
+	Skeleton->SetBoneTranslationRetargetingMode(Pelvis, EBoneTranslationRetargetingMode::Skeleton);
+	const TStrongObjectPtr<UAnimSequence> Clip = PuppetTests::MakeClip(*Skeleton, PuppetClipTests::Take(FVector(10, 0, 100)));
+
+	FPuppetClipSampler Sampler;
+	FString Error;
+	TArray<FTransform> Local;
+	if (!TestTrue(TEXT("Binds"), Sampler.SetSequence(Clip.Get(), Error)) || !TestTrue(TEXT("Samples"), Sampler.Sample(PuppetClipTests::KeyTime, Local)))
+	{
+		return false;
+	}
+	TestEqual(TEXT("The take's pelvis"), Local[Pelvis].GetTranslation(), FVector(10, 0, 100), 1.e-2f);
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetClipRejectTest, "Open3DPuppet.Clips.Sampler.RejectsAdditiveAndUnbinds", OPEN3DPUPPET_TEST_FLAGS)
 bool FPuppetClipRejectTest::RunTest(const FString& Parameters)
 {

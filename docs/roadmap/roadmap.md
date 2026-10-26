@@ -18,7 +18,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-6 | Wing module (Eagle) | WP-12 | Done (#20) |
 | WP-16 | Hand-offs (ADR 0008): control blend per slot, `UPuppetPerformanceComponent` transitions with easing, root anchoring that converges on the performer's position (by time, while moving), manual re-centre | WP-1 | Done (#9) |
 | WP-17 | Hand-off triggers: Sequencer cue, operator input (input action, Remote Control), performer gesture | WP-16 | Planned |
-| WP-3 | Performer clips as a cast source (ADR 0008): AnimSequence playback (rate, loop, start, time pin), calibration from a frame, re-solving a recorded take. Not needed for the show's entrances, which are creature clips | WP-1 | Planned |
+| WP-3 | Performer clips as a cast source (ADR 0008): AnimSequence playback (rate, loop, start, time pin), calibration from a frame, re-solving a recorded take. Not needed for the show's entrances, which are creature clips | WP-1 | Done |
 | WP-M1 | Wolf: puppet asset, profiles and calibration for the show's capture setup, run-in entrance (a clip authored on the Wolf) and hand-off; live session at the desk | WP-4, WP-5, WP-12, WP-13, WP-15, WP-16 | Planned |
 | WP-M2 | Eagle: puppet asset, profiles and calibration, fly-in entrance (a clip authored on the Eagle) and hand-off; live session at the desk | WP-5, WP-6, WP-12, WP-13, WP-15, WP-16 | Planned |
 | WP-2 | Calibration and profiles in the editor: calibrate button, save calibrations to assets, choice of reference pose, profile auto-mapping by name | WP-1 | Planned |
@@ -49,6 +49,9 @@ Items that need a person at the desk or a maintainer decision:
   module, and its `curl_*` curves reading 0 flat and about 1 in a fist, and the Wolf's paw toes once the mesh exists; tune the default gains.
 - Physics assets for the Wolf and the Eagle, before WP-15 (ADR 0007; none exist yet).
 - ADR 0008: which hand-off triggers the show uses (question 1).
+- WP-3 at the desk: a recorded take (an FBX mocap take on a mannequin skeleton) cast into the
+  Body slot of a puppet, calibrated from its first frame, playing, looping and scrubbed from
+  Sequencer through the Cast pin, then handed to a live performer with a transition.
 - WP-16 at the desk: a creature clip into a performer hand-off and back, and a manual re-centre,
   with a live performer; tune the default convergence time and moving speed.
 - WP-11 at the desk: Live Link Face (ARKit curves) cast into a curve-only slot, its neutral

@@ -27,6 +27,19 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Performer clips as a cast source** (WP-3, ADR 0008): a cast entry's `Source` is a Live Link
+  subject or an `Animation`, an AnimSequence of human motion on its own skeleton (a recorded take,
+  mocap delivered as FBX), which the Puppet Solve node samples on the animation worker thread and
+  gives the slot as a Live Link subject's bones would, so profiles, calibration and every module
+  work unchanged and a take can be solved again with different module settings. Playback has
+  `PlayRate` (negative plays backwards), `bLoop` and `StartTime`; `bUseTime` with `Time` shows a
+  set time instead, so Sequencer or a Blueprint can scrub the take through the Cast pin. The clip
+  is calibrated from a frame (`CalibrationTime`, the first by default) or its skeleton's reference
+  pose, with `CalibrationAlignment`. Bones only: the clip's curves are not read. Bones keep the
+  take's own translations whatever the skeleton's translation retargeting modes; the sequence's
+  Force Root Lock still pins its root. Additive sequences are rejected with a warning.
+  `FPuppetClipSampler` does the sampling; the test harness builds skeletons and AnimSequences in
+  code. 6 new tests (132).
 - **Wing module** (WP-6): the Eagle's wings from the performer's arms. The wing root flaps with the
   upper arm relative to the chest (`FlapAmplification`); the elbow bend, through
   `FoldStartAngle` to `FoldEndAngle`, folds the forearm and hand towards `ForearmFold` and

@@ -8,6 +8,8 @@
 #include "UObject/StrongObjectPtr.h"
 
 class FAutomationTestBase;
+class UAnimSequence;
+class USkeleton;
 
 // Fixtures for solver tests (ADR 0005): skeletons built in code, and performers that carry the
 // same data a Live Link Animation-role subject does (bone names, parent indices, local transforms).
@@ -62,6 +64,16 @@ namespace PuppetTests
 	TArray<FBone> Tail();
 
 	FReferenceSkeleton MakeReferenceSkeleton(TConstArrayView<FBone> Bones);
+
+	/** A skeleton asset with Bones, as a performer clip's (ADR 0008). */
+	TStrongObjectPtr<USkeleton> MakeSkeleton(TConstArrayView<FBone> Bones);
+
+	/**
+	 * A sequence on Skeleton at 30 frames per second, one key per entry of Keys (at least two), each
+	 * a local transform per skeleton bone; Keys[1] is at 1/30 s. Built through the editor's animation
+	 * data controller, as the engine's animation recorder builds one.
+	 */
+	TStrongObjectPtr<UAnimSequence> MakeClip(USkeleton& Skeleton, TConstArrayView<TArray<FTransform>> Keys);
 
 	/** A performer as Live Link delivers it, starting in its rest pose: bones, curves, or both. */
 	struct FPerformer

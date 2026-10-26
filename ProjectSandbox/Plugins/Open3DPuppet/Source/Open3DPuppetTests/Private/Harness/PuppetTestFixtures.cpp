@@ -2,6 +2,10 @@
 
 #include "PuppetTestFixtures.h"
 
+#include "Animation/AnimData/IAnimationDataController.h"
+#include "Animation/AnimSequence.h"
+#include "Animation/Skeleton.h"
+#include "Engine/SkeletalMesh.h"
 #include "Misc/AutomationTest.h"
 #include "PuppetAsset.h"
 #include "PuppetPerformerCalibration.h"
@@ -160,6 +164,52 @@ namespace PuppetTests
 			}
 		}
 		return RefSkeleton;
+	}
+
+	TStrongObjectPtr<USkeleton> MakeSkeleton(TConstArrayView<FBone> Bones)
+	{
+		// A skeleton takes its bones from a mesh; the mesh needs nothing but the reference skeleton.
+		USkeletalMesh* Mesh = NewObject<USkeletalMesh>();
+		Mesh->SetRefSkeleton(MakeReferenceSkeleton(Bones));
+		TStrongObjectPtr<USkeleton> Skeleton(NewObject<USkeleton>());
+		verify(Skeleton->MergeAllBonesToBoneTree(Mesh, false));
+		return Skeleton;
+	}
+
+	TStrongObjectPtr<UAnimSequence> MakeClip(USkeleton& Skeleton, TConstArrayView<TArray<FTransform>> Keys)
+	{
+		check(Keys.Num() >= 2);
+		TStrongObjectPtr<UAnimSequence> Clip(NewObject<UAnimSequence>());
+		Clip->SetSkeleton(&Skeleton);
+
+		// As FAnimationRecorder builds a sequence (Engine/Source/Editor/SequenceRecorder/Private/AnimationRecorder.cpp).
+		constexpr bool bTransact = false;
+		IAnimationDataController& Controller = Clip->GetController();
+		Controller.SetModel(Clip->GetDataModelInterface());
+		Controller.OpenBracket(FText::FromString(TEXT("Test clip")), bTransact);
+		Controller.InitializeModel();
+		Controller.SetFrameRate(FFrameRate(30, 1), bTransact);
+		Controller.SetNumberOfFrames(FFrameNumber(Keys.Num() - 1), bTransact);
+		const FReferenceSkeleton& RefSkeleton = Skeleton.GetReferenceSkeleton();
+		for (int32 Bone = 0; Bone < RefSkeleton.GetNum(); ++Bone)
+		{
+			TArray<FVector> Positions;
+			TArray<FQuat> Rotations;
+			TArray<FVector> Scales;
+			for (const TArray<FTransform>& Key : Keys)
+			{
+				Positions.Add(Key[Bone].GetTranslation());
+				Rotations.Add(Key[Bone].GetRotation());
+				Scales.Add(Key[Bone].GetScale3D());
+			}
+			const FName BoneName = RefSkeleton.GetBoneName(Bone);
+			Controller.AddBoneCurve(BoneName, bTransact);
+			Controller.SetBoneTrackKeys(BoneName, Positions, Rotations, Scales, bTransact);
+		}
+		Controller.NotifyPopulated();
+		Controller.CloseBracket(bTransact);
+		Clip->PostEditChange();
+		return Clip;
 	}
 
 	FPerformer::FPerformer(TConstArrayView<FBone> Bones)

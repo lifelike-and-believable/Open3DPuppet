@@ -20,7 +20,8 @@ the code and docs, not in a running editor, so menu paths may differ slightly.
    - the UE5 mannequin (`SKM_Manny` and its skeleton);
    - two or three mannequin animations, at least one that travels (a walk or run) and one in
      place (an idle).
-3. Create the puppet asset (Content Browser > Miscellaneous > Data Asset > **Puppet Asset**),
+3. Create the puppet asset (Content Browser > Add > Puppet > **Puppet Asset**; the Puppet
+   category also offers Puppet Performer Profile and Puppet Calibration Asset),
    named `PA_Test`.
    - Set Target Mesh to `SKM_Manny`.
    - Add modules: **Root**; **Chain** (`spine_01` to `spine_05`); **Chain** (`neck_01` to

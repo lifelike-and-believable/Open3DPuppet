@@ -20,6 +20,11 @@ Until then changes collect under `## Unreleased`.
 
 ### Changed
 
+- **The plugin's asset types are in the Add menu** (maintainer, 2026-10-26): Content Browser >
+  Add > Puppet offers Puppet Asset, Puppet Performer Profile and Puppet Calibration Asset, each
+  with its own factory and asset definition (name, colour, category), instead of a generic Data
+  Asset whose class the user then picks. A test finds every data asset class in the plugin and
+  fails on one without a factory and definition. 1 new test (161).
 - **Live module tuning** (WP-8): a number edited in a module (Weight, Amplification, Stiffness, a
   digit's gain), on the module or through the puppet asset's Modules, applies on the next frame
   without binding the puppet again (`PuppetEditing::IsLiveEdit`). Before, every module edit

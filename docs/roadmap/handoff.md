@@ -83,7 +83,7 @@ These are not obvious from the rest of the repository's docs:
   commercial assets and the repository is public. They stay untracked, and tests never load
   `/Game/...` (CI does not have them); tests build the skeletons they need in code.
 - **Reading assets without the editor UI:** a Python script run by
-  `UnrealEditor-Cmd.exe <uproject> -run=pythonscript -script=<file> -EnablePlugins=PythonScriptPlugin -unattended -nullrhi`
+  `UnrealEditor-Cmd.exe <uproject> -run=pythonscript -script=<file> -EnablePlugins=PythonScriptPlugin -unattended -nop4 -nosplash -NoSound -stdout`
   can list a mesh's bones (`unreal.AnimPoseExtensions` on the skeleton's reference pose), morph
   targets and a physics asset's constraints (`get_constraints`, then
   `ConstraintInstanceBlueprintLibrary.get_attached_body_names`), saving nothing.

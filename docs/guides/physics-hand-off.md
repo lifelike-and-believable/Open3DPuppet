@@ -46,8 +46,12 @@ Live Link / clips ──► Puppet Solve ──► Rigid Body With Control ─�
      puppeteer asks for nothing. The regions scale these.
 3. Connect **Make Physics Region Parameters** to the node's **Control And Modifier Parameters**
    pin: **Anim Instance** is Self, **Regions** lists the limb names that have a Physics Region
-   module. The function is thread safe, so it runs on the animation worker threads with the
-   node.
+   module. The function is marked thread safe, so the AnimGraph can call it on the animation
+   worker threads when the animation blueprint uses multi-threaded update.
+   - Spell each region exactly as its limb. The node logs a warning every frame for a name that
+     matches no limb or control (`SetRecordParameters: Failed to find control with name ...`,
+     `Engine/Plugins/Animation/PhysicsControl/Source/PhysicsControl/Private/RigidBodyWithControl.cpp:96`
+     in UE 5.8.4), so a typo floods the log.
 
 The node reads the curves the animation instance had after its last evaluation, so the physics
 follows a change of weight one frame late.
@@ -129,4 +133,6 @@ Needs a person at the desk:
   Make Physics Region Parameters reads (`UAnimInstance::GetCurveValueWithDefault`).
 - The Wolf and the Eagle on Rigid Body With Control with these limbs: stable at rest, a region
   going limp and recovering as its curve plays, and contact with the ground.
-- The cost of the node and of building the parameters every frame, in Unreal Insights.
+- The cost of the node and of building the parameters every frame, in Unreal Insights. The
+  function builds each region's curve names and a new parameter array on every call.
+- Which thread the function runs on in the Wolf's and Eagle's animation blueprints.

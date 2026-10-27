@@ -76,7 +76,6 @@ namespace PuppetModuleControlRig
 			{
 				FInput& Input = Inputs.AddDefaulted_GetRef();
 				Input.Kind = Entry.Input;
-				Input.Scale = Entry.Scale;
 				if (Entry.Input == EPuppetControlRigInput::Curve)
 				{
 					Input.Source = Context.Performer.FindCurve(Entry.PerformerCurve);
@@ -191,19 +190,22 @@ namespace PuppetModuleControlRig
 					ERigTransformType::CurrentGlobal, false);
 			}
 
-			for (const FInput& Input : Inputs)
+			for (int32 Index = 0; Index < Inputs.Num(); ++Index)
 			{
+				const FInput& Input = Inputs[Index];
+				// Read each frame, so tuning applies live; any change to the list binds again, so the indices match.
+				const float Scale = Settings.Inputs[Index].Scale;
 				FRigControlElement* Control = Hierarchy->Get<FRigControlElement>(Input.Element);
 				if (Input.Kind == EPuppetControlRigInput::Curve)
 				{
-					Hierarchy->SetControlValue(Control, FRigControlValue::Make<float>(Context.GetCurveDelta(Input.Source) * Input.Scale), ERigControlValueType::Current);
+					Hierarchy->SetControlValue(Control, FRigControlValue::Make<float>(Context.GetCurveDelta(Input.Source) * Scale), ERigControlValueType::Current);
 					continue;
 				}
 				FTransform Target = Input.Initial;
 				Target.SetRotation((Context.GetJointDelta(Input.Source) * Input.Initial.GetRotation()).GetNormalized());
 				if (Input.Kind == EPuppetControlRigInput::JointTransform)
 				{
-					Target.AddToTranslation(Context.GetJointTranslation(Input.Source) * Context.RootScale * Input.Scale);
+					Target.AddToTranslation(Context.GetJointTranslation(Input.Source) * Context.RootScale * Scale);
 				}
 				Hierarchy->SetTransform(Control, Target, ERigTransformType::CurrentGlobal, false);
 			}
@@ -238,7 +240,6 @@ namespace PuppetModuleControlRig
 			int32 Source = INDEX_NONE;
 			/** The control, by hierarchy element index. */
 			int32 Element = INDEX_NONE;
-			float Scale = 1.0f;
 			/** The control's global transform after construction. */
 			FTransform Initial;
 		};

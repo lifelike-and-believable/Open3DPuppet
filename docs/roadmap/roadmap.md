@@ -40,7 +40,8 @@ Items that need a person at the desk or a maintainer decision:
   curves as outputs).
 - WP-10 at the desk: a Control Rig made in the Control Rig editor on a puppet's mesh, driven
   through the Control Rig module by a live performer (only a native rig built in code has been
-  run through it); profile the rig's forward solve with Unreal Insights.
+  run through it): pick the rig in the module's details, then drive it; profile the rig's
+  forward solve with Unreal Insights.
 - WP-6 at the desk: a performer flapping and folding the Eagle's wings; set the fold poses and
   feather fold for the mesh, and tune the fold range and flap amplification.
 - WP-5 at the desk: the Wolf's tail, ears and mane swinging as the performer walks, turns and

@@ -29,6 +29,9 @@ What is true today (`develop` at `d50cbaa`, UE 5.8.4 sources):
   `CreateInstance` (`Engine/Plugins/Animation/ControlRig/Source/ControlRig/Public/ControlRigAssetReference.h:20`).
   The engine node's property is this struct with `DisallowCreateNew`
   (`Engine/Plugins/Animation/ControlRig/Source/ControlRig/Public/AnimNode_ControlRig.h:61`).
+  The Control Rig editor registers its picker for the struct globally, not only for that node,
+  so a module property of this type gets the same picker
+  (`Engine/Plugins/Animation/ControlRig/Source/ControlRigEditor/Private/ControlRigEditorModule.cpp:202`).
 - A native rig (a C++ `UControlRig` subclass with its own `Execute_Internal`) runs without a VM:
   the engine's FK Control Rig is one
   (`Engine/Plugins/Animation/ControlRig/Source/ControlRig/Public/Rigs/FKControlRig.h:41`).
@@ -126,7 +129,10 @@ What is true today (`develop` at `d50cbaa`, UE 5.8.4 sources):
    frame. A rig whose construction depends on per-frame data would need the construction event
    again; the adapter does not run it again until the module binds again.
 4. needs-verification: the adapter was tested with a native rig built in code. A rig asset made
-   in the Control Rig editor has not been run through it; that needs a person at the desk.
+   in the Control Rig editor has not been run through it; that needs a person at the desk. The
+   adapter runs the Forwards Solve event only (`Execute`), where the engine node runs the rig's
+   event queue (`Evaluate_AnyThread`), which also runs the Pre and Post Forwards Solve events: a
+   rig that uses those would not run them here.
 5. ADR 0002 question 2 (the Modular Control Rig and IK Retargeter assessments, from the 5.7
    design): this ADR read the 5.8 Control Rig runtime but not Modular Control Rig's assembly
    tools or the IK Retargeter, so it does not close that question.

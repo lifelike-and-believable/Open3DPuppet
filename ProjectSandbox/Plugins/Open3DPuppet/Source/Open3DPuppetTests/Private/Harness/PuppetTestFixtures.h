@@ -9,6 +9,7 @@
 
 class FAutomationTestBase;
 class UAnimSequence;
+class USkeletalMesh;
 class USkeleton;
 
 // Fixtures for solver tests (ADR 0005): skeletons built in code, and performers that carry the
@@ -64,6 +65,9 @@ namespace PuppetTests
 	TArray<FBone> Tail();
 
 	FReferenceSkeleton MakeReferenceSkeleton(TConstArrayView<FBone> Bones);
+
+	/** A skeletal mesh with Bones and nothing else (no render data), as a puppet asset's Target Mesh. */
+	TStrongObjectPtr<USkeletalMesh> MakeMesh(TConstArrayView<FBone> Bones);
 
 	/** A skeleton asset with Bones, as a performer clip's (ADR 0008). */
 	TStrongObjectPtr<USkeleton> MakeSkeleton(TConstArrayView<FBone> Bones);

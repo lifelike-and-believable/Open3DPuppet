@@ -55,6 +55,11 @@ namespace PuppetNaming
 		}
 	}
 
+	TArray<FName> CanonicalJoints()
+	{
+		return {};
+	}
+
 	FMatch Match(TConstArrayView<FName> SourceBones, TConstArrayView<int32> SourceParents, TConstArrayView<FPuppetNamingScheme> Schemes)
 	{
 		TArray<FString> Keys;

@@ -41,6 +41,16 @@ void UPuppetPerformerProfile::MapFromLiveLinkSubject()
 	MapBones(Data.BoneNames, Data.BoneParents, GetDefault<UPuppetSettings>()->NamingSchemes);
 }
 
+TArray<FName> UPuppetPerformerProfile::GetCanonicalJointOptions() const
+{
+	return {};
+}
+
+TArray<FName> UPuppetPerformerProfile::GetSourceBoneOptions() const
+{
+	return {};
+}
+
 bool UPuppetPerformerProfile::MapBones(TConstArrayView<FName> SourceBones, TConstArrayView<int32> SourceParents, TConstArrayView<FPuppetNamingScheme> Schemes)
 {
 	const PuppetNaming::FMatch Match = PuppetNaming::Match(SourceBones, SourceParents, Schemes);

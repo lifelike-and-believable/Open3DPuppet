@@ -59,6 +59,14 @@ public:
 	UPROPERTY(EditAnywhere, Instanced, BlueprintReadOnly, Category = "Modules")
 	TArray<TObjectPtr<UPuppetModule>> Modules;
 
+	/** Target Mesh's bone names, for the bone pickers in the details panel; the canonical joint names when no mesh is set. */
+	UFUNCTION()
+	TArray<FName> GetPuppetBoneOptions() const;
+
+	/** The performer slots, for the slot pickers in the details panel. */
+	UFUNCTION()
+	TArray<FName> GetPerformerSlotOptions() const;
+
 	/** Changes whenever the asset or one of its modules is edited. Game thread only. */
 	int32 GetRevision() const { return Revision; }
 

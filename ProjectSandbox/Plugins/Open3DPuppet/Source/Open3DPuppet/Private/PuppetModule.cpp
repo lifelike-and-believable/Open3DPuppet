@@ -45,6 +45,21 @@ FVector FPuppetSolveContext::GetJointTranslation(int32 Joint) const
 	return HandoffOffset.GetRotation().RotateVector(Alignment.RotateVector(Performer.GetComponent(Joint).GetTranslation() - Calibration.RestComponent[Joint].GetTranslation()));
 }
 
+TArray<FName> UPuppetModule::GetPuppetBoneOptions() const
+{
+	return {};
+}
+
+TArray<FName> UPuppetModule::GetPerformerJointOptions() const
+{
+	return {};
+}
+
+TArray<FName> UPuppetModule::GetPerformerSlotOptions() const
+{
+	return {};
+}
+
 #if WITH_EDITOR
 void UPuppetModule::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {

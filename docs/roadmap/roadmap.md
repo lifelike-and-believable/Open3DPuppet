@@ -23,7 +23,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-M2 | Eagle: puppet asset, profiles and calibration, fly-in entrance (a clip authored on the Eagle) and hand-off; live session at the desk | WP-5, WP-6, WP-12, WP-13, WP-15, WP-16 | Planned |
 | WP-2 | Calibration and profiles in the editor: calibrate button, save calibrations to assets, choice of reference pose, profile auto-mapping by name | WP-1 | Done (#24, #25, #26) |
 | WP-7 | Prop-driven module (Live Link Transform role) and a multi-performer sample | WP-1 | Done (#28) |
-| WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | In progress (bone pickers: #PRNUM) |
+| WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | In progress (bone pickers: #29) |
 | WP-9 | Fab readiness as Open3DBroadcast: packaging script (`fab-package.py`), exclusion lists, icon | WP-1 | Planned |
 | WP-10 | Control Rig adapter module | WP-1 | Planned |
 

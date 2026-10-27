@@ -24,8 +24,7 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
   test plan (#27), WP-7 (Prop Chain and the multi-performer sample, #28), WP-8 (bone pickers
   #29, setup assistant #30, live tuning and slot status #31, the Puppet Session panel #33) and
   the asset types in the Add menu (#32), and WP-9 (the Fab source zip, its checks and the
-  plugin icon, #34), and WP-10 (the Control Rig adapter, #35; ADR 0010 is proposed, awaiting
-  sign-off).
+  plugin icon, #34), and WP-10 (the Control Rig adapter, #35; ADR 0010).
 - 185 automation tests, all passing on the self-hosted runner.
 - Every module the Wolf and the Eagle need exists, except the Tier 2 physics hand-off (WP-15).
 
@@ -33,8 +32,7 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 
 In this order unless the maintainer says otherwise:
 
-1. **ADR 0010 sign-off** (the Control Rig adapter's interface) and its open questions. Every
-   remaining work package is blocked:
+1. **Nothing is unblocked.** Every remaining work package waits on the maintainer:
    - WP-15 waits on physics assets for the Wolf and the Eagle;
    - WP-17 waits on which hand-off triggers the show uses (ADR 0008 question 1);
    - WP-M1 and WP-M2 (the Wolf and the Eagle) wait on their meshes.
@@ -50,7 +48,6 @@ The roadmap's [Next](roadmap.md#next) section lists them. In short:
 - Which hand-off triggers the show uses (ADR 0008 question 1, WP-17).
 - The Wolf and Eagle meshes, their morph targets, and how each is performed.
 - Physics assets for the Wolf and the Eagle, before WP-15.
-- ADR 0010 (Control Rig adapter): sign-off and its open questions.
 
 ## Working conventions learned
 

@@ -1,6 +1,6 @@
 # 0010: Control Rig adapter
 
-- **Status:** Proposed (pending maintainer sign-off)
+- **Status:** Accepted (maintainer sign-off 2026-10-27)
 - **Date:** 2026-10-27
 - **Related:** [ADR 0002](0002-puppet-module-architecture.md) (the module contract; Consequences name the adapter as the route for artists who would rather not write C++), [ADR 0003](0003-performer-input-and-calibration.md) (canonical joints, calibration), [ADR 0006](0006-fingers-face-and-curves.md) (curves), roadmap WP-10
 

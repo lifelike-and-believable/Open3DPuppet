@@ -16,7 +16,8 @@
 	"Installed": false,
 	"Plugins": [
 		{ "Name": "LiveLink", "Enabled": true },
-		{ "Name": "ControlRig", "Enabled": true }
+		{ "Name": "ControlRig", "Enabled": true },
+		{ "Name": "PhysicsControl", "Enabled": true }
 	],
 	"SupportedTargetPlatforms": [ "Win64" ],
 	"Modules": [
@@ -29,6 +30,13 @@
 		},
 		{
 			"Name": "Open3DPuppetControlRig",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ],
+			"TargetDenyList": [ "Server", "Program" ]
+		},
+		{
+			"Name": "Open3DPuppetPhysics",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"PlatformAllowList": [ "Win64" ],

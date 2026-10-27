@@ -339,12 +339,12 @@ void FAnimNode_PuppetSolve::ReadPerformers()
 		{
 			continue;
 		}
-		if (Data.Skeleton && Data.Animation)
+		if (Data.HasBones())
 		{
 			FString Error;
-			if (Instance->SetPerformerSkeleton(Slot, Data.Skeleton->BoneNames, Data.Skeleton->BoneParents, Entry.Profile, Error))
+			if (Instance->SetPerformerSkeleton(Slot, Data.BoneNames, Data.BoneParents, Entry.Profile, Error))
 			{
-				Instance->SetPerformerTransforms(Slot, Data.Animation->Transforms);
+				Instance->SetPerformerTransforms(Slot, Data.BoneTransforms);
 			}
 			else
 			{

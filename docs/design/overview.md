@@ -49,7 +49,8 @@ worker thread:
 
 1. **Source.** For each performer slot, evaluate the bound Live Link subject
    (`ILiveLinkClient::EvaluateFrame_AnyThread` with `ULiveLinkAnimationRole`), giving bone names,
-   parents and local transforms. A slot with no data this frame keeps its last pose; a slot that
+   parents and local transforms. A Transform-role subject (one tracked rigid body, such as a
+   puppeteer's rod) is read as a performer with one joint, `prop` (WP-7). A slot with no data this frame keeps its last pose; a slot that
    has never had data (or is not calibrated) leaves its modules' bones in the pose the node
    received. Each change of slot state is logged once.
 2. **Normalize.** Build an `FPuppetPerformerPose`: canonical joint lookup through the profile, and
@@ -117,7 +118,7 @@ frame, so a change in the details panel shows up live in the viewport.
 | Digitigrade leg (3-bone) | Performer leg | Knee-to-hock ratio, heel lift, stride scale, foot contact | WP-4 |
 | Tail / dynamic chain | Pelvis motion plus springs, or a performer chain or prop | Stiffness, damping, amplitude, input mix, physics weight | WP-5 |
 | Wing | Performer arm (shoulder to wing root, elbow to fold) | Fold/spread curve, flap amplification, feather fan | WP-6 |
-| Prop-driven | Tracked rigid body (Live Link Transform role) | Mapping space, filtering | WP-7 |
+| Prop Chain | A tracked rigid body (Live Link Transform role, the joint `prop`) or any performer joint, driving a chain such as a tail | Bend or rigid shape, parent or stage space, amplification, smoothing | WP-7 |
 | Digits (fingers, toes, talons, feathers) | Performer fingers, relative to the hand | Finger-to-digit mapping, curl and spread gains, chain resampling | WP-12 |
 | Curve to bone | A performer curve (face, finger curl) | Source range to bone rotation or translation range, dead zone, smoothing | WP-13 |
 | Curve remap | Performer curves (ARKit's 52 blend shapes by default; other sources through the profile) | Per-curve remap, combination, smoothing to puppet curves (morph targets) | WP-13 |
@@ -136,7 +137,9 @@ the front and back of one creature. Examples:
 - A two-person quadruped: `Front` drives the spine front half, neck, head and front legs; `Back`
   owns the root and drives the hind legs and tail.
 - A dragon: `Body` drives the biped core; a second performer's arms drive the wings.
-- A creature with a puppeteered tail: `Body` plus a `Tail` slot bound to a tracked rod (WP-7).
+- A creature with a puppeteered tail: `Body` plus a `Tail` slot bound to a tracked rod, driving
+  the tail with a Prop Chain module. The [multi-performer sample](../guides/multi-performer-sample.md)
+  walks through this setup.
 
 ## 7. Live and recorded motion
 

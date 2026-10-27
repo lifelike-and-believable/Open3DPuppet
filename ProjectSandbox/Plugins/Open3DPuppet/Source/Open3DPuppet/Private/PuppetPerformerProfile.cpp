@@ -33,12 +33,12 @@ void UPuppetPerformerProfile::MapFromLiveLinkSubject()
 	ILiveLinkClient* Client = PuppetLiveLink::GetClient();
 	FLiveLinkSubjectFrameData Frame;
 	PuppetLiveLink::FSubjectData Data;
-	if (!Client || !PuppetLiveLink::EvaluateSubject(*Client, SourceSubject, Frame, Data) || !Data.Skeleton)
+	if (!Client || !PuppetLiveLink::EvaluateSubject(*Client, SourceSubject, Frame, Data) || !Data.HasBones())
 	{
 		MappingResult = FString::Printf(TEXT("Live Link subject '%s' has sent no bones yet."), *SourceSubject.ToString());
 		return;
 	}
-	MapBones(Data.Skeleton->BoneNames, Data.Skeleton->BoneParents, GetDefault<UPuppetSettings>()->NamingSchemes);
+	MapBones(Data.BoneNames, Data.BoneParents, GetDefault<UPuppetSettings>()->NamingSchemes);
 }
 
 bool UPuppetPerformerProfile::MapBones(TConstArrayView<FName> SourceBones, TConstArrayView<int32> SourceParents, TConstArrayView<FPuppetNamingScheme> Schemes)

@@ -1,7 +1,7 @@
-# Desk test plan: performer clips and calibration in the editor
+# Desk test plan: performer clips, calibration and props in the editor
 
-Step-by-step checks in the editor for what WP-3 (performer clips, #21) and WP-2 (saved
-calibrations #24, naming schemes #25, rest pose #26) added. Automated tests cover the solver
+Step-by-step checks in the editor for what WP-3 (performer clips, #21), WP-2 (saved calibrations
+#24, naming schemes #25, rest pose #26) and WP-7 (a prop driving a chain) added. Automated tests cover the solver
 and helpers; these cover what only a running editor shows: the node's wiring, the buttons in the
 details panel and real capture systems. The roadmap's [Next](../roadmap/roadmap.md#next) lists
 the desk checks for other work packages.
@@ -126,7 +126,25 @@ the code and docs, not in a running editor, so menu paths may differ slightly.
 5. **A real A-pose mesh**, where one exists: a T-pose rest clip for it makes a T-pose-calibrated
    performer look right.
 
-## 5. Recording results
+## 5. A prop drives a tail (WP-7)
+
+Set up the [multi-performer sample](multi-performer-sample.md): a mesh with a tail, slots `Body`
+and `Tail`, a Prop Chain on `Tail`, the rod's Transform-role subject cast into `Tail`.
+
+1. Calibrate the rod at rest (**Capture** on a calibration asset for its subject). **Expect:** the
+   log says `Calibrated performer <rod> (1 bones, 0 curves).`
+2. Tilt the rod. **Expect** with Shape `Bend`: the tail bends from its base, its tip turning as
+   far as the rod; with `Rigid`, the whole tail turns as one piece.
+3. Turn the body performer around with the rod still. **Expect** with Space `Parent`: the tail
+   turns with the body; with `Stage`: the tail's tip keeps pointing where the rod points.
+4. **Amplification** `2`: the tail turns twice as far as the rod. **Smoothing** `0.2`: a sharp rod
+   movement reaches the tail over about a fifth of a second, and tracking jitter calms.
+5. Before calibrating the rod, or with the rod's subject gone: **Expect:** the tail stays in the
+   node's input pose while the body still drives.
+6. A hand instead of a rod: set Performer Joint to `hand_l` on a Body-slot Prop Chain. **Expect:**
+   the tail follows the performer's left hand.
+
+## 6. Recording results
 
 - File each failure as an Open3DPuppet issue with the `desk` label: the step number, what you
   saw, and the Output Log lines.

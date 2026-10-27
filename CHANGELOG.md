@@ -34,6 +34,15 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Prop Chain and props as performers** (WP-7, ADR 0004): a Live Link Transform-role subject
+  (one tracked rigid body, such as a puppeteer's rod) is read as a performer with one joint,
+  `prop`, so it is cast, calibrated (Capture, Calibrate Performer) and mapped like any performer.
+  `UPuppetModule_PropChain` drives a chain such as a tail from it, or from any performer joint:
+  **Shape** `Bend` (the base keeps its rest, the tip turns fully with the prop) or `Rigid`;
+  **Space** `Parent` (the prop's motion adds to the body's) or `Stage` (the tip points where the
+  prop points); **Amplification**; **Smoothing**, exponential, so frame-rate independent. The
+  [multi-performer sample](docs/guides/multi-performer-sample.md) sets up a body and a
+  puppeteered tail on two slots, and its tests check it. 9 new tests (150).
 - **Puppet rest pose** (WP-2, ADR 0003): a puppet asset's `RestPose` (an AnimSequence on the
   puppet's skeleton) and `RestPoseTime` set the pose modules retarget from, for a mesh modelled in
   another pose than performers calibrate in, such as an A-pose mesh for T-pose performers. Its

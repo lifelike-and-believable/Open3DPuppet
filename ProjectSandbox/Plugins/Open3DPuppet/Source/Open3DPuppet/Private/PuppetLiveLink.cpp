@@ -7,6 +7,8 @@
 #include "Roles/LiveLinkAnimationRole.h"
 #include "Roles/LiveLinkAnimationTypes.h"
 #include "Roles/LiveLinkBasicRole.h"
+#include "Roles/LiveLinkTransformRole.h"
+#include "Roles/LiveLinkTransformTypes.h"
 
 namespace PuppetLiveLink
 {
@@ -30,8 +32,30 @@ namespace PuppetLiveLink
 			{
 				return false;
 			}
-			OutData.Skeleton = OutFrame.StaticData.Cast<FLiveLinkSkeletonStaticData>();
-			OutData.Animation = OutFrame.FrameData.Cast<FLiveLinkAnimationFrameData>();
+			const FLiveLinkSkeletonStaticData* Skeleton = OutFrame.StaticData.Cast<FLiveLinkSkeletonStaticData>();
+			const FLiveLinkAnimationFrameData* Animation = OutFrame.FrameData.Cast<FLiveLinkAnimationFrameData>();
+			if (Skeleton && Animation)
+			{
+				OutData.BoneNames = Skeleton->BoneNames;
+				OutData.BoneParents = Skeleton->BoneParents;
+				OutData.BoneTransforms = Animation->Transforms;
+			}
+		}
+		// The Transform role derives from the Basic role, so it is asked about first.
+		else if (Client.DoesSubjectSupportsRole_AnyThread(Subject, ULiveLinkTransformRole::StaticClass()))
+		{
+			if (!Client.EvaluateFrame_AnyThread(Subject, ULiveLinkTransformRole::StaticClass(), OutFrame))
+			{
+				return false;
+			}
+			static const FName PropNames[] = { FName(TEXT("prop")) };
+			static const int32 PropParents[] = { INDEX_NONE };
+			if (const FLiveLinkTransformFrameData* Transform = OutFrame.FrameData.Cast<FLiveLinkTransformFrameData>())
+			{
+				OutData.BoneNames = PropNames;
+				OutData.BoneParents = PropParents;
+				OutData.BoneTransforms = MakeArrayView(&Transform->Transform, 1);
+			}
 		}
 		else if (!Client.DoesSubjectSupportsRole_AnyThread(Subject, ULiveLinkBasicRole::StaticClass())
 			|| !Client.EvaluateFrame_AnyThread(Subject, ULiveLinkBasicRole::StaticClass(), OutFrame))

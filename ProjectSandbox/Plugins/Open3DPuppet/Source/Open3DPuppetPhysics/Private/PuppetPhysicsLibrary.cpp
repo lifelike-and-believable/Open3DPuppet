@@ -22,5 +22,23 @@ FPhysicsControlControlAndModifierParameters UPuppetPhysicsLibrary::MakeRegionPar
 
 FPhysicsControlControlAndModifierParameters UPuppetPhysicsLibrary::MakeRegionParametersFromCurves(TConstArrayView<FName> Regions, TFunctionRef<float(FName)> GetCurve)
 {
-	return {};
+	FPhysicsControlControlAndModifierParameters Parameters;
+	for (const FName Region : Regions)
+	{
+		const float Strength = 1.0f - FMath::Clamp(GetCurve(PuppetPhysics::WeightCurve(Region)), 0.0f, 1.0f);
+		const float Damping = 1.0f + FMath::Max(GetCurve(PuppetPhysics::DampingCurve(Region)), 0.0f);
+
+		// Only strength and damping ratio are set; the other multipliers keep what the node has.
+		FPhysicsControlSparseMultiplier Multiplier;
+		Multiplier.LinearStrengthMultiplier = FVector(Strength);
+		Multiplier.AngularStrengthMultiplier = Strength;
+		Multiplier.LinearDampingRatioMultiplier = FVector(Damping);
+		Multiplier.AngularDampingRatioMultiplier = Damping;
+		Multiplier.bEnableLinearExtraDampingMultiplier = false;
+		Multiplier.bEnableMaxForceMultiplier = false;
+		Multiplier.bEnableAngularExtraDampingMultiplier = false;
+		Multiplier.bEnableMaxTorqueMultiplier = false;
+		Parameters.Add(FPhysicsControlNamedControlMultiplierParameters(Region, Multiplier));
+	}
+	return Parameters;
 }

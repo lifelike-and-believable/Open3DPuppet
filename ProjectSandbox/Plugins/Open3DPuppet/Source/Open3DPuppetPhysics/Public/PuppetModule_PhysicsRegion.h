@@ -23,7 +23,7 @@ class OPEN3DPUPPETPHYSICS_API UPuppetModule_PhysicsRegion : public UPuppetModule
 public:
 	UPuppetModule_PhysicsRegion();
 
-	/** The region: a limb name in the Rigid Body With Control node's Character Setup Data (Tail, FrontLegs, Body). */
+	/** The region: a limb name in the Rigid Body With Control node's Character Setup Data (Tail, LeftFrontLeg, Body). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Physics")
 	FName Region = TEXT("Tail");
 

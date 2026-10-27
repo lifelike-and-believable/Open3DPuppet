@@ -14,7 +14,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-14 | Solver dynamics (ADR 0007, Tier 1): world motion in the solve context, `PuppetDynamics` (fixed-step integrator, spring-dampers, constrained chains, collision shapes), Physics Weight | WP-11 | Done (#18) |
 | WP-4 | Digitigrade leg module (Wolf front and hind legs) | WP-1 | Done (#16) |
 | WP-5 | Tail and dynamic chain module: springs, input mix (Wolf tail, ears, mane; Eagle tail fan, feathers) | WP-14 | Done (#19) |
-| WP-15 | Engine physics hand-off (ADR 0007, Tier 2): optional `Open3DPuppetPhysics` module, Physics Region module, Rigid Body With Control parameters from curves, setup guide. The Wolf and Eagle need physics assets first (none exist yet) | WP-11 | Planned |
+| WP-15 | Engine physics hand-off (ADR 0007, Tier 2; ADR 0011): `Open3DPuppetPhysics` module, Physics Region module, Rigid Body With Control parameters from curves, setup guide | WP-11 | Done (#36) |
 | WP-6 | Wing module (Eagle) | WP-12 | Done (#20) |
 | WP-16 | Hand-offs (ADR 0008): control blend per slot, `UPuppetPerformanceComponent` transitions with easing, root anchoring that converges on the performer's position (by time, while moving), manual re-centre | WP-1 | Done (#9) |
 | WP-17 | Hand-off triggers: Sequencer cue, operator input (input action, Remote Control), performer gesture | WP-16 | Planned |
@@ -51,7 +51,12 @@ Items that need a person at the desk or a maintainer decision:
   Remap and the eyes with Eyes; tune the default ranges, smoothing and eye limits per creature.
 - WP-12 at the desk: a glove or suit with finger bones driving a mannequin hand with the Digits
   module, and its `curl_*` curves reading 0 flat and about 1 in a fist, and the Wolf's paw toes once the mesh exists; tune the default gains.
-- Physics assets for the Wolf and the Eagle, before WP-15 (ADR 0007; none exist yet).
+- WP-15 at the desk: Rigid Body With Control after Puppet Solve on the Mamaawi Wolf and Eagle,
+  with the limbs the [setup guide](../guides/physics-hand-off.md) proposes: stable at rest, a
+  region going limp and recovering as its Physics Region curve plays, contact with the ground;
+  check that the region curves reach the animation instance, and profile the node.
+- ADR 0007 question 1: which regions of the Wolf and the Eagle are physical in the show. The
+  Eagle's physics asset is not symmetric between the wings (setup guide §4).
 - ADR 0008: which hand-off triggers the show uses (question 1).
 - WP-2, WP-3, WP-7 and WP-8 at the desk: step by step in the [desk test plan](../guides/desk-test-plan.md);
   for WP-8, the bone pickers, Propose Modules on the mannequin and the Wolf, and the Puppet
@@ -75,5 +80,10 @@ Items that need a person at the desk or a maintainer decision:
   calibrated, and output curves reaching the puppet's morph targets.
 - WP-1 at the desk: a mannequin driven live through Live Link (Open3DBroadcast or a capture
   system), calibrated with the subsystem, with Root, Chain and Two-Bone Limb modules.
-- Wolf and Eagle: the skeletal meshes (or their bone hierarchies and reference poses), their morph
-  targets, and how each is performed (one performer upright, two performers, or another way).
+- Wolf and Eagle (WP-M1, WP-M2): the meshes are in the host project (2026-10-27; the Mamaawi
+  copies, `GrayWolf_oneMat` and `BaldEagle_removedFeathers`; not committed, they are licensed
+  assets). Still open: how each is performed (one performer upright, two performers, or another
+  way), the entrance clips, and the design's mapping (§10) against the meshes. The Wolf has no
+  morph targets (no snarl shapes) and no mane bones, and each ear is one bone; the Eagle has no
+  eyelid or crest bones, its tail fan is 11 bones at one point, and its legs have three segments.
+  The Bison plays an animation and is not a puppet for now.

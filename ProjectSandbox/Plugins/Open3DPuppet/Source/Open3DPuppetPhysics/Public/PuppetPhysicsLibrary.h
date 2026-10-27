@@ -25,7 +25,7 @@ public:
 	 * instance's curves are those of its last evaluation, so the node sees them a frame late.
 	 *
 	 * @param AnimInstance The animation instance that runs Puppet Solve (Self in its AnimGraph).
-	 * @param Regions The regions, named as the node's limbs (Tail, FrontLegs, Body).
+	 * @param Regions The regions, named as the node's limbs (Tail, LeftFrontLeg, Body).
 	 */
 	UFUNCTION(BlueprintPure, Category = "Open3DPuppet|Physics", meta = (BlueprintThreadSafe, DisplayName = "Make Physics Region Parameters"))
 	static FPhysicsControlControlAndModifierParameters MakeRegionParameters(const UAnimInstance* AnimInstance, const TArray<FName>& Regions);

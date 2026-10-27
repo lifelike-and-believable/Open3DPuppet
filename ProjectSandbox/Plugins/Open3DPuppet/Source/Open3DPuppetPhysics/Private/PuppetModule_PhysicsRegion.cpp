@@ -2,6 +2,8 @@
 
 #include "PuppetModule_PhysicsRegion.h"
 
+#include "PuppetPose.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PuppetModule_PhysicsRegion)
 
 namespace PuppetModulePhysicsRegion
@@ -13,12 +15,33 @@ namespace PuppetModulePhysicsRegion
 
 		virtual bool Bind(const FPuppetBindContext& Context, FString& OutError) override
 		{
+			if (Settings.Region.IsNone())
+			{
+				OutError = TEXT("it names no region");
+				return false;
+			}
+			if (!PuppetDynamics::BindPhysicsWeight(Settings.PhysicsWeight, Context.Performer, PhysicsWeightCurve, OutError)
+				|| !PuppetDynamics::BindPhysicsWeight(Settings.Damping, Context.Performer, DampingCurve, OutError))
+			{
+				return false;
+			}
+			WeightName = PuppetPhysics::WeightCurve(Settings.Region);
+			DampingName = PuppetPhysics::DampingCurve(Settings.Region);
 			return true;
 		}
 
 		virtual void Solve(FPuppetSolveContext& Context) override
 		{
+			// 0 is the physics as authored, so the module's weight scales towards it.
+			Context.Puppet.SetCurve(WeightName, PuppetDynamics::GetPhysicsWeight(Settings.PhysicsWeight, PhysicsWeightCurve, Context) * Context.Weight);
+			Context.Puppet.SetCurve(DampingName, PuppetDynamics::GetPhysicsWeight(Settings.Damping, DampingCurve, Context) * Context.Weight);
 		}
+
+	private:
+		int32 PhysicsWeightCurve = INDEX_NONE;
+		int32 DampingCurve = INDEX_NONE;
+		FName WeightName;
+		FName DampingName;
 	};
 }
 
@@ -38,11 +61,11 @@ namespace PuppetPhysics
 {
 	FName WeightCurve(FName Region)
 	{
-		return NAME_None;
+		return FName(FString::Printf(TEXT("Physics_%s"), *Region.ToString()));
 	}
 
 	FName DampingCurve(FName Region)
 	{
-		return NAME_None;
+		return FName(FString::Printf(TEXT("Physics_%s_Damping"), *Region.ToString()));
 	}
 }

@@ -21,9 +21,9 @@ Check whether an existing module already does the job with different settings:
 | Eyes from the performer's gaze (ARKit eye-look curves or eye joints) | Eyes |
 | A tail, ears, a mane or feathers that swing with the puppet's motion and settle | Dynamic Chain (Tail), with Stiffness, Damping, Amplitude and Physics Weight |
 | A wing from the performer's arm: flap, fold, feather fan | Wing |
+| A tail, trunk or tentacle a puppeteer plays with a tracked rod (a Live Link Transform-role subject, read as the joint `prop`) | Prop Chain, with Shape, Space, Amplification and Smoothing |
 
-Write a new module when the anatomy needs behaviour these cannot express, or a different input
-(a tracked prop).
+Write a new module when the anatomy needs behaviour these cannot express.
 
 ## 2. The contract
 

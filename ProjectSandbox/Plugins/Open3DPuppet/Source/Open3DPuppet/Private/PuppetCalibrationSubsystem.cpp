@@ -26,10 +26,10 @@ bool UPuppetCalibrationSubsystem::CalibratePerformer(FLiveLinkSubjectName Subjec
 	}
 
 	FPuppetPerformerPose Pose;
-	if (Data.Skeleton && Data.Animation)
+	if (Data.HasBones())
 	{
 		FString Error;
-		if (!Pose.SetSkeleton(Data.Skeleton->BoneNames, Data.Skeleton->BoneParents, nullptr, Error) || !Pose.SetLocalTransforms(Data.Animation->Transforms))
+		if (!Pose.SetSkeleton(Data.BoneNames, Data.BoneParents, nullptr, Error) || !Pose.SetLocalTransforms(Data.BoneTransforms))
 		{
 			UE_LOG(LogOpen3DPuppet, Warning, TEXT("Cannot calibrate %s: %s"), *Subject.ToString(),
 				Error.IsEmpty() ? TEXT("the frame's transform count does not match its skeleton") : *Error);

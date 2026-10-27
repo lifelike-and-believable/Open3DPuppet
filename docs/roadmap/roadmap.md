@@ -22,7 +22,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-M1 | Wolf: puppet asset, profiles and calibration for the show's capture setup, run-in entrance (a clip authored on the Wolf) and hand-off; live session at the desk | WP-4, WP-5, WP-12, WP-13, WP-15, WP-16 | Planned |
 | WP-M2 | Eagle: puppet asset, profiles and calibration, fly-in entrance (a clip authored on the Eagle) and hand-off; live session at the desk | WP-5, WP-6, WP-12, WP-13, WP-15, WP-16 | Planned |
 | WP-2 | Calibration and profiles in the editor: calibrate button, save calibrations to assets, choice of reference pose, profile auto-mapping by name | WP-1 | Done (#24, #25, #26) |
-| WP-7 | Prop-driven module (Live Link Transform role) and a multi-performer sample | WP-1 | Planned |
+| WP-7 | Prop-driven module (Live Link Transform role) and a multi-performer sample | WP-1 | Done (#PRNUM) |
 | WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | Planned |
 | WP-9 | Fab readiness as Open3DBroadcast: packaging script (`fab-package.py`), exclusion lists, icon | WP-1 | Planned |
 | WP-10 | Control Rig adapter module | WP-1 | Planned |
@@ -50,6 +50,10 @@ Items that need a person at the desk or a maintainer decision:
 - Physics assets for the Wolf and the Eagle, before WP-15 (ADR 0007; none exist yet).
 - ADR 0008: which hand-off triggers the show uses (question 1).
 - WP-2 and WP-3 at the desk: step by step in the [desk test plan](../guides/desk-test-plan.md).
+- WP-7 at the desk: a tracked rod (any capture system's rigid body) cast into a Tail slot, driving
+  a creature's tail with Prop Chain while a performer plays the body, as the
+  [multi-performer sample](../guides/multi-performer-sample.md) sets it up; tune Shape, Space,
+  Amplification and Smoothing ([desk test plan](../guides/desk-test-plan.md) part 5).
 - WP-2 at the desk: Capture a performer into a calibration asset, restart, and drive the puppet
   from it as the cast entry's Saved Calibration; Map From Live Link Subject on each capture system
   the show uses (the default naming schemes are the IKRig templates' names, not checked against

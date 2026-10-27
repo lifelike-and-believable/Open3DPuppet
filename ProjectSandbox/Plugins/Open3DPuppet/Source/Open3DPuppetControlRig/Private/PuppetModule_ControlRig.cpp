@@ -298,3 +298,14 @@ TUniquePtr<FPuppetModuleSolver> UPuppetModule_ControlRig::CreateSolver() const
 {
 	return MakeUnique<PuppetModuleControlRig::FSolver>(*this);
 }
+
+void UPuppetModule_ControlRig::RefreshVariables()
+{
+}
+
+#if WITH_EDITOR
+void UPuppetModule_ControlRig::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
+#endif

@@ -64,6 +64,16 @@ void UPuppetTestControlRig::Initialize(bool bInitRigUnits)
 	Controller->AddCurve(PuppetTestControlRig::JawCurve.Name, 0.0f, false);
 }
 
+TArray<FRigVMExternalVariable> UPuppetTestControlRig::GetExternalVariablesImpl(bool bFallbackToBlueprint) const
+{
+	if (bInitializingVM)
+	{
+		return {};
+	}
+	const FProperty* Gain = GetClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UPuppetTestControlRig, JawGain));
+	return { FRigVMExternalVariable::Make(FGuid(), Gain, const_cast<UPuppetTestControlRig*>(this)) };
+}
+
 bool UPuppetTestControlRig::SupportsEvent(const FName& InEventName) const
 {
 	return InEventName == FRigUnit_PreBeginExecution::EventName || InEventName == FRigUnit_PostBeginExecution::EventName || Super::SupportsEvent(InEventName);
@@ -122,7 +132,7 @@ bool UPuppetTestControlRig::Execute_Internal(const FName& InEventName)
 
 	const float Open = Hierarchy->GetControlValue(JawOpen, ERigControlValueType::Current).Get<float>();
 	FTransform JawLocal = Hierarchy->GetTransform(Jaw, ERigTransformType::InitialLocal);
-	JawLocal.SetRotation(JawLocal.GetRotation() * PuppetTestControlRig::Yaw(Open));
+	JawLocal.SetRotation(JawLocal.GetRotation() * PuppetTestControlRig::Yaw(Open * JawGain));
 	Hierarchy->SetTransform(Jaw, JawLocal, ERigTransformType::CurrentLocal, true);
 	Hierarchy->SetCurveValue(JawCurve, Open);
 	return true;

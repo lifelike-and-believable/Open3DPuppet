@@ -4,6 +4,7 @@
 
 #include "ControlRigAssetReference.h"
 #include "PuppetModule.h"
+#include "StructUtils/PropertyBag.h"
 
 #include "PuppetModule_ControlRig.generated.h"
 
@@ -64,6 +65,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rig", meta = (DisallowCreateNew))
 	FControlRigAssetStrongReference Rig;
 
+	/**
+	 * Values for the rig's public variables, set per puppet: a rig's tuning (a stiffness, a limit, a
+	 * gain) without editing the rig. Listed from the rig, with its defaults, when the rig is picked
+	 * and by Refresh Variables; a variable left out keeps the rig's own value. Read every frame.
+	 */
+	UPROPERTY(EditAnywhere, Category = "Rig", meta = (FixedLayout))
+	FInstancedPropertyBag Variables;
+
 	/** The rig controls the performer drives. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rig")
 	TArray<FPuppetControlRigInput> Inputs;
@@ -76,5 +85,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
 	TArray<FName> Curves;
 
+	/**
+	 * Lists the rig's public variables in Variables, with the rig's defaults. Values already set for
+	 * a variable of the same name and type are kept; variables the rig no longer has are removed.
+	 */
+	UFUNCTION(CallInEditor, Category = "Rig")
+	void RefreshVariables();
+
 	virtual TUniquePtr<FPuppetModuleSolver> CreateSolver() const override;
+
+#if WITH_EDITOR
+	/** Picking a rig lists its variables. */
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 };

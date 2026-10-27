@@ -178,6 +178,89 @@ bool FPuppetControlRigCurvesTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigRefreshVariablesTest, "Open3DPuppet.Modules.ControlRig.RefreshListsTheRigsVariables", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetControlRigRefreshVariablesTest::RunTest(const FString& Parameters)
+{
+	PuppetTests::FPuppet Puppet(PuppetTests::Face());
+	UPuppetModule_ControlRig& Rig = PuppetControlRigTests::AddRig(Puppet, { TEXT("jaw") });
+	Rig.Variables.AddProperty(TEXT("TailGain"), EPropertyBagPropertyType::Float);
+	Rig.RefreshVariables();
+	TestEqual(TEXT("The rig's one variable"), Rig.Variables.GetNumPropertiesInBag(), 1);
+	TestTrue(TEXT("One the rig no longer has is removed"), Rig.Variables.FindPropertyDescByName(TEXT("TailGain")) == nullptr);
+	const TValueOrError<float, EPropertyBagResult> Default = Rig.Variables.GetValueFloat(TEXT("JawGain"));
+	if (TestTrue(TEXT("JawGain, a float"), Default.HasValue()))
+	{
+		TestEqual(TEXT("With the rig's default"), Default.GetValue(), 1.0f);
+	}
+
+	Rig.Variables.SetValueFloat(TEXT("JawGain"), 2.0f);
+	Rig.RefreshVariables();
+	const TValueOrError<float, EPropertyBagResult> Kept = Rig.Variables.GetValueFloat(TEXT("JawGain"));
+	if (TestTrue(TEXT("Still listed"), Kept.HasValue()))
+	{
+		TestEqual(TEXT("A value already set is kept"), Kept.GetValue(), 2.0f);
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigVariablesTest, "Open3DPuppet.Modules.ControlRig.VariablesReachTheRig", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetControlRigVariablesTest::RunTest(const FString& Parameters)
+{
+	// JawGain 2 doubles the jaw's turn: jawOpen 0.5 gives 30 degrees, not 15.
+	PuppetTests::FPuppet Puppet(PuppetTests::Face());
+	UPuppetModule_ControlRig& Rig = PuppetControlRigTests::AddRig(Puppet, { TEXT("jaw") });
+	Rig.Inputs = { PuppetControlRigTests::JawInput() };
+	Rig.RefreshVariables();
+	Rig.Variables.SetValueFloat(TEXT("JawGain"), 2.0f);
+	PuppetTests::FPerformer Performer(PuppetTests::Face());
+	PuppetControlRigTests::Calibrate(Puppet, Performer);
+	Performer.SetCurve(TEXT("jawOpen"), 0.5f);
+	Puppet.Drive(0, Performer);
+	Puppet.Solve();
+	PuppetTests::TestRotation(*this, TEXT("Twice the turn"), Puppet.Component(TEXT("jaw")).GetRotation(), PuppetControlRigTests::Yaw(30.0));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigLiveVariablesTest, "Open3DPuppet.Modules.ControlRig.VariablesAreReadEveryFrame", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetControlRigLiveVariablesTest::RunTest(const FString& Parameters)
+{
+	PuppetTests::FPuppet Puppet(PuppetTests::Face());
+	UPuppetModule_ControlRig& Rig = PuppetControlRigTests::AddRig(Puppet, { TEXT("jaw") });
+	Rig.Inputs = { PuppetControlRigTests::JawInput() };
+	Rig.RefreshVariables();
+	PuppetTests::FPerformer Performer(PuppetTests::Face());
+	PuppetControlRigTests::Calibrate(Puppet, Performer);
+	Performer.SetCurve(TEXT("jawOpen"), 0.5f);
+	Puppet.Drive(0, Performer);
+	Puppet.Solve();
+	PuppetTests::TestRotation(*this, TEXT("The rig's default gain"), Puppet.Component(TEXT("jaw")).GetRotation(), PuppetControlRigTests::Yaw(15.0));
+	Rig.Variables.SetValueFloat(TEXT("JawGain"), 3.0f);
+	Puppet.Solve();
+	PuppetTests::TestRotation(*this, TEXT("The new gain on the next frame"), Puppet.Component(TEXT("jaw")).GetRotation(), PuppetControlRigTests::Yaw(45.0));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigBadVariableTest, "Open3DPuppet.Modules.ControlRig.UnknownOrMistypedVariableSkipsTheModule", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetControlRigBadVariableTest::RunTest(const FString& Parameters)
+{
+	AddExpectedMessagePlain(TEXT("the Control Rig has no variable 'TailGain'"), ELogVerbosity::Warning);
+	AddExpectedMessagePlain(TEXT("the Control Rig's variable 'JawGain' is not of the type the module sets"), ELogVerbosity::Warning);
+	PuppetTests::FPuppet Puppet(PuppetTests::Face());
+	UPuppetModule_ControlRig& Unknown = PuppetControlRigTests::AddRig(Puppet, { TEXT("head") });
+	Unknown.Inputs = { PuppetControlRigTests::HeadInput() };
+	Unknown.Variables.AddProperty(TEXT("TailGain"), EPropertyBagPropertyType::Float);
+	UPuppetModule_ControlRig& Mistyped = PuppetControlRigTests::AddRig(Puppet, { TEXT("jaw") });
+	Mistyped.Inputs = { PuppetControlRigTests::HeadInput() };
+	Mistyped.Variables.AddProperty(TEXT("JawGain"), EPropertyBagPropertyType::Bool);
+	PuppetTests::FPerformer Performer(PuppetTests::Face());
+	PuppetControlRigTests::Calibrate(Puppet, Performer);
+	PuppetControlRigTests::TurnHead(Puppet, Performer);
+	Puppet.Solve();
+	TestEqual(TEXT("The head left as the input"), Puppet.Component(TEXT("head")), Puppet.Reference(TEXT("head")), 1.e-3f);
+	TestEqual(TEXT("The jaw left as the input"), Puppet.Component(TEXT("jaw")), Puppet.Reference(TEXT("jaw")), 1.e-3f);
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigInputPoseTest, "Open3DPuppet.Modules.ControlRig.RigStartsFromTheIncomingPose", OPEN3DPUPPET_TEST_FLAGS)
 bool FPuppetControlRigInputPoseTest::RunTest(const FString& Parameters)
 {

@@ -73,7 +73,9 @@ void UPuppetCalibrationSubsystem::ClearCalibration(FLiveLinkSubjectName Subject)
 
 TArray<FName> UPuppetCalibrationSubsystem::GetCalibratedSubjects() const
 {
-	return {};
+	TArray<FName> Subjects;
+	Calibrations.GenerateKeyArray(Subjects);
+	return Subjects;
 }
 
 const FPuppetPerformerCalibration* UPuppetCalibrationSubsystem::FindCalibration(FName Subject, int32& OutRevision) const

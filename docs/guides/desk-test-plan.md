@@ -2,7 +2,7 @@
 
 Step-by-step checks in the editor for what WP-3 (performer clips, #21), WP-2 (saved calibrations
 #24, naming schemes #25, rest pose #26), WP-7 (a prop driving a chain) and WP-8 (bone pickers,
-setup assistant) added. Automated tests cover the solver
+setup assistant, Puppet Session panel) added. Automated tests cover the solver
 and helpers; these cover what only a running editor shows: the node's wiring, the buttons in the
 details panel and real capture systems. The roadmap's [Next](../roadmap/roadmap.md#next) lists
 the desk checks for other work packages.
@@ -173,7 +173,31 @@ and `Tail`, a Prop Chain on `Tail`, the rod's Transform-role subject cast into `
 5. Drive the proposed puppet with a performer. **Expect:** the body follows without further
    setup; then check the right hand's Digits Spread Axis and tune the Dynamic Chains.
 
-## 8. Recording results
+## 8. Puppet Session panel (WP-8)
+
+Open **Window > Tools > Puppet Session** with the setup from part 0 and a Live Link source
+running.
+
+1. **Performers:** each Live Link subject is listed as Streaming, and each calibrated subject as
+   Calibrated, also when its source is off. **Calibrate** (with an alignment yaw) calibrates it;
+   **Clear** forgets it, and the puppet stops following.
+2. Choose a Puppet Calibration Asset in **Save captures to** and press **Save to asset** on a
+   performer. **Expect:** the asset holds the capture with that subject and alignment.
+3. **Running puppets:** the puppet's actor and asset, and a row per slot with its source (Live Link
+   subject or clip), its state (No data, Not calibrated, Driving) updating as the performer
+   connects and calibrates. A puppet in a linked anim graph is listed too.
+4. With a Puppet Performance Component on the actor: drag **Control** and watch the slot blend;
+   **To performer** and **To animation** run a transition of the set duration; **Re-centre**
+   keeps the puppet where it is. Without one, the row says the slot is always under the
+   performer.
+5. **Tune** shows the puppet asset below. Drag a module's Amplification or Stiffness while the
+   performer moves after a hand-off. **Expect:** the change shows at once and the puppet does not
+   snap back to the performer or reset its dynamics. Change a bone name: the puppet binds again
+   (that edit is allowed to reset it).
+6. Start Play In Editor. **Expect:** the panel switches to the PIE world's puppets, and back when
+   play stops.
+
+## 9. Recording results
 
 - File each failure as an Open3DPuppet issue with the `desk` label: the step number, what you
   saw, and the Output Log lines.

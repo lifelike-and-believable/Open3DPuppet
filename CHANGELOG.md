@@ -47,6 +47,17 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Puppet Session panel** (WP-8): **Window > Tools > Puppet Session** for a live session. It
+  lists the performers (Live Link subjects and calibrated subjects) with their streaming and
+  calibration state and Calibrate (with an alignment yaw), Save To Asset (into a chosen Puppet
+  Calibration Asset) and Clear; every running Puppet Solve node in the session world (Play In
+  Editor when it runs, else the editor world; linked anim graphs included) with each slot's
+  source, performer and state, and, with a Puppet Performance Component, the control blend and
+  To Performer, To Animation and Re-centre; and the selected puppet's asset in a details view,
+  whose module numbers tune live (#31). It refreshes four times a second and rebuilds rows only
+  when performers or puppets change. Its model (`PuppetSession`, public in the editor module) and
+  the new `UPuppetCalibrationSubsystem::GetCalibratedSubjects` are tested; the editor module now
+  has a module class that registers the tab. 3 new tests (164).
 - **Setup assistant** (WP-8): **Propose Modules** on a puppet asset fills its empty module list
   for Target Mesh (`PuppetSetup::ProposeModules`). The mesh's bones are named through the
   naming schemes (`PuppetNaming::Match`), and the asset gets Root with Pelvis Bone set, a spine

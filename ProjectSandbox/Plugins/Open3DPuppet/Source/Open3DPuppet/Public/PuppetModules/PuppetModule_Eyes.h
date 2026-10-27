@@ -32,19 +32,19 @@ public:
 	EPuppetEyeInput Input = EPuppetEyeInput::Curves;
 
 	/** The performer's left eye joint, by canonical name (Bones input; map the source's name in the profile). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (EditCondition = "Input == EPuppetEyeInput::Bones"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions", EditCondition = "Input == EPuppetEyeInput::Bones"))
 	FName PerformerLeftEye = TEXT("eye_l");
 
 	/** The performer's right eye joint (Bones input). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (EditCondition = "Input == EPuppetEyeInput::Bones"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions", EditCondition = "Input == EPuppetEyeInput::Bones"))
 	FName PerformerRightEye = TEXT("eye_r");
 
 	/** The puppet's left eye bone. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetLeftEye = TEXT("eye_l");
 
 	/** The puppet's right eye bone. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetRightEye = TEXT("eye_r");
 
 	/** The eye bones' axis for looking left and right, in their own space. */

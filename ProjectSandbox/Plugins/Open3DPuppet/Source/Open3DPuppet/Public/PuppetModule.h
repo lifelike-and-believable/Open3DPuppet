@@ -147,7 +147,7 @@ public:
 	bool bEnabled = true;
 
 	/** The performer slot (UPuppetAsset::PerformerSlots) whose performer drives this module. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Module")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Module", meta = (GetOptions = "GetPerformerSlotOptions"))
 	FName PerformerSlot = TEXT("Body");
 
 	/** Blends the module's result over the pose it received: 0 leaves the pose, 1 is full performer control. */
@@ -156,6 +156,18 @@ public:
 
 	/** Creates this module's solver. */
 	virtual TUniquePtr<FPuppetModuleSolver> CreateSolver() const PURE_VIRTUAL(UPuppetModule::CreateSolver, return nullptr;);
+
+	/** The owning puppet asset's mesh bones, for the bone pickers (UPuppetAsset::GetPuppetBoneOptions). */
+	UFUNCTION()
+	TArray<FName> GetPuppetBoneOptions() const;
+
+	/** The canonical joint names (ADR 0003), for the performer joint pickers. */
+	UFUNCTION()
+	TArray<FName> GetPerformerJointOptions() const;
+
+	/** The owning puppet asset's performer slots, for Performer Slot. */
+	UFUNCTION()
+	TArray<FName> GetPerformerSlotOptions() const;
 
 #if WITH_EDITOR
 	/** Tells the owning puppet asset that it changed, so running Puppet Solve nodes bind again. */

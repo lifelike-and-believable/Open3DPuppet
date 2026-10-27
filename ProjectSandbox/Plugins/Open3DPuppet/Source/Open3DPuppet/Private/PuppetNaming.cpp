@@ -55,6 +55,32 @@ namespace PuppetNaming
 		}
 	}
 
+	TArray<FName> CanonicalJoints()
+	{
+		TArray<FName> Joints = { TEXT("pelvis"), TEXT("spine_01"), TEXT("spine_02"), TEXT("spine_03"), TEXT("spine_04"), TEXT("spine_05"),
+			TEXT("neck_01"), TEXT("neck_02"), TEXT("head"), TEXT("eye_l"), TEXT("eye_r") };
+		for (const TCHAR* Side : { TEXT("_l"), TEXT("_r") })
+		{
+			for (const TCHAR* Bone : { TEXT("clavicle"), TEXT("upperarm"), TEXT("lowerarm"), TEXT("hand") })
+			{
+				Joints.Add(FName(FString(Bone) + Side));
+			}
+			for (const TCHAR* Finger : { TEXT("thumb"), TEXT("index"), TEXT("middle"), TEXT("ring"), TEXT("pinky") })
+			{
+				for (int32 Segment = 1; Segment <= 3; ++Segment)
+				{
+					Joints.Add(FName(FString::Printf(TEXT("%s_%02d%s"), Finger, Segment, Side)));
+				}
+			}
+			for (const TCHAR* Bone : { TEXT("thigh"), TEXT("calf"), TEXT("foot"), TEXT("ball") })
+			{
+				Joints.Add(FName(FString(Bone) + Side));
+			}
+		}
+		Joints.Add(TEXT("prop"));
+		return Joints;
+	}
+
 	FMatch Match(TConstArrayView<FName> SourceBones, TConstArrayView<int32> SourceParents, TConstArrayView<FPuppetNamingScheme> Schemes)
 	{
 		TArray<FString> Keys;

@@ -18,27 +18,27 @@ class OPEN3DPUPPET_API UPuppetModule_Wing : public UPuppetModule
 
 public:
 	/** Performer upper arm, by canonical name: its turn relative to the chest flaps the wing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerUpper = TEXT("upperarm_l");
 
 	/** Performer forearm: its bend at the elbow folds the wing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerLower = TEXT("lowerarm_l");
 
 	/** Puppet wing root (humerus). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetUpper = TEXT("upperarm_l");
 
 	/** Puppet wing forearm; a child of PuppetUpper. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetLower = TEXT("lowerarm_l");
 
 	/** Puppet wing hand; a child of PuppetLower. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetHand = TEXT("hand_l");
 
 	/** Feather bones, in fan order: the first stays as it is, the last closes by the full Feather Fold. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	TArray<FName> Feathers;
 
 	/** Scales the flap (the upper arm's turn relative to the chest): below 1 calms it, above 1 exaggerates it. */

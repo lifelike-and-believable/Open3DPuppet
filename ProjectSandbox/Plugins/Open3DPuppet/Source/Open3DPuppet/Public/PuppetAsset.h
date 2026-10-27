@@ -30,11 +30,11 @@ public:
 	TArray<FName> PerformerSlots = { TEXT("Body") };
 
 	/** The slot whose performer owns the puppet's position in the world (ADR 0004). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPerformerSlotOptions"))
 	FName RootSlot = TEXT("Body");
 
 	/** The puppet's pelvis bone; its height over the performer's pelvis height sets the root scale. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PelvisBone = TEXT("pelvis");
 
 	/**
@@ -58,6 +58,14 @@ public:
 		/** The modules, in the order they run: root first, then the bones each later module hangs from. */
 	UPROPERTY(EditAnywhere, Instanced, BlueprintReadOnly, Category = "Modules")
 	TArray<TObjectPtr<UPuppetModule>> Modules;
+
+	/** Target Mesh's bone names, for the bone pickers in the details panel; the canonical joint names when no mesh is set. */
+	UFUNCTION()
+	TArray<FName> GetPuppetBoneOptions() const;
+
+	/** The performer slots, for the slot pickers in the details panel. */
+	UFUNCTION()
+	TArray<FName> GetPerformerSlotOptions() const;
 
 	/** Changes whenever the asset or one of its modules is edited. Game thread only. */
 	int32 GetRevision() const { return Revision; }

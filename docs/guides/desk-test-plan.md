@@ -1,7 +1,8 @@
 # Desk test plan: performer clips, calibration and props in the editor
 
 Step-by-step checks in the editor for what WP-3 (performer clips, #21), WP-2 (saved calibrations
-#24, naming schemes #25, rest pose #26) and WP-7 (a prop driving a chain) added. Automated tests cover the solver
+#24, naming schemes #25, rest pose #26), WP-7 (a prop driving a chain) and WP-8 (bone pickers)
+added. Automated tests cover the solver
 and helpers; these cover what only a running editor shows: the node's wiring, the buttons in the
 details panel and real capture systems. The roadmap's [Next](../roadmap/roadmap.md#next) lists
 the desk checks for other work packages.
@@ -144,7 +145,20 @@ and `Tail`, a Prop Chain on `Tail`, the rod's Transform-role subject cast into `
 6. A hand instead of a rod: set Performer Joint to `hand_l` on a Body-slot Prop Chain. **Expect:**
    the tail follows the performer's left hand.
 
-## 6. Recording results
+## 6. Bone pickers (WP-8)
+
+1. Open `PA_Test` with Target Mesh set. **Expect:** every module's puppet bone field (Puppet
+   Start, Puppet Upper, Feathers, a collision sphere's Bone, the asset's Pelvis Bone) is a
+   dropdown of the mesh's bones, in skeleton order.
+2. **Expect:** performer joint fields (Performer Start, Performer Joint, ...) list the canonical
+   joints, `pelvis` first and `prop` last; Performer Slot and Root Slot list the asset's slots.
+3. Clear Target Mesh. **Expect:** bone fields fall back to the canonical joints.
+4. A performer profile: the mapping's keys list the canonical joints; its values list Source
+   Skeleton's bones, or, without one, the naming schemes' bone names and the values already
+   mapped.
+5. Curve fields (Performer Curve, Puppet Curve) stay free text.
+
+## 7. Recording results
 
 - File each failure as an Open3DPuppet issue with the `desk` label: the step number, what you
   saw, and the Output Log lines.

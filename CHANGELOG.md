@@ -34,6 +34,14 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Bone pickers** (WP-8, ADR 0002): in the details panel, every module's puppet bone fields are
+  dropdowns of the puppet asset's Target Mesh bones (the canonical joints when no mesh is set),
+  performer joint fields list the canonical joints (`PuppetNaming::CanonicalJoints`), and
+  Performer Slot and Root Slot list the asset's slots. A performer profile's mapping offers the
+  canonical joints as keys and Source Skeleton's bones as values (without one, the naming
+  schemes' bone names and the values already mapped). Curve names stay free text.
+  `Open3DPuppet.Pickers.Coverage` checks every library module's bone and joint fields by
+  reflection. 4 new tests (154).
 - **Prop Chain and props as performers** (WP-7, ADR 0004): a Live Link Transform-role subject
   (one tracked rigid body, such as a puppeteer's rod) is read as a performer with one joint,
   `prop`, so it is cast, calibrated (Capture, Calibrate Performer) and mapped like any performer.

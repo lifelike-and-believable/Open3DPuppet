@@ -3,6 +3,7 @@
 #include "PuppetModule.h"
 
 #include "PuppetAsset.h"
+#include "PuppetNaming.h"
 #include "PuppetPerformerCalibration.h"
 #include "PuppetPerformerPose.h"
 #include "PuppetRetargetMath.h"
@@ -43,6 +44,23 @@ FVector FPuppetSolveContext::GetJointPosition(int32 Joint) const
 FVector FPuppetSolveContext::GetJointTranslation(int32 Joint) const
 {
 	return HandoffOffset.GetRotation().RotateVector(Alignment.RotateVector(Performer.GetComponent(Joint).GetTranslation() - Calibration.RestComponent[Joint].GetTranslation()));
+}
+
+TArray<FName> UPuppetModule::GetPuppetBoneOptions() const
+{
+	const UPuppetAsset* Asset = GetTypedOuter<UPuppetAsset>();
+	return Asset ? Asset->GetPuppetBoneOptions() : PuppetNaming::CanonicalJoints();
+}
+
+TArray<FName> UPuppetModule::GetPerformerJointOptions() const
+{
+	return PuppetNaming::CanonicalJoints();
+}
+
+TArray<FName> UPuppetModule::GetPerformerSlotOptions() const
+{
+	const UPuppetAsset* Asset = GetTypedOuter<UPuppetAsset>();
+	return Asset ? Asset->GetPerformerSlotOptions() : TArray<FName>({ PerformerSlot });
 }
 
 #if WITH_EDITOR

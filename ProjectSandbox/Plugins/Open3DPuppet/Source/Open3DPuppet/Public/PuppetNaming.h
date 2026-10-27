@@ -33,6 +33,12 @@ struct OPEN3DPUPPET_API FPuppetNamingScheme
 
 namespace PuppetNaming
 {
+	/**
+	 * The canonical joint names modules read (ADR 0003): the UE5 mannequin's body, finger and eye
+	 * bones, and `prop` for a tracked prop (WP-7). In skeleton order.
+	 */
+	OPEN3DPUPPET_API TArray<FName> CanonicalJoints();
+
 	/** The schemes that come with the plugin: Xsens, OptiTrack, Rokoko, Vicon, Qualisys, Mocopi, Move One, HumanIK, Mixamo and Unity humanoid (VMC). */
 	OPEN3DPUPPET_API TArray<FPuppetNamingScheme> DefaultSchemes();
 

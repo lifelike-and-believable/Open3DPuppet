@@ -166,13 +166,19 @@ namespace PuppetTests
 		return RefSkeleton;
 	}
 
+	TStrongObjectPtr<USkeletalMesh> MakeMesh(TConstArrayView<FBone> Bones)
+	{
+		TStrongObjectPtr<USkeletalMesh> Mesh(NewObject<USkeletalMesh>());
+		Mesh->SetRefSkeleton(MakeReferenceSkeleton(Bones));
+		return Mesh;
+	}
+
 	TStrongObjectPtr<USkeleton> MakeSkeleton(TConstArrayView<FBone> Bones)
 	{
 		// A skeleton takes its bones from a mesh; the mesh needs nothing but the reference skeleton.
-		USkeletalMesh* Mesh = NewObject<USkeletalMesh>();
-		Mesh->SetRefSkeleton(MakeReferenceSkeleton(Bones));
+		const TStrongObjectPtr<USkeletalMesh> Mesh = MakeMesh(Bones);
 		TStrongObjectPtr<USkeleton> Skeleton(NewObject<USkeleton>());
-		verify(Skeleton->MergeAllBonesToBoneTree(Mesh, false));
+		verify(Skeleton->MergeAllBonesToBoneTree(Mesh.Get(), false));
 		return Skeleton;
 	}
 

@@ -91,7 +91,11 @@ turn: `Turn * PuppetRetarget::ScaleRotation(Turn.Inverse() * Delta, Amount)`, wi
 6. **Controls are `UPROPERTY`s** with `EditAnywhere`, `BlueprintReadOnly`, a `Category`
    (`Performer` for performer joints, `Puppet` for puppet bones, `Retarget` for retargeting
    controls), a tooltip comment, and `ClampMin`/`ClampMax` where a range makes sense. The solver
-   reads them every frame, so edits are live; editing them also re-binds the puppet.
+   reads them every frame, so edits are live; editing them also re-binds the puppet. Give every
+   bone or joint name a picker: `meta = (GetOptions = "GetPuppetBoneOptions")` for a puppet bone
+   (the target mesh's bones) and `GetOptions = "GetPerformerJointOptions"` for a performer joint
+   (the canonical joints); curve names have none. `Open3DPuppet.Pickers.Coverage` fails on a
+   module whose bone or joint name lacks one.
 7. **Changing the contract** (the virtuals above, the context structs, the pose types) needs an
    ADR. A new module never needs one.
 
@@ -119,11 +123,11 @@ class OPEN3DPUPPET_API UPuppetModule_SingleBone : public UPuppetModule
 
 public:
 	/** The performer joint, by canonical name. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerJoint = TEXT("head");
 
 	/** The puppet bone it drives. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetBone = TEXT("head");
 
 	/** Scales the performer's rotation: below 1 damps it, above 1 exaggerates it. */
@@ -322,6 +326,6 @@ Write the tests first and watch them fail (rule TEST-004). Raise `plugin` in
 - [ ] Header in `Public/PuppetModules/`, source in `Private/PuppetModules/`, class `UPuppetModule_<Name>`, display name set.
 - [ ] Copyright line on both files (rule OP-002).
 - [ ] `Bind` checks every name and sizes every array; `Solve` does not allocate, log or touch game-thread objects.
-- [ ] Every control has a category, a tooltip comment and a sensible clamp.
+- [ ] Every control has a category, a tooltip comment and a sensible clamp; every bone or joint name has a picker.
 - [ ] Tests from section 5, the floor raised, the UE build and the `Open3DPuppet` tests run with their output in the PR.
 - [ ] The module added to the design overview's table (§5.2) and to `CHANGELOG.md`; its roadmap work package marked done.

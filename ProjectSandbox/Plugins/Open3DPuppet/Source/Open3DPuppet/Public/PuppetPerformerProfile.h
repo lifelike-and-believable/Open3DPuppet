@@ -22,7 +22,7 @@ class OPEN3DPUPPET_API UPuppetPerformerProfile : public UDataAsset
 
 public:
 	/** Canonical joint name (for example "upperarm_l") to the source's bone name (for example "LeftArm"). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Profile", meta = (ForceInlineRow))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Profile", meta = (ForceInlineRow, GetKeyOptions = "GetCanonicalJointOptions", GetValueOptions = "GetSourceBoneOptions"))
 	TMap<FName, FName> CanonicalToSource;
 
 	/**
@@ -62,4 +62,16 @@ public:
 	 * unchanged, when no scheme names any of the bones.
 	 */
 	bool MapBones(TConstArrayView<FName> SourceBones, TConstArrayView<int32> SourceParents, TConstArrayView<FPuppetNamingScheme> Schemes);
+
+	/** The canonical joint names, for the mapping's keys in the details panel. */
+	UFUNCTION()
+	TArray<FName> GetCanonicalJointOptions() const;
+
+	/**
+	 * Source Skeleton's bone names, for the mapping's values in the details panel. Without a
+	 * skeleton, every bone name the naming schemes in Project Settings know, and the values already
+	 * mapped, since a picker takes no typed names.
+	 */
+	UFUNCTION()
+	TArray<FName> GetSourceBoneOptions() const;
 };

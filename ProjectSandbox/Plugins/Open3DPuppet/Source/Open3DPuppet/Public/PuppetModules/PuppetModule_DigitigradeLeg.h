@@ -20,31 +20,31 @@ class OPEN3DPUPPET_API UPuppetModule_DigitigradeLeg : public UPuppetModule
 
 public:
 	/** Performer upper joint, by canonical name (thigh_l, or upperarm_l for a front leg). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerUpper = TEXT("thigh_l");
 
 	/** Performer lower joint (calf_l, or lowerarm_l). Its bend is the knee bend Knee To Hock Ratio reads. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerLower = TEXT("calf_l");
 
 	/** Performer end joint (foot_l, or hand_l): the paw follows it. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerEnd = TEXT("foot_l");
 
 	/** Puppet thigh (or upper arm). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetUpper = TEXT("thigh_l");
 
 	/** Puppet shin, from knee to hock; a descendant of PuppetUpper. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetLower = TEXT("calf_l");
 
 	/** Puppet metatarsal, from hock to paw; a descendant of PuppetLower. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetMetatarsal = TEXT("foot_l");
 
 	/** Puppet paw; a descendant of PuppetMetatarsal. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetPaw = TEXT("ball_l");
 
 	/** Scales how far the paw moves forward, back and sideways for the performer's steps; up and down are not scaled. */

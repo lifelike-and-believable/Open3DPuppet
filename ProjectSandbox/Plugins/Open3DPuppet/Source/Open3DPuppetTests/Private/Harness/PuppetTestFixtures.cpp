@@ -266,9 +266,9 @@ namespace PuppetTests
 	{
 	}
 
-	void FPuppet::Build()
+	void FPuppet::Build(TConstArrayView<FTransform> RestLocal)
 	{
-		Instance.Initialize(*Asset, Asset->Modules, RefSkeleton);
+		Instance.Initialize(*Asset, Asset->Modules, RefSkeleton, RestLocal);
 	}
 
 	void FPuppet::Drive(int32 Slot, const FPerformer& Performer)

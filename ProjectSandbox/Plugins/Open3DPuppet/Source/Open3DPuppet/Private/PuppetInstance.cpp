@@ -31,10 +31,11 @@ namespace PuppetInstance
 FPuppetInstance::FPuppetInstance() = default;
 FPuppetInstance::~FPuppetInstance() = default;
 
-void FPuppetInstance::Initialize(const UPuppetAsset& Asset, TConstArrayView<TObjectPtr<UPuppetModule>> Modules, const FReferenceSkeleton& RefSkeleton)
+void FPuppetInstance::Initialize(const UPuppetAsset& Asset, TConstArrayView<TObjectPtr<UPuppetModule>> Modules, const FReferenceSkeleton& RefSkeleton,
+	TConstArrayView<FTransform> RestLocal)
 {
 	AssetName = Asset.GetFName();
-	Puppet.Initialize(RefSkeleton);
+	Puppet.Initialize(RefSkeleton, RestLocal);
 	PuppetPelvis = Puppet.FindBone(Asset.PelvisBone);
 	if (PuppetPelvis == INDEX_NONE)
 	{

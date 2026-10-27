@@ -72,7 +72,10 @@ Modules share one small set of operations, implemented once in the solver core:
   the puppet bone's own rest rotation:
   `Q_puppet = A · (Q_performer · Q_performerRest⁻¹) · A⁻¹ · Q_puppetRest`, where `A` is the
   calibration's alignment. This is independent of how either skeleton orients its bone axes,
-  which is what lets any capture skeleton drive any mesh.
+  which is what lets any capture skeleton drive any mesh. The puppet's rest pose is the mesh's
+  reference pose, or the puppet asset's **Rest Pose** (WP-2): a frame of an AnimSequence on the
+  puppet's skeleton, for a mesh modelled in another pose than performers calibrate in (an A-pose
+  mesh for T-pose performers). Only its rotations are used; bone lengths stay the mesh's.
 - **Chain resampling.** A performer chain and a puppet chain need not have the same number of
   bones. Each puppet bone sits at a normalized position along its chain (by rest length), and its
   delta is interpolated (slerp) between the performer deltas at the neighbouring positions. Three
@@ -153,7 +156,9 @@ and handing control between a clip and a performer.
 
 ## 8. Setting up a puppet (target workflow)
 
-1. Create a Puppet asset (Data Asset > Puppet Asset) and pick the skeletal mesh.
+1. Create a Puppet asset (Data Asset > Puppet Asset) and pick the skeletal mesh. If the mesh is
+   not modelled in the pose performers calibrate in (T-pose by default), set **Rest Pose** to an
+   AnimSequence of the puppet in that pose.
 2. Add modules and set their bones. (WP-8 adds a setup assistant that finds chains by name and
    topology and proposes modules.)
 3. In the character's Animation Blueprint, add the **Puppet Solve** node, choose the puppet, and

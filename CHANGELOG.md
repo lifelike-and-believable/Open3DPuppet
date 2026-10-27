@@ -34,6 +34,12 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Puppet rest pose** (WP-2, ADR 0003): a puppet asset's `RestPose` (an AnimSequence on the
+  puppet's skeleton) and `RestPoseTime` set the pose modules retarget from, for a mesh modelled in
+  another pose than performers calibrate in, such as an A-pose mesh for T-pose performers. Its
+  bone rotations are used, by bone name, and bone lengths stay the mesh's
+  (`FPuppetClipSampler::SampleOnto`). Without it, modules retarget from the mesh's reference pose
+  as before. `FPuppetPose::GetReferenceComponent` returns the rest pose. 2 new tests (141).
 - **Naming schemes and profile auto-mapping** (WP-2, ADR 0003): Project Settings > Plugins >
   Open3DPuppet > Naming Schemes maps canonical joints to capture systems' bone names, starting
   with defaults for the UE5 mannequin, Xsens, OptiTrack / Motive, Rokoko, Vicon, Qualisys, Sony

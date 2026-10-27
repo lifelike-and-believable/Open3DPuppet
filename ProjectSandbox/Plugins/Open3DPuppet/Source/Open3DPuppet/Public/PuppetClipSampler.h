@@ -12,6 +12,7 @@
 
 class UAnimSequence;
 struct FPuppetPerformerCalibration;
+struct FReferenceSkeleton;
 
 /**
  * Plays an AnimSequence of human motion as a performer (ADR 0008, item 1): the bone names and
@@ -40,6 +41,13 @@ public:
 	 * False when unbound. Any thread; allocates only when OutLocal must grow.
 	 */
 	bool Sample(double Time, TArray<FTransform>& OutLocal) const;
+
+	/**
+	 * Fills OutLocal with Target's reference pose, each bone the clip's skeleton also has (by name)
+	 * turned to the clip's local rotation at Time; translations and scales stay Target's. For a
+	 * puppet's rest pose authored on its skeleton. False when unbound. Allocates.
+	 */
+	bool SampleOnto(double Time, const FReferenceSkeleton& Target, TArray<FTransform>& OutLocal) const;
 
 	/** The skeleton's reference pose, one local transform per bone. */
 	TConstArrayView<FTransform> GetReferencePose() const { return ReferencePose; }

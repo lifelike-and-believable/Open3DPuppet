@@ -7,6 +7,7 @@
 
 #include "PuppetAsset.generated.h"
 
+class UAnimSequence;
 class UPuppetModule;
 class USkeletalMesh;
 
@@ -35,6 +36,20 @@ public:
 	/** The puppet's pelvis bone; its height over the performer's pelvis height sets the root scale. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
 	FName PelvisBone = TEXT("pelvis");
+
+	/**
+	 * The pose modules retarget from: how the puppet stands when the performer stands in the pose
+	 * they calibrate in (T-pose by default). Leave empty to use the mesh's reference pose; set it
+	 * when the mesh is modelled in another pose, such as an A-pose mesh for T-pose performers. An
+	 * AnimSequence on the puppet's skeleton; its bone rotations at Rest Pose Time are used, bone
+	 * lengths stay the mesh's.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	TObjectPtr<UAnimSequence> RestPose;
+
+	/** The time in Rest Pose to take the pose from, in seconds. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (EditCondition = "RestPose != nullptr", ClampMin = "0"))
+	float RestPoseTime = 0.0f;
 
 	/** A move of the puppet further than this in one frame, in centimetres, counts as a teleport: dynamic modules start again from the pose (ADR 0007). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dynamics", meta = (ClampMin = "0.0", Units = "cm"))

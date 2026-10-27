@@ -56,6 +56,15 @@ void FAnimNode_PuppetSolve::PreUpdate(const UAnimInstance* InAnimInstance)
 		BoundModules = Puppet ? Puppet->Modules : TArray<TObjectPtr<UPuppetModule>>();
 		BoundRevision = Puppet ? Puppet->GetRevision() : INDEX_NONE;
 		bNeedsInitialize = true;
+
+		BoundRestPose = Puppet ? Puppet->RestPose : nullptr;
+		BoundRestPoseTime = Puppet ? Puppet->RestPoseTime : 0.0f;
+		FString Error;
+		if (!RestPoseSampler.SetSequence(BoundRestPose, Error))
+		{
+			UE_LOG(LogOpen3DPuppet, Warning, TEXT("Puppet %s: rest pose %s cannot be used (%s); modules retarget from the mesh's reference pose."),
+				*Puppet->GetName(), *GetNameSafe(BoundRestPose), *Error);
+		}
 	}
 
 	// Cast can change through a pin; it is read here on the game thread for the calibrations and
@@ -246,7 +255,12 @@ void FAnimNode_PuppetSolve::InitializeInstance(const FReferenceSkeleton& RefSkel
 	bNeedsInitialize = false;
 	BoundRefSkeleton = &RefSkeleton;
 	BoundNumBones = RefSkeleton.GetNum();
-	Instance->Initialize(*BoundPuppet, BoundModules, RefSkeleton);
+	TArray<FTransform> RestLocal;
+	if (RestPoseSampler.IsBound())
+	{
+		RestPoseSampler.SampleOnto(BoundRestPoseTime, RefSkeleton, RestLocal);
+	}
+	Instance->Initialize(*BoundPuppet, BoundModules, RefSkeleton, RestLocal);
 	InputLocal = RefSkeleton.GetRefBonePose();
 	// INDEX_NONE matches no state, so each slot's first state is logged.
 	LoggedSlotStates.Init(INDEX_NONE, Instance->NumSlots());

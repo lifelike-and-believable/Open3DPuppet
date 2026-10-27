@@ -15,25 +15,25 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 
 ## Where things stand (2026-10-26)
 
-- `develop` at `da4d7cc`.
+- `develop` after WP-2's last PR (#26).
 - Done: WP-0, WP-1, WP-9a, WP-11 (curves, #8), WP-12 (Digits #13, finger-curl curves #14, ADR
   0009), WP-13 (face modules, #15), WP-4 (digitigrade leg, #16), WP-14 (solver dynamics, #18),
   WP-5 (dynamic chain, #19), WP-6 (wing, #20), WP-16 (hand-offs, #9; Two-Bone Limb weight fix #17)
-  and WP-3 (performer clips as a cast source, #21).
-- 132 automation tests, all passing on the self-hosted runner.
+  WP-3 (performer clips as a cast source, #21), CI status comments (#23) and WP-2 (saved
+  calibrations #24, naming schemes and profile auto-mapping #25, puppet rest pose #26).
+- 141 automation tests, all passing on the self-hosted runner.
 - Every module the Wolf and the Eagle need exists, except the Tier 2 physics hand-off (WP-15).
 
 ## Next steps
 
 In this order unless the maintainer says otherwise:
 
-1. **WP-2, calibration and profiles in the editor** (calibrate button, saving calibrations to
-   assets, choice of reference pose, profile auto-mapping by name), the next work package in the
-   roadmap's order that is not blocked:
+1. **WP-7, the prop-driven module** (Live Link Transform role) **and a multi-performer sample**,
+   the next work package in the roadmap's order that is not blocked:
    - WP-15 waits on physics assets for the Wolf and the Eagle;
    - WP-17 waits on which hand-off triggers the show uses (ADR 0008 question 1);
    - WP-M1 and WP-M2 (the Wolf and the Eagle) wait on their meshes.
-2. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-3, WP-4, WP-5,
+2. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5,
    WP-6, WP-11, WP-12, WP-13 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
    and tune for each.
 

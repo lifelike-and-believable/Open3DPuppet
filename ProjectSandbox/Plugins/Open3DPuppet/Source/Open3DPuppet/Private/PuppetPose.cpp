@@ -5,12 +5,13 @@
 #include "PuppetRetargetMath.h"
 #include "ReferenceSkeleton.h"
 
-void FPuppetPose::Initialize(const FReferenceSkeleton& RefSkeleton)
+void FPuppetPose::Initialize(const FReferenceSkeleton& RefSkeleton, TConstArrayView<FTransform> RestLocal)
 {
 	const int32 NumBones = RefSkeleton.GetNum();
+	const bool bHasRest = RestLocal.Num() == NumBones;
 	Names.SetNum(NumBones);
 	Parents.SetNum(NumBones);
-	Local = RefSkeleton.GetRefBonePose();
+	Local = bHasRest ? TArray<FTransform>(RestLocal) : RefSkeleton.GetRefBonePose();
 	Component.SetNum(NumBones);
 	for (int32 Bone = 0; Bone < NumBones; ++Bone)
 	{
@@ -19,6 +20,11 @@ void FPuppetPose::Initialize(const FReferenceSkeleton& RefSkeleton)
 	}
 	PropagateFrom(0);
 	ReferenceComponent = Component;
+	if (bHasRest)
+	{
+		Local = RefSkeleton.GetRefBonePose();
+		PropagateFrom(0);
+	}
 }
 
 void FPuppetPose::SetLocalTransforms(TConstArrayView<FTransform> InLocal)

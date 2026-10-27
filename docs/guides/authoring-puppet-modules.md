@@ -47,7 +47,7 @@ The solver has two functions:
 
 | Member | Meaning |
 |---|---|
-| `Puppet` | `FPuppetPose`: the puppet's bones by mesh index. `FindBone`, `GetChain`, `GetReferenceComponent` (rest), `GetComponent` and `GetLocal` (current), and in `Solve`: `SetComponent`, `SetComponentRotation`, and `SetCurve(name, value)` for output curves (morph targets, material parameters). |
+| `Puppet` | `FPuppetPose`: the puppet's bones by mesh index. `FindBone`, `GetChain`, `GetReferenceComponent` (rest: the mesh's reference pose, or the puppet asset's Rest Pose when it sets one), `GetComponent` and `GetLocal` (current), and in `Solve`: `SetComponent`, `SetComponentRotation`, and `SetCurve(name, value)` for output curves (morph targets, material parameters). |
 | `Performer` | `FPuppetPerformerPose`: `FindJoint(canonical name)`, `GetParents`, `GetComponent`, and `FindCurve(canonical name)` for curves (ARKit names by default, plus the derived finger curls `curl_<finger>_<side>` when the performer has finger bones, ADR 0009). A face slot has curves and no bones. |
 | `Calibration` | `FPuppetPerformerCalibration`: `RestComponent[joint]`, the performer's rest pose, and `GetRestCurve(name)`, the neutral value of a curve. It always matches `Performer`'s skeleton. |
 | `PuppetPelvis`, `PerformerPelvis`, `RootScale` | The pelvis on each side and the size ratio between them (puppet pelvis height over performer pelvis height). |
@@ -306,7 +306,7 @@ bool FPuppetSingleBoneFollowsTest::RunTest(const FString& Parameters)
 
 Each module tests at least:
 
-1. The calibrated rest pose maps to the puppet's reference pose.
+1. The calibrated rest pose maps to the puppet's rest pose (its reference pose unless the asset sets a Rest Pose).
 2. A known performer motion produces the expected puppet pose, with values you can work out by
    hand (90 and 45 degree turns, round lengths). Write the reasoning in a comment.
 3. Each retargeting control changes the result as its tooltip says.

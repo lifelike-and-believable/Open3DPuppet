@@ -111,8 +111,8 @@ namespace PuppetTests
 			return *Module;
 		}
 
-		/** Creates the instance from the asset's current modules. */
-		void Build();
+		/** Creates the instance from the asset's current modules, with RestLocal as the rest pose (empty: the reference pose). */
+		void Build(TConstArrayView<FTransform> RestLocal = {});
 
 		/** Gives Slot its performer's current pose. */
 		void Drive(int32 Slot, const FPerformer& Performer);

@@ -34,6 +34,13 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Saved calibrations** (WP-2, ADR 0003): `UPuppetCalibrationAsset` keeps a performer's
+  calibration in an asset. **Capture** (a button in its details panel, and callable from
+  Blueprint) calibrates its Live Link `Subject` with its `Alignment` and saves the result;
+  **Apply** makes the saved calibration the subject's current one. A cast entry's
+  `SavedCalibration` is used while the subject has no calibration in the Puppet Calibration
+  subsystem, so a show can start without calibrating; a calibration captured since takes
+  precedence. 3 new tests (135).
 - **Performer clips as a cast source** (WP-3, ADR 0008): a cast entry's `Source` is a Live Link
   subject or an `Animation`, an AnimSequence of human motion on its own skeleton (a recorded take,
   mocap delivered as FBX), which the Puppet Solve node samples on the animation worker thread and

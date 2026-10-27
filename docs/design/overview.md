@@ -158,8 +158,13 @@ and handing control between a clip and a performer.
    topology and proposes modules.)
 3. In the character's Animation Blueprint, add the **Puppet Solve** node, choose the puppet, and
    bind each performer slot to a Live Link subject.
-4. Have the performer stand in the reference pose and call **Calibrate Performer** on the Puppet
-   Calibration subsystem (from Blueprint now; an editor button comes in WP-2).
+4. Have the performer stand in the reference pose and calibrate: create a Puppet Calibration
+   asset (Data Asset > Puppet Calibration Asset), set its Live Link subject and alignment, and
+   press **Capture** in its details panel, or call **Calibrate Performer** on the Puppet
+   Calibration subsystem from Blueprint. The asset keeps the calibration: name it as the cast
+   entry's **Saved Calibration** and the puppet uses it until the performer is calibrated again,
+   so a show can start without calibrating, or press **Apply** to make it the subject's current
+   calibration.
 5. Puppeteer. Adjust module controls live in the details panel; WP-8 adds a control panel for
    session use.
 

@@ -13,6 +13,7 @@
 class FPuppetInstance;
 class ILiveLinkClient;
 class UAnimSequence;
+class UPuppetCalibrationAsset;
 class UPuppetAsset;
 class UPuppetModule;
 class UPuppetPerformerProfile;
@@ -55,6 +56,14 @@ struct OPEN3DPUPPET_API FPuppetCastEntry
 	/** The Live Link subject (Animation role, or Basic for curves only) that plays the slot. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cast", meta = (EditCondition = "Source == EPuppetCastSource::LiveLink", EditConditionHides))
 	FLiveLinkSubjectName Subject;
+
+	/**
+	 * A saved calibration, used while the subject has none in the Puppet Calibration subsystem, so
+	 * a show can start without calibrating. A calibration captured since (Calibrate Performer, or
+	 * Capture on any calibration asset) takes precedence.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cast", meta = (EditCondition = "Source == EPuppetCastSource::LiveLink", EditConditionHides))
+	TObjectPtr<UPuppetCalibrationAsset> SavedCalibration;
 
 	/**
 	 * The performer clip: human motion on its own (performer) skeleton, retargeted through the
@@ -141,6 +150,9 @@ private:
 		EPuppetCastSource Source = EPuppetCastSource::LiveLink;
 		FName Subject;
 		int32 Revision = 0;
+		/** The saved calibration asset and its revision, for a subject the subsystem has no calibration for. */
+		const UPuppetCalibrationAsset* Saved = nullptr;
+		int32 SavedRevision = 0;
 		FPuppetPerformerCalibration Calibration;
 		bool bHasCalibration = false;
 		bool bDirty = true;

@@ -15,12 +15,20 @@
 	"IsExperimentalVersion": true,
 	"Installed": false,
 	"Plugins": [
-		{ "Name": "LiveLink", "Enabled": true }
+		{ "Name": "LiveLink", "Enabled": true },
+		{ "Name": "ControlRig", "Enabled": true }
 	],
 	"SupportedTargetPlatforms": [ "Win64" ],
 	"Modules": [
 		{
 			"Name": "Open3DPuppet",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ],
+			"TargetDenyList": [ "Server", "Program" ]
+		},
+		{
+			"Name": "Open3DPuppetControlRig",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"PlatformAllowList": [ "Win64" ],

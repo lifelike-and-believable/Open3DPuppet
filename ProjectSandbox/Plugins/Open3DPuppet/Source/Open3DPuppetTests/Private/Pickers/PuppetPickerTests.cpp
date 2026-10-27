@@ -20,6 +20,13 @@
 
 namespace PuppetPickerTests
 {
+	/** The plugin's runtime modules' script packages: the core and the Control Rig adapter (ADR 0010). */
+	bool IsLibraryPackage(const UObject& Object)
+	{
+		const FString Package = Object.GetOutermost()->GetName();
+		return Package == TEXT("/Script/Open3DPuppet") || Package == TEXT("/Script/Open3DPuppetControlRig");
+	}
+
 	TArray<FName> Names(TConstArrayView<PuppetTests::FBone> Bones)
 	{
 		TArray<FName> Result;
@@ -47,7 +54,7 @@ namespace PuppetPickerTests
 			}
 			if (const FStructProperty* Inner = CastField<FStructProperty>(Element))
 			{
-				if (Inner->Struct->GetOutermost()->GetName() == TEXT("/Script/Open3DPuppet"))
+				if (IsLibraryPackage(*Inner->Struct))
 				{
 					CheckPickers(Test, Inner->Struct, Path + TEXT(".") + Property->GetName(), OutChecked);
 				}
@@ -124,7 +131,7 @@ bool FPuppetPickerCoverageTest::RunTest(const FString& Parameters)
 	for (TObjectIterator<UClass> It; It; ++It)
 	{
 		if (It->IsChildOf(UPuppetModule::StaticClass()) && !It->HasAnyClassFlags(CLASS_Abstract)
-			&& It->GetOutermost()->GetName() == TEXT("/Script/Open3DPuppet"))
+			&& PuppetPickerTests::IsLibraryPackage(**It))
 		{
 			PuppetPickerTests::CheckPickers(*this, *It, It->GetName(), Checked);
 		}

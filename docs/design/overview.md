@@ -124,7 +124,7 @@ frame, so a change in the details panel shows up live in the viewport.
 | Curve remap | Performer curves (ARKit's 52 blend shapes by default; other sources through the profile) | Per-curve remap, combination, smoothing to puppet curves (morph targets) | WP-13 |
 | Eyes | Eye-look curves or eye bones | Range limits, convergence | WP-13 |
 | Physics Region (optional module) | Its controls or a performer curve | Strength and damping of a region in Rigid Body With Control | WP-15 |
-| Control Rig adapter | A Control Rig asset with a known interface | The rig's own controls | WP-10 |
+| Control Rig adapter | A Control Rig made on the puppet's mesh: performer joints and curves drive its controls, it poses the bones the module lists (ADR 0010) | The rig's own controls | WP-10 |
 
 ## 6. Several performers
 

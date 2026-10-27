@@ -1,7 +1,7 @@
 # Handoff
 
 Where the last working session left Open3DPuppet, and how to start the next one. Last updated
-2026-10-26. The [roadmap](roadmap.md) stays the source of truth for work packages; this page says
+2026-10-27. The [roadmap](roadmap.md) stays the source of truth for work packages; this page says
 what changed, what is open, and what to do first. Work that spans Open3DBroadcast, VMCLiveLink
 and Open3DPuppet together is planned in
 [`live-virtual-performance`](https://github.com/lifelike-and-believable/live-virtual-performance)
@@ -13,9 +13,9 @@ Read [`AGENTS.md`](../../AGENTS.md), then this page, then the [roadmap](roadmap.
 is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 [`docs/adr/`](../adr/README.md), including the maintainer's answers to open questions.
 
-## Where things stand (2026-10-26)
+## Where things stand (2026-10-27)
 
-- `develop` after WP-9 (#34).
+- `develop` after WP-10 (#35).
 - Done: WP-0, WP-1, WP-9a, WP-11 (curves, #8), WP-12 (Digits #13, finger-curl curves #14, ADR
   0009), WP-13 (face modules, #15), WP-4 (digitigrade leg, #16), WP-14 (solver dynamics, #18),
   WP-5 (dynamic chain, #19), WP-6 (wing, #20), WP-16 (hand-offs, #9; Two-Bone Limb weight fix #17)
@@ -24,21 +24,20 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
   test plan (#27), WP-7 (Prop Chain and the multi-performer sample, #28), WP-8 (bone pickers
   #29, setup assistant #30, live tuning and slot status #31, the Puppet Session panel #33) and
   the asset types in the Add menu (#32), and WP-9 (the Fab source zip, its checks and the
-  plugin icon, #34).
-- 164 automation tests, all passing on the self-hosted runner.
+  plugin icon, #34), and WP-10 (the Control Rig adapter, #35; ADR 0010).
+- 185 automation tests, all passing on the self-hosted runner.
 - Every module the Wolf and the Eagle need exists, except the Tier 2 physics hand-off (WP-15).
 
 ## Next steps
 
 In this order unless the maintainer says otherwise:
 
-1. **WP-10, the Control Rig adapter module**, the next work package in the roadmap's order that
-   is not blocked:
+1. **Nothing is unblocked.** Every remaining work package waits on the maintainer:
    - WP-15 waits on physics assets for the Wolf and the Eagle;
    - WP-17 waits on which hand-off triggers the show uses (ADR 0008 question 1);
    - WP-M1 and WP-M2 (the Wolf and the Eagle) wait on their meshes.
 2. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5, WP-7, WP-8,
-   WP-6, WP-11, WP-12, WP-13 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
+   WP-6, WP-10, WP-11, WP-12, WP-13 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
    and tune for each; the [desk test plan](../guides/desk-test-plan.md) has the steps for WP-2,
    WP-3 and WP-7.
 
@@ -75,6 +74,9 @@ These are not obvious from the rest of the repository's docs:
 - **Fixtures:** `PuppetTests::MakeSkeleton` and `PuppetTests::MakeClip`
   (`Source/Open3DPuppetTests/Private/Harness/PuppetTestFixtures.h`) build a `USkeleton` and a
   `UAnimSequence` in code, for tests that need assets.
+- **Control Rig tests:** `UPuppetTestControlRig`
+  (`Source/Open3DPuppetTests/Private/Harness/PuppetTestControlRig.h`) is a native rig built in
+  code, as the engine's FK Control Rig is, so the adapter is tested without a rig asset.
 - **Local runs:**
   - An automation run creates an untracked `ProjectSandbox/Config/` (`DefaultEngine.ini`,
     `DefaultInput.ini`). Delete it; do not commit it.

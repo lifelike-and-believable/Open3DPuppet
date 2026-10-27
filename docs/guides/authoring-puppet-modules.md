@@ -22,6 +22,7 @@ Check whether an existing module already does the job with different settings:
 | A tail, ears, a mane or feathers that swing with the puppet's motion and settle | Dynamic Chain (Tail), with Stiffness, Damping, Amplitude and Physics Weight |
 | A wing from the performer's arm: flap, fold, feather fan | Wing |
 | A tail, trunk or tentacle a puppeteer plays with a tracked rod (a Live Link Transform-role subject, read as the joint `prop`) | Prop Chain, with Shape, Space, Amplification and Smoothing |
+| Behaviour you would rather build in the Control Rig editor than in C++ | Control Rig ([ADR 0010](../adr/0010-control-rig-adapter.md)): a rig made on the puppet's mesh, whose controls the performer drives (joint rotation, joint transform or curve inputs) and whose variables take values set per puppet, posing the bones and setting the curves the module lists |
 
 Write a new module when the anatomy needs behaviour these cannot express.
 

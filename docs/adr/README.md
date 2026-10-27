@@ -17,6 +17,7 @@ from it. ADRs need maintainer sign-off before coding work that depends on them i
 | [0007](0007-physics-driven-modules.md) | Physics-driven modules | Accepted |
 | [0008](0008-animation-sources-and-handoffs.md) | Animation sources and hand-offs | Accepted |
 | [0009](0009-derived-finger-curl-curves.md) | Derived finger-curl curves | Accepted |
+| [0010](0010-control-rig-adapter.md) | Control Rig adapter | Accepted |
 
 ## Answers to open questions
 

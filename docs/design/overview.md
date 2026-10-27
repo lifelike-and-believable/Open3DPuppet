@@ -179,8 +179,9 @@ and handing control between a clip and a performer.
    entry's **Saved Calibration** and the puppet uses it until the performer is calibrated again,
    so a show can start without calibrating, or press **Apply** to make it the subject's current
    calibration.
-5. Puppeteer. Adjust module controls live in the details panel; WP-8 adds a control panel for
-   session use.
+5. Puppeteer. Adjust module numbers live in the details panel: they apply without re-binding the
+   puppet, so its hand-off offset and dynamics carry on; names and other structural edits re-bind
+   it. WP-8 adds a control panel for session use.
 
 ## 9. Out of scope for now
 

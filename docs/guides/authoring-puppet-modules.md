@@ -91,7 +91,11 @@ turn: `Turn * PuppetRetarget::ScaleRotation(Turn.Inverse() * Delta, Amount)`, wi
 6. **Controls are `UPROPERTY`s** with `EditAnywhere`, `BlueprintReadOnly`, a `Category`
    (`Performer` for performer joints, `Puppet` for puppet bones, `Retarget` for retargeting
    controls), a tooltip comment, and `ClampMin`/`ClampMax` where a range makes sense. The solver
-   reads them every frame, so edits are live; editing them also re-binds the puppet. Give every
+   reads them every frame, so edits are live. A number set in place (a weight, a gain, a
+   stiffness) changes nothing else, so it can be tuned during a session; editing a name, vector,
+   enum, flag or list re-binds the puppet (`PuppetEditing::IsLiveEdit`), which resets its
+   hand-off offset and dynamics. A number the solver reads only in `Bind` would therefore not
+   update: read numbers in `Solve`. Give every
    bone or joint name a picker: `meta = (GetOptions = "GetPuppetBoneOptions")` for a puppet bone
    (the target mesh's bones) and `GetOptions = "GetPerformerJointOptions"` for a performer joint
    (the canonical joints); curve names have none. `Open3DPuppet.Pickers.Coverage` fails on a

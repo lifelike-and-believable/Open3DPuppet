@@ -124,6 +124,21 @@ void FAnimNode_PuppetSolve::PreUpdate(const UAnimInstance* InAnimInstance)
 		SlotControls[Slot].ControlBlend = Performance ? Performance->GetControlBlend(SlotName) : 1.0f;
 		SlotControls[Slot].RecentreCount = Performance ? Performance->GetRecentreCount(SlotName) : SlotControls[Slot].AppliedRecentreCount;
 	}
+
+	// The previous evaluation has finished, so the instance's slot states are safe to read here.
+	SlotStatus.SetNum(NumSlots);
+	for (int32 Slot = 0; Slot < NumSlots; ++Slot)
+	{
+		FPuppetSlotStatus& Status = SlotStatus[Slot];
+		Status.Slot = BoundPuppet->PerformerSlots[Slot];
+		Status.State = Instance.IsValid() && Slot < Instance->NumSlots() ? Instance->GetSlotState(Slot) : EPuppetSlotState::NoData;
+		Status.ControlBlend = SlotControls[Slot].ControlBlend;
+		const FPuppetCastEntry* Entry = Cast.FindByPredicate([&Status](const FPuppetCastEntry& Candidate) { return Candidate.Slot == Status.Slot; });
+		Status.Source = Entry ? Entry->Source : EPuppetCastSource::LiveLink;
+		Status.Performer = !Entry ? NAME_None
+			: Entry->Source == EPuppetCastSource::Animation ? (Entry->Animation ? Entry->Animation->GetFName() : NAME_None)
+			: Entry->Subject.Name;
+	}
 }
 
 void FAnimNode_PuppetSolve::UpdateClip(int32 Index)

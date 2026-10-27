@@ -335,7 +335,14 @@ def check_tree(files):
 
 def check_fab_paths(files):
     """Paths over MAX_PATH_LENGTH, and names other than letters, digits and underscores (FAB-003)."""
-    return []
+    errors = []
+    for rel in files:
+        if len(rel) > MAX_PATH_LENGTH:
+            errors.append(f"path is {len(rel)} characters, over Fab's {MAX_PATH_LENGTH} (FAB-003): {rel}")
+        if not all(NAME_SEGMENT_RE.match(part) for name in rel.split("/") for part in name.split(".")):
+            errors.append("name uses a character other than English letters, digits and underscores "
+                          f"(FAB-003): {rel}")
+    return errors
 
 
 def filter_plugin_rules(text):

@@ -18,5 +18,12 @@ public class Open3DPuppetTests : ModuleRules
 			"Engine",
 			"Open3DPuppet"
 		});
+
+		// The asset type tests read the editor's factories and asset definitions.
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"AssetDefinition",
+			"UnrealEd"
+		});
 	}
 }

@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Puppet|Calibration")
 	void ClearCalibration(FLiveLinkSubjectName Subject);
 
+	/** The subjects that have a calibration, for the session panel. */
+	TArray<FName> GetCalibratedSubjects() const;
+
 	/** The subject's calibration or null, and a number that changes whenever it changes (0 when there is none). */
 	const FPuppetPerformerCalibration* FindCalibration(FName Subject, int32& OutRevision) const;
 

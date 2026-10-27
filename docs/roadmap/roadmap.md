@@ -26,6 +26,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | Done (#29, #30, #31, #33) |
 | WP-9 | Fab readiness as Open3DBroadcast: packaging script (`fab-package.py`), exclusion lists, icon | WP-1 | Done (#34) |
 | WP-10 | Control Rig adapter module (ADR 0010) | WP-1 | Done (#35) |
+| WP-18 | Fan module: spreads a fan of sibling bones (the Eagle's tail feathers) from the bend of performer joints, averaged (the Eagle's elbows, so the tail opens as the wings spread); feathers from the middle outwards, spread angle, input range, smoothing; tests and a desk test part. After the desk tests (maintainer, 2026-10-27) | WP-1 | Planned |
 
 Work packages are listed in the order they are planned. The Wolf and Eagle (design overview §10)
 set that order: curves, digits and face first, because both characters use them, then the

@@ -386,8 +386,9 @@ Driven by the finger-curl curves from `MM_Attack_01` (part 9).
    fully bent elbow gives a folded wing, and record the values that work for the Eagle.
 4. The legs: two Digitigrade Legs from `thigh_l`, `calf_l`, `foot_l` onto `RigLLeg1`,
    `RigLLeg2`, `RigLLeg3`, `RigLLegAnkle` (and the right side), with the walk.
-5. **Not covered:** the tail fan's 11 feathers are siblings under `RigTail_1`, each one bone, so
-   neither Dynamic Chain nor Digits drives them as a fan. Note what the fan should do.
+5. **Not covered yet:** the tail fan's 11 feathers are siblings under `RigTail_1`, each one bone,
+   so neither Dynamic Chain nor Digits drives them as a fan. The Fan module (WP-18, planned)
+   will open it as the wings spread, from the performer's elbows; it gets its own part here.
 
 ## 17. Control Rig adapter (WP-10)
 

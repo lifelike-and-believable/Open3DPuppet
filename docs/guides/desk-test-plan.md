@@ -1,8 +1,8 @@
 # Desk test plan: performer clips, calibration and props in the editor
 
 Step-by-step checks in the editor for what WP-3 (performer clips, #21), WP-2 (saved calibrations
-#24, naming schemes #25, rest pose #26), WP-7 (a prop driving a chain) and WP-8 (bone pickers)
-added. Automated tests cover the solver
+#24, naming schemes #25, rest pose #26), WP-7 (a prop driving a chain) and WP-8 (bone pickers,
+setup assistant) added. Automated tests cover the solver
 and helpers; these cover what only a running editor shows: the node's wiring, the buttons in the
 details panel and real capture systems. The roadmap's [Next](../roadmap/roadmap.md#next) lists
 the desk checks for other work packages.
@@ -158,7 +158,21 @@ and `Tail`, a Prop Chain on `Tail`, the rod's Transform-role subject cast into `
    mapped.
 5. Curve fields (Performer Curve, Puppet Curve) stay free text.
 
-## 7. Recording results
+## 7. Setup assistant (WP-8)
+
+1. Create a new Puppet Asset for `SKM_Manny` and press **Propose Modules**. **Expect:** Setup
+   Result names the UE5 Mannequin scheme and lists Root, a spine Chain (`spine_01` to
+   `spine_05`), a neck Chain, four Two-Bone Limbs (legs in Pelvis Relative), Digits for each
+   hand, and no Dynamic Chain for the mannequin's IK, twist or corrective bones.
+2. Press it again. **Expect:** nothing changes, and Setup Result says to remove the modules
+   first.
+3. A mesh with a tail or ears (or the Wolf once it exists). **Expect:** a Dynamic Chain for each.
+4. A Mixamo-named mesh. **Expect:** the puppet bones keep the mesh's names (`mixamorig:...`)
+   while the performer joints stay canonical.
+5. Drive the proposed puppet with a performer. **Expect:** the body follows without further
+   setup; then check the right hand's Digits Spread Axis and tune the Dynamic Chains.
+
+## 8. Recording results
 
 - File each failure as an Open3DPuppet issue with the `desk` label: the step number, what you
   saw, and the Output Log lines.

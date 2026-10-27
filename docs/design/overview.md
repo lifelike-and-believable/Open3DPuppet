@@ -123,7 +123,7 @@ frame, so a change in the details panel shows up live in the viewport.
 | Curve to bone | A performer curve (face, finger curl) | Source range to bone rotation or translation range, dead zone, smoothing | WP-13 |
 | Curve remap | Performer curves (ARKit's 52 blend shapes by default; other sources through the profile) | Per-curve remap, combination, smoothing to puppet curves (morph targets) | WP-13 |
 | Eyes | Eye-look curves or eye bones | Range limits, convergence | WP-13 |
-| Physics Region (optional module) | Its controls or a performer curve | Strength and damping of a region in Rigid Body With Control | WP-15 |
+| Physics Region (`Open3DPuppetPhysics`) | Its controls or a performer curve | Physics weight (strength) and extra damping of a region in Rigid Body With Control | WP-15 |
 | Control Rig adapter | A Control Rig made on the puppet's mesh: performer joints and curves drive its controls, it poses the bones the module lists (ADR 0010) | The rig's own controls | WP-10 |
 
 ## 6. Several performers
@@ -252,13 +252,16 @@ It comes in two tiers:
   so a tail swings when the wolf turns or stops. Each dynamic module has a **Physics Weight**
   between following the retargeted pose and simulating, and a curve can drive it, so it is
   playable live. It is deterministic, so re-solving a take reproduces it.
-- **Tier 2, engine physics hand-off, in the optional `Open3DPuppetPhysics` module.** For contact
+- **Tier 2, engine physics hand-off, in the `Open3DPuppetPhysics` module.** For contact
   with the world and reactions to impacts, Puppet Solve feeds the engine's Rigid Body With Control
   node (Physics Control plugin). Physics Region modules publish each region's strength and
   damping as curves, and a function library turns them into the node's control parameters. A
   puppeteer can make the wolf's legs heavy and grounded, or let the whole body go limp and pull
-  it back. Enabled only in projects that enable Physics Control, so the core plugin does not
-  depend on it. Takes that use it also record the solved pose, because engine physics is not
+  it back. The core module does not depend on Physics Control; `Open3DPuppetPhysics` does, and
+  the plugin enables Physics Control for it (ADR 0011: an optional plugin dependency would be
+  enabled anyway, since the engine ships the plugin). The
+  [setup guide](../guides/physics-hand-off.md) has the AnimGraph and the Wolf's and Eagle's
+  regions. Takes that use it also record the solved pose, because engine physics is not
   deterministic.
 
 For the first characters:

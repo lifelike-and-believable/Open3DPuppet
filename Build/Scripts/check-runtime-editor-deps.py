@@ -81,6 +81,9 @@ FORBIDDEN_MODULES = {
     "LiveLinkEditor",
     "MainFrame",
     "Persona",
+    # The physics module's runtime side is PhysicsControl alone (ADR 0011).
+    "PhysicsControlEditor",
+    "PhysicsControlUncookedOnly",
     "PropertyEditor",
     "Slate",
     "SlateCore",

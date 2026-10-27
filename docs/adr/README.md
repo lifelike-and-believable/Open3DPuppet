@@ -18,6 +18,7 @@ from it. ADRs need maintainer sign-off before coding work that depends on them i
 | [0008](0008-animation-sources-and-handoffs.md) | Animation sources and hand-offs | Accepted |
 | [0009](0009-derived-finger-curl-curves.md) | Derived finger-curl curves | Accepted |
 | [0010](0010-control-rig-adapter.md) | Control Rig adapter | Accepted |
+| [0011](0011-physics-module-in-the-plugin.md) | The physics module ships in the plugin | Accepted |
 
 ## Answers to open questions
 
@@ -31,6 +32,7 @@ questions of accepted ADRs are recorded here.
 | 0006 | Finger capture | Standard Live Link: finger bones on an Animation-role subject, named as the Unreal standard skeleton. |
 | 0006 | Face capture | Configurable. The default is the most common source: ARKit's 52 blend-shape curves (`jawOpen`, `eyeBlinkLeft`, `browInnerUp`, ...) as Live Link Face sends them. Other sources map their curve names through the performer profile. |
 | 0007 | Physics assets for the Wolf and Eagle | None yet. Tier 1 (solver dynamics) needs none; Tier 2 (WP-15) needs them authored first. |
+| 0007 | Physics assets for the Wolf and Eagle (again, 2026-10-27) | They exist now, migrated into the host project with the meshes (not committed: they are licensed assets). The show uses the Mamaawi copies, `GrayWolf_oneMat` and `BaldEagle_removedFeathers`, with their physics assets. The Bison plays an animation and is not a puppet for now. |
 | 0008 | Manual re-centre | Yes: `UPuppetPerformanceComponent` gets a re-centre call that captures the same offset as a hand-off, mid-scene, which then converges on the performer as a hand-off's does (WP-16). |
 | 0008 | Question 3 (needs-verification): evaluating a sequence for its own skeleton on the worker thread | Verified in WP-3, not a maintainer answer: a bone container built once for the sequence's skeleton (`FBoneContainer::InitializeTo` with the `USkeleton` as the asset), with retargeting disabled so bones in Skeleton translation mode keep the take's translations, then `GetAnimationPose` into an `FCompactPose` on the animation stack each frame, as PoseSearch samples an asset (UE 5.8.4, `Engine/Plugins/Animation/PoseSearch/Source/Runtime/Private/PoseSearchAssetSamplerLibrary.cpp:33`). Per-bone `GetBoneTransform` was not used: it builds a decompression context per call (`Engine/Source/Runtime/Engine/Private/Animation/AnimSequence.cpp:1515`). |
 | 0008 | Item 5: a transition back to the animation "drops the offset" | The offset is kept until the next hand-off or re-centre replaces it, so a slot still under its performer does not snap when another slot hands back (WP-16). |

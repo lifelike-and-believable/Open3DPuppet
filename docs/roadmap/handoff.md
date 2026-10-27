@@ -15,7 +15,7 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 
 ## Where things stand (2026-10-27)
 
-- `develop` after WP-10 (#35).
+- `develop` after WP-15 (#36).
 - Done: WP-0, WP-1, WP-9a, WP-11 (curves, #8), WP-12 (Digits #13, finger-curl curves #14, ADR
   0009), WP-13 (face modules, #15), WP-4 (digitigrade leg, #16), WP-14 (solver dynamics, #18),
   WP-5 (dynamic chain, #19), WP-6 (wing, #20), WP-16 (hand-offs, #9; Two-Bone Limb weight fix #17)
@@ -24,20 +24,22 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
   test plan (#27), WP-7 (Prop Chain and the multi-performer sample, #28), WP-8 (bone pickers
   #29, setup assistant #30, live tuning and slot status #31, the Puppet Session panel #33) and
   the asset types in the Add menu (#32), and WP-9 (the Fab source zip, its checks and the
-  plugin icon, #34), and WP-10 (the Control Rig adapter, #35; ADR 0010).
-- 185 automation tests, all passing on the self-hosted runner.
-- Every module the Wolf and the Eagle need exists, except the Tier 2 physics hand-off (WP-15).
+  plugin icon, #34), WP-10 (the Control Rig adapter, #35; ADR 0010) and WP-15 (the engine
+  physics hand-off, #36; ADR 0011).
+- 196 automation tests, all passing on the self-hosted runner.
+- Every module the Wolf and the Eagle need exists. Their meshes and physics assets are in the
+  host project (not committed: licensed assets); the show uses the Mamaawi copies.
 
 ## Next steps
 
 In this order unless the maintainer says otherwise:
 
-1. **Nothing is unblocked.** Every remaining work package waits on the maintainer:
-   - WP-15 waits on physics assets for the Wolf and the Eagle;
-   - WP-17 waits on which hand-off triggers the show uses (ADR 0008 question 1);
-   - WP-M1 and WP-M2 (the Wolf and the Eagle) wait on their meshes.
+1. **WP-M1 and WP-M2** (the Wolf and the Eagle) can start once the maintainer says how each is
+   performed and whether entrance clips exist; the roadmap's [Next](roadmap.md#next) lists where
+   the meshes differ from the design's mapping (§10). WP-17 still waits on which hand-off
+   triggers the show uses (ADR 0008 question 1).
 2. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5, WP-7, WP-8,
-   WP-6, WP-10, WP-11, WP-12, WP-13 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
+   WP-6, WP-10, WP-11, WP-12, WP-13, WP-15 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
    and tune for each; the [desk test plan](../guides/desk-test-plan.md) has the steps for WP-2,
    WP-3 and WP-7.
 
@@ -46,8 +48,8 @@ In this order unless the maintainer says otherwise:
 The roadmap's [Next](roadmap.md#next) section lists them. In short:
 
 - Which hand-off triggers the show uses (ADR 0008 question 1, WP-17).
-- The Wolf and Eagle meshes, their morph targets, and how each is performed.
-- Physics assets for the Wolf and the Eagle, before WP-15.
+- How the Wolf and the Eagle are performed, and their entrance clips (WP-M1, WP-M2).
+- Which regions are physical in the show (ADR 0007 question 1).
 
 ## Working conventions learned
 
@@ -77,6 +79,14 @@ These are not obvious from the rest of the repository's docs:
 - **Control Rig tests:** `UPuppetTestControlRig`
   (`Source/Open3DPuppetTests/Private/Harness/PuppetTestControlRig.h`) is a native rig built in
   code, as the engine's FK Control Rig is, so the adapter is tested without a rig asset.
+- **Licensed content:** the Wolf, Eagle and Bison meshes in `ProjectSandbox/Content/` are
+  commercial assets and the repository is public. They stay untracked, and tests never load
+  `/Game/...` (CI does not have them); tests build the skeletons they need in code.
+- **Reading assets without the editor UI:** a Python script run by
+  `UnrealEditor-Cmd.exe <uproject> -run=pythonscript -script=<file> -EnablePlugins=PythonScriptPlugin -unattended -nop4 -nosplash -NoSound -stdout`
+  can list a mesh's bones (`unreal.AnimPoseExtensions` on the skeleton's reference pose), morph
+  targets and a physics asset's constraints (`get_constraints`, then
+  `ConstraintInstanceBlueprintLibrary.get_attached_body_names`), saving nothing.
 - **Local runs:**
   - An automation run creates an untracked `ProjectSandbox/Config/` (`DefaultEngine.ini`,
     `DefaultInput.ini`). Delete it; do not commit it.

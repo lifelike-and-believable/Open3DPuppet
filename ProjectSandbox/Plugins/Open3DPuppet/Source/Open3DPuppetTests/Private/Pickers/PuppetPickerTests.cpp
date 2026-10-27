@@ -24,7 +24,8 @@ namespace PuppetPickerTests
 	bool IsLibraryPackage(const UObject& Object)
 	{
 		const FString Package = Object.GetOutermost()->GetName();
-		return Package == TEXT("/Script/Open3DPuppet") || Package == TEXT("/Script/Open3DPuppetControlRig");
+		return Package == TEXT("/Script/Open3DPuppet") || Package == TEXT("/Script/Open3DPuppetControlRig")
+			|| Package == TEXT("/Script/Open3DPuppetPhysics");
 	}
 
 	TArray<FName> Names(TConstArrayView<PuppetTests::FBone> Bones)

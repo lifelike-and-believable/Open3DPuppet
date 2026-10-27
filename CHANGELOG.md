@@ -47,6 +47,20 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Engine physics hand-off** (WP-15, ADR 0007 Tier 2, ADR 0011): a new runtime module,
+  `Open3DPuppetPhysics`, with the Physics Region module and Make Physics Region Parameters. The
+  module writes no bones; it publishes a region's physics weight (`Physics_<Region>`) and extra
+  damping (`Physics_<Region>_Damping`) as puppet curves, each a fixed value or a performer
+  curve's change from neutral, times the module's weight. The function, thread safe, turns them
+  into Rigid Body With Control's control multipliers for the limb of the same name (strength
+  times 1 minus the weight, damping ratio times 1 plus the extra damping), so the AnimGraph reads
+  Puppet Solve, then Rigid Body With Control. Every curve at 0, or missing, leaves the physics as
+  authored. The plugin now depends on the engine's Physics Control plugin, as a plain dependency:
+  an optional one is enabled whenever the engine has the plugin (ADR 0011).
+  `check-runtime-editor-deps.py` now rejects `PhysicsControlEditor` and
+  `PhysicsControlUncookedOnly` in runtime modules. A setup guide
+  (`docs/guides/physics-hand-off.md`) covers the AnimGraph and the regions of the Mamaawi Wolf
+  and Eagle from their physics assets. 11 new tests (196).
 - **Control Rig adapter** (WP-10, ADR 0010): the Control Rig module, in a new runtime module
   `Open3DPuppetControlRig`, drives part of a puppet from a Control Rig built in the Control Rig
   editor, with no C++. Each puppet instance runs its own copy of the rig. The rig's bones start

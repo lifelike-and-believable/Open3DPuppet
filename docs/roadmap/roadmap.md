@@ -24,7 +24,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-2 | Calibration and profiles in the editor: calibrate button, save calibrations to assets, choice of reference pose, profile auto-mapping by name | WP-1 | Done (#24, #25, #26) |
 | WP-7 | Prop-driven module (Live Link Transform role) and a multi-performer sample | WP-1 | Done (#28) |
 | WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | Done (#29, #30, #31, #33) |
-| WP-9 | Fab readiness as Open3DBroadcast: packaging script (`fab-package.py`), exclusion lists, icon | WP-1 | Planned |
+| WP-9 | Fab readiness as Open3DBroadcast: packaging script (`fab-package.py`), exclusion lists, icon | WP-1 | Done (#34) |
 | WP-10 | Control Rig adapter module | WP-1 | Planned |
 
 Work packages are listed in the order they are planned. The Wolf and Eagle (design overview §10)

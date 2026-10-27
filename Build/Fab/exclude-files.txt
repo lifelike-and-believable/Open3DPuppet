@@ -1,0 +1,17 @@
+# Files left out of the Fab source package, as glob patterns relative to the
+# plugin root (forward slashes). '*' matches within one path segment, '**'
+# matches any number of segments.
+#
+# Read by Build/Scripts/fab-package.py. The package checks in that script run
+# after these rules and fail the job if a debug symbol, script or developer
+# document is still in the package, so a new file of that kind needs a rule
+# here or a move out of the plugin.
+#
+# Some files have no rule here on purpose: fab-package.py checks the tracked
+# tree before any exclusion and fails the job, so they must not be committed
+# under the plugin at all: debug symbols (.pdb), scripts (.py, .pyc),
+# executables and installers (.exe, .msi), and developer notes under Source/
+# (anything but a README.md or USER_GUIDE.md outside ThirdParty/).
+#
+# No rules today: everything git tracks under the plugin, apart from the
+# excluded modules, ships.

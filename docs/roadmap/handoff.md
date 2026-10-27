@@ -34,10 +34,11 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 
 In this order unless the maintainer says otherwise:
 
-1. **WP-M1 and WP-M2** (the Wolf and the Eagle) can start once the maintainer says how each is
-   performed and whether entrance clips exist; the roadmap's [Next](roadmap.md#next) lists where
-   the meshes differ from the design's mapping (§10). WP-17 still waits on which hand-off
-   triggers the show uses (ADR 0008 question 1).
+1. **Desk tests first** (maintainer, 2026-10-27): the maintainer runs the
+   [desk test plan](../guides/desk-test-plan.md), recorded mannequin motion first (parts 9 to
+   18), then live with a Rokoko suit (part 19). Fix what the `desk` issues report before new
+   features. The Wolf and the Eagle are test meshes, not production puppets yet; WP-M1 and WP-M2
+   come after. WP-17 still waits on which hand-off triggers the show uses (ADR 0008 question 1).
 2. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5, WP-7, WP-8,
    WP-6, WP-10, WP-11, WP-12, WP-13, WP-15 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
    and tune for each; the [desk test plan](../guides/desk-test-plan.md) has the steps for WP-2,

@@ -3,6 +3,7 @@
 #include "PuppetModule_ControlRig.h"
 
 #include "ControlRig.h"
+#include "PuppetAsset.h"
 #include "PuppetPerformerPose.h"
 #include "PuppetPose.h"
 #include "ReferenceSkeleton.h"
@@ -56,6 +57,8 @@ namespace PuppetModuleControlRig
 			Inputs.Reset();
 			Outputs.Reset();
 			Curves.Reset();
+			VariableCopies.Reset();
+			VariablesStruct = nullptr;
 			if (!Settings.Rig.IsValid())
 			{
 				OutError = TEXT("no Control Rig is set");
@@ -157,6 +160,27 @@ namespace PuppetModuleControlRig
 				Curves.Add({ Name, Element });
 			}
 
+			VariablesStruct = Settings.Variables.GetPropertyBagStruct();
+			if (VariablesStruct)
+			{
+				const TArray<FRigVMExternalVariable> Public = Rig->GetPublicVariables();
+				for (const FPropertyBagPropertyDesc& Desc : VariablesStruct->GetPropertyDescs())
+				{
+					const FRigVMExternalVariable* Variable = Public.FindByPredicate([&Desc](const FRigVMExternalVariable& Candidate) { return Candidate.GetName() == Desc.Name; });
+					if (!Variable || Variable->IsReadOnly() || !Variable->GetMemory())
+					{
+						OutError = FString::Printf(TEXT("the Control Rig has no variable '%s'"), *Desc.Name.ToString());
+						return false;
+					}
+					if (!Desc.CachedProperty || !Variable->GetProperty() || !Variable->GetProperty()->SameType(Desc.CachedProperty))
+					{
+						OutError = FString::Printf(TEXT("the Control Rig's variable '%s' is not of the type the module sets"), *Desc.Name.ToString());
+						return false;
+					}
+					VariableCopies.Add({ Desc.CachedProperty, const_cast<uint8*>(Variable->GetMemory()) });
+				}
+			}
+
 			// The events the engine's Control Rig node runs around the forward solve, when the rig has them.
 			bPreForwardsSolve = Rig->SupportsEvent(FRigUnit_PreBeginExecution::EventName);
 			bPostForwardsSolve = Rig->SupportsEvent(FRigUnit_PostBeginExecution::EventName);
@@ -226,6 +250,21 @@ namespace PuppetModuleControlRig
 				Hierarchy->SetTransform(Control, Target, ERigTransformType::CurrentGlobal, false);
 			}
 
+			// Copied only when changed, so a value that allocates (a string) does not every frame. A
+			// refreshed bag has new properties; the variables wait for the bind that follows.
+			if (VariablesStruct && Settings.Variables.GetPropertyBagStruct() == VariablesStruct)
+			{
+				const uint8* Values = Settings.Variables.GetValue().GetMemory();
+				for (const FVariableCopy& Copy : VariableCopies)
+				{
+					const void* Value = Copy.Property->ContainerPtrToValuePtr<void>(Values);
+					if (!Copy.Property->Identical(Value, Copy.RigValue))
+					{
+						Copy.Property->CopyCompleteValue(Copy.RigValue, Value);
+					}
+				}
+			}
+
 			if (bPreForwardsSolve)
 			{
 				Instance->Execute(FRigUnit_PreBeginExecution::EventName);
@@ -289,6 +328,15 @@ namespace PuppetModuleControlRig
 			int32 Element = INDEX_NONE;
 		};
 		TArray<FCurveOutput> Curves;
+		/** A module value for a rig variable: the bag's property and the rig variable's memory. */
+		struct FVariableCopy
+		{
+			const FProperty* Property = nullptr;
+			void* RigValue = nullptr;
+		};
+		TArray<FVariableCopy> VariableCopies;
+		/** The module's Variables as bound; another struct means they were refreshed since. */
+		const UPropertyBag* VariablesStruct = nullptr;
 		bool bPreForwardsSolve = false;
 		bool bPostForwardsSolve = false;
 	};
@@ -301,11 +349,54 @@ TUniquePtr<FPuppetModuleSolver> UPuppetModule_ControlRig::CreateSolver() const
 
 void UPuppetModule_ControlRig::RefreshVariables()
 {
+	FInstancedPropertyBag Listed;
+	UControlRig* Instance = Rig.IsValid() ? Rig.CreateInstance(GetTransientPackage()) : nullptr;
+	if (Instance)
+	{
+		Instance->Initialize(true);
+		const TArray<FRigVMExternalVariable> Public = Instance->GetPublicVariables();
+		TArray<FPropertyBagPropertyDesc> Descs;
+		for (const FRigVMExternalVariable& Variable : Public)
+		{
+			if (Variable.IsReadOnly() || !Variable.GetProperty() || !Variable.GetMemory())
+			{
+				continue;
+			}
+			FPropertyBagPropertyDesc& Desc = Descs.Emplace_GetRef(Variable.GetName(), Variable.GetProperty());
+			Desc.PropertyFlags |= static_cast<uint64>(CPF_Edit);
+			// The same ID keeps the value already set when the bags are migrated below.
+			const FPropertyBagPropertyDesc* Existing = Variables.FindPropertyDescByName(Variable.GetName());
+			if (Existing && Existing->CachedProperty && Existing->CachedProperty->SameType(Variable.GetProperty()))
+			{
+				Desc.ID = Existing->ID;
+			}
+		}
+		Listed.AddProperties(Descs);
+		for (const FRigVMExternalVariable& Variable : Public)
+		{
+			const FPropertyBagPropertyDesc* Desc = Listed.FindPropertyDescByName(Variable.GetName());
+			if (Desc && Desc->CachedProperty && Variable.GetMemory())
+			{
+				Desc->CachedProperty->CopyCompleteValue(Desc->CachedProperty->ContainerPtrToValuePtr<void>(Listed.GetMutableValue().GetMemory()), Variable.GetMemory());
+			}
+		}
+	}
+	Variables.MigrateToNewBagInstance(Listed);
+
+	// Solvers hold the old bag's properties, so running puppets bind again.
+	if (UPuppetAsset* Asset = GetTypedOuter<UPuppetAsset>())
+	{
+		Asset->MarkChanged();
+	}
 }
 
 #if WITH_EDITOR
 void UPuppetModule_ControlRig::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
+	if (PropertyChangedEvent.GetMemberPropertyName() == GET_MEMBER_NAME_CHECKED(UPuppetModule_ControlRig, Rig))
+	{
+		RefreshVariables();
+	}
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
 #endif

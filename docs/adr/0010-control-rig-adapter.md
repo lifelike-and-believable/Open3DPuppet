@@ -63,7 +63,9 @@ What is true today (`develop` at `d50cbaa`, UE 5.8.4 sources):
 - Pros: the engine's Control Rig node exposes variables as pins, so the pattern is familiar.
 - Cons: variables are found by property name and type, and are written through reflection.
   A native rig's own properties are not variables (`URigVMHost::GetExternalVariablesImpl` skips
-  native properties), so the adapter could only be tested with a rig asset.
+  native properties), so a test rig has to offer them itself.
+- Variables are still the place for what the performer does not drive: a rig's tuning, set per
+  puppet (decision item 6, the maintainer's answer to question 1).
 
 ### Option C: the whole performer pose as rig bones
 - Pros: no mapping to set up.
@@ -94,22 +96,31 @@ What is true today (`develop` at `d50cbaa`, UE 5.8.4 sources):
    - **Curve:** the curve's change from neutral (`GetCurveDelta`) times Scale. The control must be
      a float control.
    Joint data goes into the control's global transform; the rig decides what the control does.
-6. **Pose in.** Before the rig runs, each rig bone that the puppet has takes the puppet's current
+6. **Variables.** Values for the rig's public variables, set on the module per puppet: the rig's
+   tuning (a stiffness, a limit, a gain), changed without editing the rig. The module holds them
+   in a property bag (`FInstancedPropertyBag`) with the rig's variables' names and types,
+   listed from the rig with its defaults when the rig is picked and by Refresh Variables, which
+   keeps values already set. A variable the bag does not list keeps the rig's own value. `Bind`
+   matches each by name and type; `Solve` copies a value into the rig when it differs from the
+   rig's, so tuning applies on the next frame and a value that allocates (a string) is not copied
+   every frame.
+7. **Pose in.** Before the rig runs, each rig bone that the puppet has takes the puppet's current
    component-space transform, so the rig starts from what the earlier modules and the input pose
    left.
-7. **Output.** A list of puppet bones and a list of rig curves. After the forward solve, each
+8. **Output.** A list of puppet bones and a list of rig curves. After the forward solve, each
    listed bone takes the rig bone's global transform, parents before children, blended over the
    pose by the solve context's weight. Each listed rig curve is written to the puppet curve of the
    same name (a morph target or material parameter), times that weight, as Curve Remap's outputs
    are. Bones and curves not listed are left untouched, so the adapter writes only its region.
-8. **Per frame.** `Solve` locks the rig's evaluate mutex as the engine node does, writes the
+9. **Per frame.** `Solve` locks the rig's evaluate mutex as the engine node does, writes the
    bones and controls through element indices cached in `Bind`, runs the rig's Pre Forwards
    Solve event (when the rig has one), its Forwards Solve, and its Post Forwards Solve (when it
    has one), the events the engine node runs, and reads the outputs.
-9. **Errors.** `Bind` fails, and the module is skipped, when no rig is set, the rig cannot be
-   instanced, a control, output bone or output curve is missing, a control's type does not suit its input, or
+10. **Errors.** `Bind` fails, and the module is skipped, when no rig is set, the rig cannot be
+   instanced, a control, output bone, output curve or variable is missing, a variable's type is
+   not the module's, a control's type does not suit its input, or
    a performer joint or curve is missing.
-10. **Contract.** No change to the module contract: `Bind` may allocate, and `Solve` reads the
+11. **Contract.** No change to the module contract: `Bind` may allocate, and `Solve` reads the
     context's helpers like any module.
 
 ## Consequences
@@ -124,15 +135,16 @@ What is true today (`develop` at `d50cbaa`, UE 5.8.4 sources):
 
 ## Open questions for the maintainer
 
-1. Is a list of control inputs (joint rotation, joint transform, curve) the right interface?
-   Should rig variables also be inputs (Option B)?
-2. Answered (maintainer, 2026-10-27): yes, rig curves are outputs (item 7).
+1. Answered (maintainer, 2026-10-27): controls take the performer's input, and the rig's
+   variables take values set per puppet, for its tuning (item 6).
+2. Answered (maintainer, 2026-10-27): yes, rig curves are outputs (item 8).
 3. Accepted as is (maintainer, 2026-10-27): construction runs once in `Bind`, then the forward
    solve events each frame. A rig whose construction depends on per-frame data would need the
    construction event again; the adapter does not run it again until the module binds again.
-4. Answered (maintainer, 2026-10-27): the Pre and Post Forwards Solve events run (item 8).
+4. Answered (maintainer, 2026-10-27): the Pre and Post Forwards Solve events run (item 9).
    Still needs-verification: the adapter was tested with a native rig built in code. A rig asset
-   made in the Control Rig editor has not been run through it; that needs a person at the desk.
+   made in the Control Rig editor has not been run through it, its variables included (a rig
+   asset keeps them in its own property bag); that needs a person at the desk.
 5. Left open for a later phase (maintainer, 2026-10-27): ADR 0002 question 2 (the Modular Control
    Rig and IK Retargeter assessments, from the 5.7 design). This ADR read the 5.8 Control Rig
    runtime but not Modular Control Rig's assembly tools or the IK Retargeter.

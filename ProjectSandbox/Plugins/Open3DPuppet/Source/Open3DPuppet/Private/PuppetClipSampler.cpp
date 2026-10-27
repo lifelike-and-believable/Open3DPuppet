@@ -97,6 +97,11 @@ bool FPuppetClipSampler::CaptureCalibration(bool bReferencePose, double Time, co
 	return true;
 }
 
+bool FPuppetClipSampler::SampleOnto(double Time, const FReferenceSkeleton& Target, TArray<FTransform>& OutLocal) const
+{
+	return false;
+}
+
 double FPuppetClipSampler::AdvanceTime(double Time, double DeltaTime, float PlayRate, bool bLoop, double Length)
 {
 	return PlaceTime(Time + DeltaTime * PlayRate, bLoop, Length);

@@ -19,8 +19,13 @@ struct FReferenceSkeleton;
 class OPEN3DPUPPET_API FPuppetPose
 {
 public:
-	/** Sizes the pose for RefSkeleton and sets it to the reference pose. Allocates. */
-	void Initialize(const FReferenceSkeleton& RefSkeleton);
+	/**
+	 * Sizes the pose for RefSkeleton and sets it to the reference pose. RestLocal, one local
+	 * transform per bone, is the pose modules retarget from (GetReferenceComponent): the pose the
+	 * performers' calibration pose corresponds to on this puppet. Empty means the reference pose.
+	 * Allocates.
+	 */
+	void Initialize(const FReferenceSkeleton& RefSkeleton, TConstArrayView<FTransform> RestLocal = {});
 
 	/** Sets every bone's local transform (one per bone, in mesh bone order) and recomputes component space. */
 	void SetLocalTransforms(TConstArrayView<FTransform> InLocal);
@@ -35,6 +40,7 @@ public:
 
 	const FTransform& GetLocal(int32 Bone) const { return Local[Bone]; }
 	const FTransform& GetComponent(int32 Bone) const { return Component[Bone]; }
+	/** The bone in the rest pose modules retarget from (the reference pose unless the puppet asset sets a rest pose). */
 	const FTransform& GetReferenceComponent(int32 Bone) const { return ReferenceComponent[Bone]; }
 	TConstArrayView<FTransform> GetLocalTransforms() const { return Local; }
 

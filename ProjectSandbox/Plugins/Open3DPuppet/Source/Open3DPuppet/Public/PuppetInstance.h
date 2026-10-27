@@ -43,10 +43,13 @@ public:
 	UE_NONCOPYABLE(FPuppetInstance)
 
 	/**
-	 * Sets up the puppet for a mesh's reference skeleton and creates the modules' solvers. The
-	 * caller keeps Asset and Modules alive while the instance uses them. Allocates.
+	 * Sets up the puppet for a mesh's reference skeleton and creates the modules' solvers. RestLocal
+	 * is the rest pose modules retarget from, one local transform per bone (FPuppetPose::Initialize);
+	 * empty for the reference pose. The caller keeps Asset and Modules alive while the instance uses
+	 * them. Allocates.
 	 */
-	void Initialize(const UPuppetAsset& Asset, TConstArrayView<TObjectPtr<UPuppetModule>> Modules, const FReferenceSkeleton& RefSkeleton);
+	void Initialize(const UPuppetAsset& Asset, TConstArrayView<TObjectPtr<UPuppetModule>> Modules, const FReferenceSkeleton& RefSkeleton,
+		TConstArrayView<FTransform> RestLocal = {});
 
 	bool IsInitialized() const { return Puppet.Num() > 0; }
 

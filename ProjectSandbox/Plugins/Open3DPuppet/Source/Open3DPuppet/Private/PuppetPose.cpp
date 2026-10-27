@@ -5,7 +5,7 @@
 #include "PuppetRetargetMath.h"
 #include "ReferenceSkeleton.h"
 
-void FPuppetPose::Initialize(const FReferenceSkeleton& RefSkeleton)
+void FPuppetPose::Initialize(const FReferenceSkeleton& RefSkeleton, TConstArrayView<FTransform> RestLocal)
 {
 	const int32 NumBones = RefSkeleton.GetNum();
 	Names.SetNum(NumBones);

@@ -20,6 +20,14 @@ Until then changes collect under `## Unreleased`.
 
 ### Changed
 
+- **Live module tuning** (WP-8): a number edited in a module (Weight, Amplification, Stiffness, a
+  digit's gain), on the module or through the puppet asset's Modules, applies on the next frame
+  without binding the puppet again (`PuppetEditing::IsLiveEdit`). Before, every module edit
+  re-initialised the puppet, resetting its hand-off offset, dynamics and smoothing, so tuning
+  during a session reset the puppet. Names, vectors, enums, flags, list changes and the asset's
+  own settings still re-bind it. The Puppet Solve node also keeps each slot's status (slot,
+  source, subject or clip, state, control blend), copied on the game thread in `PreUpdate`, for
+  the session panel (`FAnimNode_PuppetSolve::GetSlotStatus`). 3 new tests (160).
 - **CI in one workflow with a status comment:** `ci.yml` (was `ue-build-test.yml`) now also runs
   the source checks (was `plugin-checks.yml`), and its last job posts a new comment on the PR
   each time it finishes, through rules-for-robots' `rfr-ci-status.yml`, so a session waiting to

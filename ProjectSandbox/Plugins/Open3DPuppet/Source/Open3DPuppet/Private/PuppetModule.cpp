@@ -68,14 +68,19 @@ namespace PuppetEditing
 {
 	bool IsLiveEdit(const FPropertyChangedEvent& Event)
 	{
-		return false;
+		// A value set in place; adding, removing or moving entries changes what Bind resolved.
+		const EPropertyChangeType::Type InPlace = EPropertyChangeType::ValueSet | EPropertyChangeType::Interactive | EPropertyChangeType::ResetToDefault;
+		const FProperty* Property = Event.Property;
+		return (Event.ChangeType & InPlace) != 0 && Property
+			&& (Property->IsA<FFloatProperty>() || Property->IsA<FDoubleProperty>() || Property->IsA<FIntProperty>());
 	}
 }
 
 void UPuppetModule::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (UPuppetAsset* Asset = GetTypedOuter<UPuppetAsset>())
+	UPuppetAsset* Asset = GetTypedOuter<UPuppetAsset>();
+	if (Asset && !PuppetEditing::IsLiveEdit(PropertyChangedEvent))
 	{
 		Asset->MarkChanged();
 	}

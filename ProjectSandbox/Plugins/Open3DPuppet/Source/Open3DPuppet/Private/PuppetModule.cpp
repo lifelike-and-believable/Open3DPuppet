@@ -64,6 +64,14 @@ TArray<FName> UPuppetModule::GetPerformerSlotOptions() const
 }
 
 #if WITH_EDITOR
+namespace PuppetEditing
+{
+	bool IsLiveEdit(const FPropertyChangedEvent& Event)
+	{
+		return false;
+	}
+}
+
 void UPuppetModule::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);

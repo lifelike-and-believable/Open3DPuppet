@@ -5,6 +5,7 @@
 #include "Animation/AnimNodeBase.h"
 #include "LiveLinkTypes.h"
 #include "PuppetClipSampler.h"
+#include "PuppetInstance.h"
 #include "PuppetPerformerCalibration.h"
 #include "Templates/SharedPointer.h"
 
@@ -112,6 +113,17 @@ struct OPEN3DPUPPET_API FPuppetCastEntry
 	TObjectPtr<UPuppetPerformerProfile> Profile;
 };
 
+/** One performer slot as the Puppet Solve node last ran it, for the session panel (WP-8). */
+struct FPuppetSlotStatus
+{
+	FName Slot;
+	EPuppetCastSource Source = EPuppetCastSource::LiveLink;
+	/** The Live Link subject, or the clip's name; None when nothing is cast into the slot. */
+	FName Performer;
+	EPuppetSlotState State = EPuppetSlotState::NoData;
+	float ControlBlend = 1.0f;
+};
+
 /**
  * Puppet Solve: drives the mesh from live or recorded performers through a puppet's modules
  * (design overview §3). Bones no module writes pass through from Source.
@@ -142,6 +154,12 @@ struct OPEN3DPUPPET_API FAnimNode_PuppetSolve : public FAnimNode_Base
 	virtual void PreUpdate(const UAnimInstance* InAnimInstance) override;
 	virtual void GatherDebugData(FNodeDebugData& DebugData) override;
 	//~ End of FAnimNode_Base interface
+
+	/**
+	 * Each of the puppet's slots as of the last PreUpdate, which runs on the game thread after the
+	 * previous evaluation finished, so the session panel can read it safely there.
+	 */
+	TConstArrayView<FPuppetSlotStatus> GetSlotStatus() const { return SlotStatus; }
 
 private:
 	/** The calibration a cast entry's subject or clip had when PreUpdate last looked, waiting to be applied. */
@@ -217,6 +235,7 @@ private:
 	float BoundRestPoseTime = 0.0f;
 	/** Indexed like the bound puppet's performer slots. */
 	TArray<FSlotControl> SlotControls;
+	TArray<FPuppetSlotStatus> SlotStatus;
 	TArray<FTransform> InputLocal;
 	/** The EPuppetSlotState last logged per slot. */
 	TArray<int32> LoggedSlotStates;

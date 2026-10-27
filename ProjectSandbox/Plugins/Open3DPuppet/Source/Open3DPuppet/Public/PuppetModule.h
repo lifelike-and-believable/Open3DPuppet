@@ -170,7 +170,21 @@ public:
 	TArray<FName> GetPerformerSlotOptions() const;
 
 #if WITH_EDITOR
-	/** Tells the owning puppet asset that it changed, so running Puppet Solve nodes bind again. */
+	/** Tells the owning puppet asset that it changed, so running Puppet Solve nodes bind again, unless the edit applies live (PuppetEditing::IsLiveEdit). */
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 };
+
+#if WITH_EDITOR
+namespace PuppetEditing
+{
+	/**
+	 * True when an edit to a module's settings applies live, without binding the puppet again
+	 * (WP-8): a number set in place (Weight, Amplification, Stiffness, a digit's gain), which
+	 * solvers read every frame. Binding again would reset the puppet's hand-off offset and its
+	 * dynamics, so tuning during a session must not. Names, vectors, enums, flags and changes to
+	 * arrays and maps still bind again, since solvers resolve them in Bind.
+	 */
+	OPEN3DPUPPET_API bool IsLiveEdit(const FPropertyChangedEvent& Event);
+}
+#endif

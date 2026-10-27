@@ -60,8 +60,9 @@ These are not obvious from the rest of the repository's docs:
     ready-for-review run (one concurrency group per branch), leaving only a skipped UE build on
     the head. If the head's UE build shows skipped, convert the PR to a draft and mark it ready
     again.
-  - CI posts no comment when it succeeds, so nothing wakes a waiting session; check the PR's
-    state yourself.
+  - CI posts a comment on the PR each time it finishes (not on drafts): "Open3DPuppet CI
+    completed successfully!" with the head SHA when every job passed. In the Claude desktop app
+    that comment wakes a session waiting to merge; still confirm the checks on the head commit.
 - **Test-driven work** goes as two pushed commits: a red one (API and tests, implementation
   stubbed, with the expected failures) and a green one. Guard a red test so it fails rather than
   crashes the editor (check array sizes before indexing a stub's empty output). Raise

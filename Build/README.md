@@ -9,8 +9,9 @@ the result from the exported report. A run must execute at least the number of t
 
 ## CI
 
-[`.github/workflows/plugin-checks.yml`](../.github/workflows/plugin-checks.yml) runs on every PR
-and push to `develop` and `main`:
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) holds every check, so its last job sees
+them all. The source checks run on every PR and push to `develop` and `main`, on
+`ubuntu-latest`:
 
 | Job | Script | What it checks |
 |---|---|---|
@@ -20,8 +21,7 @@ and push to `develop` and `main`:
 
 The scripts come from Open3DBroadcast and need Python 3.8 or later, standard library only.
 
-[`.github/workflows/ue-build-test.yml`](../.github/workflows/ue-build-test.yml) runs the UE job on
-non-draft PRs, pushes to `develop` and `main`, and by hand (Actions > UE build and tests > Run
+The UE job runs on non-draft PRs, pushes to `develop` and `main`, and by hand (Actions > CI > Run
 workflow), on the self-hosted `[self-hosted, ue5, windows]` runner that Open3DBroadcast also uses,
 with UE 5.8 at `C:\Program Files\Epic Games\UE_5.8`:
 
@@ -36,3 +36,12 @@ with UE 5.8 at `C:\Program Files\Epic Games\UE_5.8`:
 
 Drafts skip the UE job so unfinished work does not hold the shared runner. Both scripts come
 from Open3DBroadcast.
+
+The last job, `status`, calls rules-for-robots' reusable
+[`rfr-ci-status.yml`](https://github.com/lifelike-and-believable/rules-for-robots/blob/main/.github/workflows/rfr-ci-status.yml).
+It posts a new comment on the PR each time the workflow finishes, headed "Open3DPuppet CI
+completed successfully!" when every job passed (or failed, or was cancelled), with the full head
+SHA and each job's result. A session waiting to merge on green is woken by that comment (the
+Claude desktop app's PR monitor relays new comments, not a passing check). Drafts get no comment,
+because their UE job skipped. The comment can describe an older commit once a later push lands,
+so confirm the checks on the head before merging.

@@ -34,7 +34,12 @@ ahead when a session needs it.
 
 ## Next
 
-Items that need a person at the desk or a maintainer decision:
+Items that need a person at the desk or a maintainer decision. The maintainer's priority
+(2026-10-27): user tests of each implemented feature, with recorded mannequin motion first, then
+live with a Rokoko suit, before the production setup of WP-M1 and WP-M2. The Wolf and the Eagle
+are test meshes for now. The [desk test plan](../guides/desk-test-plan.md) has the steps: parts
+1 to 8 for WP-2, WP-3, WP-7 and WP-8, parts 9 to 18 for each module with recorded motion, part 19
+live.
 
 - WP-10 at the desk: a Control Rig made in the Control Rig editor on a puppet's mesh, driven
   through the Control Rig module by a live performer (only a native rig built in code has been

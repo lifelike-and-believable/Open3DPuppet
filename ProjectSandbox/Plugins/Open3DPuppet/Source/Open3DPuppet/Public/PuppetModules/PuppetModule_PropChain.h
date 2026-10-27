@@ -46,15 +46,15 @@ class OPEN3DPUPPET_API UPuppetModule_PropChain : public UPuppetModule
 
 public:
 	/** The performer joint that drives the chain: `prop` for a Live Link Transform-role subject, or any canonical joint (hand_l). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerJoint = TEXT("prop");
 
 	/** First puppet bone of the chain (its base). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetStart = TEXT("tail_01");
 
 	/** Last puppet bone of the chain (its tip); a descendant of PuppetStart. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetEnd = TEXT("tail_05");
 
 	/** Bend the chain along its length, or turn it as one piece. */

@@ -30,11 +30,11 @@ public:
 	TArray<FName> PerformerSlots = { TEXT("Body") };
 
 	/** The slot whose performer owns the puppet's position in the world (ADR 0004). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPerformerSlotOptions"))
 	FName RootSlot = TEXT("Body");
 
 	/** The puppet's pelvis bone; its height over the performer's pelvis height sets the root scale. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PelvisBone = TEXT("pelvis");
 
 	/**

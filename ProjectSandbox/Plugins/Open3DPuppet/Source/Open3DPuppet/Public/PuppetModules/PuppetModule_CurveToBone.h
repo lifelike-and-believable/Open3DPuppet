@@ -23,7 +23,7 @@ public:
 	FName PerformerCurve = TEXT("jawOpen");
 
 	/** The puppet bone it drives. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetBone = TEXT("jaw");
 
 	/** The curve's change from neutral that leaves the bone at its reference pose. */

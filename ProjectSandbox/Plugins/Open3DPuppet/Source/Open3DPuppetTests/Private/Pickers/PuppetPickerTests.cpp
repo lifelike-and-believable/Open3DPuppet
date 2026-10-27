@@ -107,7 +107,10 @@ bool FPuppetPickerProfileTest::RunTest(const FString& Parameters)
 {
 	UPuppetPerformerProfile* Profile = NewObject<UPuppetPerformerProfile>();
 	TestEqual(TEXT("Keys: the canonical joints"), Profile->GetCanonicalJointOptions(), PuppetNaming::CanonicalJoints());
-	TestEqual(TEXT("Values: nothing without a source skeleton"), Profile->GetSourceBoneOptions().Num(), 0);
+	// A picker takes no typed names, so without a skeleton it offers what the schemes and the mapping name.
+	Profile->CanonicalToSource.Add(TEXT("pelvis"), TEXT("MyRig_Pelvis"));
+	TestTrue(TEXT("Values without a skeleton: the schemes' names"), Profile->GetSourceBoneOptions().Contains(FName(TEXT("LeftForeArm"))));
+	TestTrue(TEXT("And the values already mapped"), Profile->GetSourceBoneOptions().Contains(FName(TEXT("MyRig_Pelvis"))));
 	const TStrongObjectPtr<USkeleton> Skeleton = PuppetTests::MakeSkeleton(PuppetTests::Tail());
 	Profile->SourceSkeleton = Skeleton.Get();
 	TestEqual(TEXT("Values: the source skeleton's bones"), Profile->GetSourceBoneOptions(), PuppetPickerTests::Names(PuppetTests::Tail()));

@@ -14,7 +14,7 @@ struct OPEN3DPUPPET_API FPuppetCollisionBone
 	GENERATED_BODY()
 
 	/** The bone the sphere is centred on. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName Bone;
 
 	/** The sphere's radius, in centimetres. */
@@ -35,19 +35,19 @@ class OPEN3DPUPPET_API UPuppetModule_DynamicChain : public UPuppetModule
 
 public:
 	/** First bone of the chain; it stays where the pose puts it. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetStart = TEXT("tail_01");
 
 	/** Last bone of the chain; a descendant of PuppetStart. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetEnd = TEXT("tail_05");
 
 	/** Optional first performer joint of a chain that also drives the bones (Input Mix). None follows the received pose only. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerStart;
 
 	/** Last performer joint of that chain; a descendant of PerformerStart. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerEnd;
 
 	/** How much of the performer chain's rotation the followed pose takes: 0 the received pose, 1 the performer chain. */

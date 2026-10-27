@@ -162,8 +162,9 @@ and handing control between a clip and a performer.
 1. Create a Puppet asset (Data Asset > Puppet Asset) and pick the skeletal mesh. If the mesh is
    not modelled in the pose performers calibrate in (T-pose by default), set **Rest Pose** to an
    AnimSequence of the puppet in that pose.
-2. Add modules and set their bones. (WP-8 adds a setup assistant that finds chains by name and
-   topology and proposes modules.)
+2. Add modules and set their bones: each bone field offers the target mesh's bones, each
+   performer joint field the canonical joints, and each slot field the asset's slots. (WP-8 adds
+   a setup assistant that finds chains by name and topology and proposes modules.)
 3. In the character's Animation Blueprint, add the **Puppet Solve** node, choose the puppet, and
    bind each performer slot to a Live Link subject. A source that does not stream mannequin bone
    names needs a performer profile: create one (Data Asset > Puppet Performer Profile), set its

@@ -18,19 +18,19 @@ class OPEN3DPUPPET_API UPuppetModule_Chain : public UPuppetModule
 
 public:
 	/** First performer joint of the chain, by canonical name (for example spine_01). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerStart = TEXT("spine_01");
 
 	/** Last performer joint of the chain (for example spine_05); a descendant of PerformerStart. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerEnd = TEXT("spine_05");
 
 	/** First puppet bone of the chain. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetStart = TEXT("spine_01");
 
 	/** Last puppet bone of the chain; a descendant of PuppetStart. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetEnd = TEXT("spine_05");
 
 	/** Scales the performer's rotations: below 1 damps the motion, above 1 exaggerates it. */

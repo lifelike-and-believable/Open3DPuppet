@@ -3,6 +3,7 @@
 #include "PuppetModule.h"
 
 #include "PuppetAsset.h"
+#include "PuppetNaming.h"
 #include "PuppetPerformerCalibration.h"
 #include "PuppetPerformerPose.h"
 #include "PuppetRetargetMath.h"
@@ -47,17 +48,19 @@ FVector FPuppetSolveContext::GetJointTranslation(int32 Joint) const
 
 TArray<FName> UPuppetModule::GetPuppetBoneOptions() const
 {
-	return {};
+	const UPuppetAsset* Asset = GetTypedOuter<UPuppetAsset>();
+	return Asset ? Asset->GetPuppetBoneOptions() : PuppetNaming::CanonicalJoints();
 }
 
 TArray<FName> UPuppetModule::GetPerformerJointOptions() const
 {
-	return {};
+	return PuppetNaming::CanonicalJoints();
 }
 
 TArray<FName> UPuppetModule::GetPerformerSlotOptions() const
 {
-	return {};
+	const UPuppetAsset* Asset = GetTypedOuter<UPuppetAsset>();
+	return Asset ? Asset->GetPerformerSlotOptions() : TArray<FName>({ PerformerSlot });
 }
 
 #if WITH_EDITOR

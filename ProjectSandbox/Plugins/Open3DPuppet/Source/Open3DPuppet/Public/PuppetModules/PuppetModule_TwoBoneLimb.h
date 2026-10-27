@@ -32,27 +32,27 @@ class OPEN3DPUPPET_API UPuppetModule_TwoBoneLimb : public UPuppetModule
 
 public:
 	/** Performer upper limb joint, by canonical name (upperarm_l, thigh_l, ...). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerUpper = TEXT("upperarm_l");
 
 	/** Performer lower limb joint (lowerarm_l, calf_l, ...). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerLower = TEXT("lowerarm_l");
 
 	/** Performer end joint (hand_l, foot_l, ...). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerEnd = TEXT("hand_l");
 
 	/** Puppet upper limb bone. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetUpper = TEXT("upperarm_l");
 
 	/** Puppet lower limb bone; a descendant of PuppetUpper. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetLower = TEXT("lowerarm_l");
 
 	/** Puppet end bone; a descendant of PuppetLower. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetEnd = TEXT("hand_l");
 
 	/** Where the end effector goes. */

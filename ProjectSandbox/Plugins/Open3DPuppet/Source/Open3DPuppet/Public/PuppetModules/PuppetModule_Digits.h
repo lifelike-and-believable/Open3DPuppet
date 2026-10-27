@@ -13,19 +13,19 @@ struct OPEN3DPUPPET_API FPuppetDigit
 	GENERATED_BODY()
 
 	/** First joint of the performer finger, by canonical name (for example index_01_l). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerStart;
 
 	/** Last joint of the performer finger (for example index_03_l); a descendant of PerformerStart. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Performer", meta = (GetOptions = "GetPerformerJointOptions"))
 	FName PerformerEnd;
 
 	/** First bone of the puppet digit. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetStart;
 
 	/** Last bone of the puppet digit; a descendant of PuppetStart. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	FName PuppetEnd;
 
 	/** Scales the finger's curl (its bend about any axis but the spread axis): 0 keeps the digit straight, above 1 exaggerates. */

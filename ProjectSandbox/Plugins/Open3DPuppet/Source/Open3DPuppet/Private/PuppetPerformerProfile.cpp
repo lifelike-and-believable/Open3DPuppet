@@ -43,12 +43,33 @@ void UPuppetPerformerProfile::MapFromLiveLinkSubject()
 
 TArray<FName> UPuppetPerformerProfile::GetCanonicalJointOptions() const
 {
-	return {};
+	return PuppetNaming::CanonicalJoints();
 }
 
 TArray<FName> UPuppetPerformerProfile::GetSourceBoneOptions() const
 {
-	return {};
+	TArray<FName> Names;
+	if (const USkeleton* Skeleton = SourceSkeleton.LoadSynchronous())
+	{
+		for (const FMeshBoneInfo& Bone : Skeleton->GetReferenceSkeleton().GetRefBoneInfo())
+		{
+			Names.Add(Bone.Name);
+		}
+		return Names;
+	}
+	for (const FPuppetNamingScheme& Scheme : GetDefault<UPuppetSettings>()->NamingSchemes)
+	{
+		for (const TPair<FName, FName>& Row : Scheme.CanonicalToSource)
+		{
+			Names.AddUnique(Row.Value);
+		}
+	}
+	for (const TPair<FName, FName>& Row : CanonicalToSource)
+	{
+		Names.AddUnique(Row.Value);
+	}
+	Names.Sort(FNameLexicalLess());
+	return Names;
 }
 
 bool UPuppetPerformerProfile::MapBones(TConstArrayView<FName> SourceBones, TConstArrayView<int32> SourceParents, TConstArrayView<FPuppetNamingScheme> Schemes)

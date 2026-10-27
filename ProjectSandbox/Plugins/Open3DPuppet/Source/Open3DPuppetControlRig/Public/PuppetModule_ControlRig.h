@@ -50,7 +50,7 @@ struct OPEN3DPUPPETCONTROLRIG_API FPuppetControlRigInput
 /**
  * Drives part of the puppet with a Control Rig (ADR 0010): the rig starts from the pose the
  * modules before it left, the performer drives the rig's controls, and the rig's forward solve
- * poses the listed bones. The route for technical artists who would rather build a module in the
+ * (with its Pre and Post Forwards Solve events) poses the listed bones and sets the listed curves. The route for technical artists who would rather build a module in the
  * Control Rig editor than in C++. The rig is made on the puppet's mesh, so its bones have the
  * puppet's names; each puppet instance runs its own copy.
  */
@@ -71,6 +71,10 @@ public:
 	/** The puppet bones the rig poses; every other bone is left as the modules before it left it. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet", meta = (GetOptions = "GetPuppetBoneOptions"))
 	TArray<FName> Bones;
+
+	/** The rig curves written to the puppet's curves of the same name (morph targets, material parameters), times the module's weight. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Puppet")
+	TArray<FName> Curves;
 
 	virtual TUniquePtr<FPuppetModuleSolver> CreateSolver() const override;
 };

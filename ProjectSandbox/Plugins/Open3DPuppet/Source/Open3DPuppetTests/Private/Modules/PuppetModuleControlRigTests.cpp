@@ -1,9 +1,10 @@
 // Copyright 2026 Lifelike & Believable. All Rights Reserved.
 
 // UPuppetModule_ControlRig: the performer drives a Control Rig's controls and the rig poses the
-// listed bones (ADR 0010). The rig is UPuppetTestControlRig, a native rig on the Face fixture's
-// bones: head_ctrl turns and moves the head, jaw_open turns the jaw about Z. The fixture's rest
-// rotations are identity, so component rotations read as the turns applied.
+// listed bones and curves (ADR 0010). The rig is UPuppetTestControlRig, a native rig on the Face
+// fixture's bones: head_ctrl turns and moves the head, jaw_open turns the jaw about Z and sets the
+// curve jaw_curve, and its Pre and Post Forwards Solve events read pre_open and post_turn. The
+// fixture's rest rotations are identity, so component rotations read as the turns applied.
 
 #include "PuppetTestHarness.h"
 
@@ -34,10 +35,11 @@ namespace PuppetControlRigTests
 		return Entry;
 	}
 
-	FPuppetControlRigInput JawInput()
+	/** jawOpen into a float control, jaw_open unless named. */
+	FPuppetControlRigInput JawInput(const TCHAR* Control = TEXT("jaw_open"))
 	{
 		FPuppetControlRigInput Entry;
-		Entry.Control = TEXT("jaw_open");
+		Entry.Control = Control;
 		Entry.Input = EPuppetControlRigInput::Curve;
 		Entry.PerformerCurve = TEXT("jawOpen");
 		return Entry;
@@ -129,6 +131,50 @@ bool FPuppetControlRigCurveTest::RunTest(const FString& Parameters)
 	Puppet.Solve();
 	PuppetTests::TestRotation(*this, TEXT("Half of 30 degrees"), Puppet.Component(TEXT("jaw")).GetRotation(), PuppetControlRigTests::Yaw(15.0));
 	TestEqual(TEXT("The jaw keeps its place"), Puppet.Component(TEXT("jaw")).GetTranslation(), Puppet.Reference(TEXT("jaw")).GetTranslation(), 1.e-3f);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigPrePostTest, "Open3DPuppet.Modules.ControlRig.PreAndPostForwardsSolveRun", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetControlRigPrePostTest::RunTest(const FString& Parameters)
+{
+	// jawOpen 0.5 into pre_open opens the jaw 15 degrees through Pre Forwards Solve, and into
+	// post_turn turns the head 15 degrees after the forward solve, taking the jaw with it.
+	PuppetTests::FPuppet Puppet(PuppetTests::Face());
+	PuppetControlRigTests::AddRig(Puppet, { TEXT("head"), TEXT("jaw") }).Inputs = { PuppetControlRigTests::JawInput(TEXT("pre_open")), PuppetControlRigTests::JawInput(TEXT("post_turn")) };
+	PuppetTests::FPerformer Performer(PuppetTests::Face());
+	PuppetControlRigTests::Calibrate(Puppet, Performer);
+	Performer.SetCurve(TEXT("jawOpen"), 0.5f);
+	Puppet.Drive(0, Performer);
+	Puppet.Solve();
+	PuppetTests::TestRotation(*this, TEXT("Post Forwards Solve turned the head"), Puppet.Component(TEXT("head")).GetRotation(), PuppetControlRigTests::Yaw(15.0));
+	PuppetTests::TestRotation(*this, TEXT("Pre Forwards Solve opened the jaw, on the turned head"), Puppet.Component(TEXT("jaw")).GetRotation(), PuppetControlRigTests::Yaw(30.0));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigCurvesTest, "Open3DPuppet.Modules.ControlRig.RigCurvesReachThePuppet", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetControlRigCurvesTest::RunTest(const FString& Parameters)
+{
+	PuppetTests::FPuppet Puppet(PuppetTests::Face());
+	UPuppetModule_ControlRig& Rig = PuppetControlRigTests::AddRig(Puppet, {});
+	Rig.Inputs = { PuppetControlRigTests::JawInput() };
+	Rig.Curves = { TEXT("jaw_curve") };
+	PuppetTests::FPerformer Performer(PuppetTests::Face());
+	PuppetControlRigTests::Calibrate(Puppet, Performer);
+	Performer.SetCurve(TEXT("jawOpen"), 0.5f);
+	Puppet.Drive(0, Performer);
+	Puppet.Solve();
+	const float* Value = Puppet.Instance.GetPose().FindCurve(TEXT("jaw_curve"));
+	if (TestNotNull(TEXT("The rig's curve is a puppet curve"), Value))
+	{
+		TestEqual(TEXT("With the rig's value"), *Value, 0.5f, 1.e-4f);
+	}
+	Rig.Weight = 0.5f;
+	Puppet.Solve();
+	Value = Puppet.Instance.GetPose().FindCurve(TEXT("jaw_curve"));
+	if (TestNotNull(TEXT("Still written"), Value))
+	{
+		TestEqual(TEXT("Times the weight"), *Value, 0.25f, 1.e-4f);
+	}
 	return true;
 }
 
@@ -257,6 +303,22 @@ bool FPuppetControlRigMissingBoneTest::RunTest(const FString& Parameters)
 	PuppetTests::FPuppet Puppet(PuppetTests::Face());
 	PuppetControlRigTests::AddRig(Puppet, { TEXT("head"), TEXT("eye_l") }).Inputs = { PuppetControlRigTests::HeadInput() };
 	PuppetControlRigTests::AddRig(Puppet, { TEXT("tail_01") }).Inputs = { PuppetControlRigTests::HeadInput() };
+	PuppetTests::FPerformer Performer(PuppetTests::Face());
+	PuppetControlRigTests::Calibrate(Puppet, Performer);
+	PuppetControlRigTests::TurnHead(Puppet, Performer);
+	Puppet.Solve();
+	TestEqual(TEXT("The head left as the input"), Puppet.Component(TEXT("head")), Puppet.Reference(TEXT("head")), 1.e-3f);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigMissingCurveTest, "Open3DPuppet.Modules.ControlRig.MissingRigCurveSkipsTheModule", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetControlRigMissingCurveTest::RunTest(const FString& Parameters)
+{
+	AddExpectedMessagePlain(TEXT("the Control Rig has no curve 'brow_curve'"), ELogVerbosity::Warning);
+	PuppetTests::FPuppet Puppet(PuppetTests::Face());
+	UPuppetModule_ControlRig& Rig = PuppetControlRigTests::AddRig(Puppet, { TEXT("head") });
+	Rig.Inputs = { PuppetControlRigTests::HeadInput() };
+	Rig.Curves = { TEXT("brow_curve") };
 	PuppetTests::FPerformer Performer(PuppetTests::Face());
 	PuppetControlRigTests::Calibrate(Puppet, Performer);
 	PuppetControlRigTests::TurnHead(Puppet, Performer);

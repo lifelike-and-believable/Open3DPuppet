@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!--
+    Open3DPuppet plugin icon (source of truth). Icon128.png is rendered from this file
+    (Build/README.md, "Plugin icon"); edit the SVG and render again, never the PNG.
+
+    Motif: a marionette, an articulated figure hanging from a control bar, in the same family as
+    the Open3DBroadcast icon (dark tile, light bones and joints, cyan for what drives them).
+    The strings are the performer, the figure is the puppet.
+
+    The icon is shown small in Unreal's plugin browser and on a Fab card, so bones and the bar are
+    at least 7 units wide and the strings 4, which keeps them visible at 32 px.
+  -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B2340"/>
+      <stop offset="1" stop-color="#0B0E1A"/>
+    </linearGradient>
+    <linearGradient id="bone" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#CBD5E1"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="128" height="128" rx="26" fill="url(#tile)"/>
+  <!-- faint inner edge, so the dark tile doesn't dissolve on a dark listing card -->
+  <rect x="0.75" y="0.75" width="126.5" height="126.5" rx="25.25"
+        fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="1.5"/>
+
+  <!-- strings, from the bar to the head and the hands -->
+  <g stroke="#22D3EE" stroke-width="4" stroke-linecap="round" stroke-opacity="0.75" fill="none">
+    <path d="M 64 24 L 64 39"/>
+    <path d="M 36 24 L 36 66"/>
+    <path d="M 92 24 L 92 52"/>
+  </g>
+
+  <!-- control bar -->
+  <path d="M 30 22 L 98 22" stroke="#22D3EE" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- bones: arms (one raised), spine, legs (one stepping) -->
+  <g stroke="url(#bone)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M 36 66 L 50 62 L 64 60"/>
+    <path d="M 64 60 L 79 58 L 92 52"/>
+    <path d="M 64 56 L 64 84"/>
+    <path d="M 64 84 L 52 96 L 50 110"/>
+    <path d="M 64 84 L 78 94 L 86 106"/>
+  </g>
+
+  <!-- joints -->
+  <circle cx="36" cy="66" r="6" fill="#E2E8F0"/>
+  <circle cx="92" cy="52" r="6" fill="#E2E8F0"/>
+  <circle cx="64" cy="84" r="6.5" fill="#E2E8F0"/>
+  <circle cx="52" cy="96" r="5.5" fill="#E2E8F0"/>
+  <circle cx="78" cy="94" r="5.5" fill="#E2E8F0"/>
+
+  <!-- head, where the main string attaches -->
+  <circle cx="64" cy="47" r="10.5" fill="#0B0E1A"/>
+  <circle cx="64" cy="47" r="9" fill="#E2E8F0"/>
+</svg>

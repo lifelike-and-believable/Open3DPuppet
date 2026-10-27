@@ -47,6 +47,16 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Fab source package** (WP-9): `Build/Scripts/fab-package.py` builds the source-only zip for
+  Fab from the files git tracks under the plugin, without the test module
+  (`Build/Fab/exclude-modules.txt`) and the files in `Build/Fab/exclude-files.txt`, and checks it:
+  the descriptor's platforms, a `Build.cs` per listed module, no build output, debug symbols,
+  scripts, executables or developer notes, top-level files listed in `FilterPlugin.ini`, and
+  rule FAB-003's path length (170 characters) and file names (English letters, digits,
+  underscores). `Build/Scripts/Build-FabZip.ps1` runs BuildPlugin on the zip's contents. CI runs
+  both on every PR (the zip job on drafts too). Rule FAB-003 is restored. The plugin has an icon,
+  `Resources/Icon128.png`, rendered from `Icon128.svg`: a marionette in the Open3DBroadcast
+  icon's colours. No new UE tests (164).
 - **Puppet Session panel** (WP-8): **Window > Tools > Puppet Session** for a live session. It
   lists the performers (Live Link subjects and calibrated subjects) with their streaming and
   calibration state and Calibrate (with an alignment yaw), Save To Asset (into a chosen Puppet

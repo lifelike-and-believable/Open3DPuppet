@@ -35,7 +35,8 @@ version guards from day one.
 2. **Platform:** Win64 only. Every module in the `.uplugin` has `"PlatformAllowList": [ "Win64" ]`
    (rule OP-005). Animation code is platform-neutral; the limit is what CI can test.
 3. **Distribution:** the plugin is written to be Fab-ready (copyright headers, no dependency on
-   plugins that do not ship with the engine, zero warnings). Fab packaging is WP-9.
+   plugins that do not ship with the engine, zero warnings). WP-9 builds the Fab source zip
+   and checks it in CI (Build/README.md, "Fab source package").
 4. **Target.cs:** `BuildSettingsVersion.V7` and `EngineIncludeOrderVersion.Unreal5_8`.
 
 ## Consequences

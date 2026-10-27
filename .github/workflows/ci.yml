@@ -2,9 +2,9 @@ name: CI
 
 # Every check in one workflow (Build/README.md, "CI"), so the last job sees them all and posts
 # one result on the PR:
-# - cheap source checks on ubuntu-latest;
+# - cheap source checks on ubuntu-latest, and the Fab source zip built and checked there;
 # - the plugin built with RunUAT BuildPlugin on UE 5.8 (ADR 0001) and its automation tests run
-#   against that package, on the self-hosted [self-hosted, ue5, windows] runner that
+#   against that package, then BuildPlugin on the Fab zip's contents, on the self-hosted [self-hosted, ue5, windows] runner that
 #   Open3DBroadcast also uses. The runner takes one job at a time, so the two repositories' UE
 #   jobs queue rather than build at once (AGENTS.md);
 # - a new comment on the PR naming the head commit and each job's result, which wakes a session
@@ -64,9 +64,36 @@ jobs:
       - name: Check Markdown links
         run: python3 Build/Scripts/check-markdown-links.py
 
+  fab-package:
+    name: Fab source zip
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Self-test the package checks
+        run: python3 Build/Scripts/fab-package.py --self-test
+      - name: Build and check the Fab source zip
+        run: |
+          python3 Build/Scripts/fab-package.py \
+            --out-dir "$RUNNER_TEMP/fab" \
+            --zip-name "Open3DPuppet-Fab-Source-${GITHUB_SHA::12}.zip"
+      - name: Upload the Fab source zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: Open3DPuppet-Fab-Source-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/fab/*.zip
+            ${{ runner.temp }}/fab/*.manifest.txt
+          if-no-files-found: error
+          retention-days: 30
+
   build-and-test:
     name: UE build and tests
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    needs: [ fab-package ]
+    # !cancelled() keeps the UE build running when the Fab zip job failed; the Fab steps below
+    # check that job's result themselves.
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false) }}
     runs-on: [ self-hosted, ue5, windows ]
     timeout-minutes: 120
     env:
@@ -107,11 +134,38 @@ jobs:
             ${{ runner.temp }}/PluginPackage-BuildPlugin.log
           if-no-files-found: warn
 
+      # BuildPlugin on the Fab zip exactly as the fab-package job made it, the way Fab's build
+      # farm receives it: the shipped modules build without the test module and without warnings.
+      - name: Download the Fab source zip
+        if: needs.fab-package.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: Open3DPuppet-Fab-Source-${{ github.sha }}
+          path: ${{ runner.temp }}/FabZip
+
+      - name: Build the Fab source zip
+        if: needs.fab-package.result == 'success'
+        shell: powershell
+        run: |
+          & .\Build\Scripts\Build-FabZip.ps1 `
+            -UEPath "$env:UE_ROOT" `
+            -Zip (Join-Path $env:RUNNER_TEMP 'FabZip') `
+            -WorkDir (Join-Path $env:RUNNER_TEMP 'FabBuild')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload the Fab build log
+        if: always() && needs.fab-package.result == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Open3DPuppet-FabBuild-${{ github.sha }}
+          path: ${{ runner.temp }}/FabBuild/*-BuildPlugin.log
+          if-no-files-found: warn
+
   status:
     # A new comment on the PR each time CI finishes ("Open3DPuppet CI completed successfully!"
     # when every job passed), naming the full head SHA. Still confirm the checks on the current
     # head before merging: a later push makes the comment stale.
-    needs: [copyright-headers, runtime-editor-deps, doc-links, build-and-test]
+    needs: [copyright-headers, runtime-editor-deps, doc-links, fab-package, build-and-test]
     if: always() && !github.event.pull_request.draft
     permissions:
       contents: read

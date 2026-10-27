@@ -15,7 +15,7 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 
 ## Where things stand (2026-10-26)
 
-- `develop` after WP-8 (#33).
+- `develop` after WP-9 (#PRNUM).
 - Done: WP-0, WP-1, WP-9a, WP-11 (curves, #8), WP-12 (Digits #13, finger-curl curves #14, ADR
   0009), WP-13 (face modules, #15), WP-4 (digitigrade leg, #16), WP-14 (solver dynamics, #18),
   WP-5 (dynamic chain, #19), WP-6 (wing, #20), WP-16 (hand-offs, #9; Two-Bone Limb weight fix #17)
@@ -23,7 +23,8 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
   calibrations #24, naming schemes and profile auto-mapping #25, puppet rest pose #26), the desk
   test plan (#27), WP-7 (Prop Chain and the multi-performer sample, #28), WP-8 (bone pickers
   #29, setup assistant #30, live tuning and slot status #31, the Puppet Session panel #33) and
-  the asset types in the Add menu (#32).
+  the asset types in the Add menu (#32), and WP-9 (the Fab source zip, its checks and the
+  plugin icon, #PRNUM).
 - 164 automation tests, all passing on the self-hosted runner.
 - Every module the Wolf and the Eagle need exists, except the Tier 2 physics hand-off (WP-15).
 
@@ -31,8 +32,8 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 
 In this order unless the maintainer says otherwise:
 
-1. **WP-9, Fab readiness** (packaging script as Open3DBroadcast's `fab-package.py`, exclusion
-   lists, icon), the next work package in the roadmap's order that is not blocked:
+1. **WP-10, the Control Rig adapter module**, the next work package in the roadmap's order that
+   is not blocked:
    - WP-15 waits on physics assets for the Wolf and the Eagle;
    - WP-17 waits on which hand-off triggers the show uses (ADR 0008 question 1);
    - WP-M1 and WP-M2 (the Wolf and the Eagle) wait on their meshes.

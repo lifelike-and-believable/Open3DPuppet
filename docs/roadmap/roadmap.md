@@ -36,8 +36,7 @@ ahead when a session needs it.
 
 Items that need a person at the desk or a maintainer decision:
 
-- ADR 0010 (Control Rig adapter): sign-off, and its open questions (rig variables as inputs, rig
-  curves as outputs).
+- ADR 0010 (Control Rig adapter): sign-off, and its open question 1 (rig variables as inputs).
 - WP-10 at the desk: a Control Rig made in the Control Rig editor on a puppet's mesh, driven
   through the Control Rig module by a live performer (only a native rig built in code has been
   run through it): pick the rig in the module's details, then drive it; profile the rig's

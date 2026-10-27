@@ -52,11 +52,12 @@ Until then changes collect under `## Unreleased`.
   editor, with no C++. Each puppet instance runs its own copy of the rig. The rig's bones start
   at the puppet's rest pose, take the pose the modules before it left, and the performer drives
   its controls: a joint's rotation, or rotation and move, since calibration into a transform or
-  rotator control, or a curve's change from neutral into a float control. After the forward
-  solve, the module writes only the bones it lists, blended by its weight. The plugin now
+  rotator control, or a curve's change from neutral into a float control. After the rig's Pre
+  Forwards Solve, Forwards Solve and Post Forwards Solve events, the module writes only the bones
+  and curves it lists, blended by its weight. The plugin now
   depends on the engine's Control Rig plugin. `check-runtime-editor-deps.py` now rejects
   `ControlRigDeveloper` and `ControlRigEditor` in runtime modules, and the picker coverage test
-  covers the new module. 14 new tests (178).
+  covers the new module. 17 new tests (181).
 - **Fab source package** (WP-9): `Build/Scripts/fab-package.py` builds the source-only zip for
   Fab from the files git tracks under the plugin, without the test module
   (`Build/Fab/exclude-modules.txt`) and the files in `Build/Fab/exclude-files.txt`, and checks it:

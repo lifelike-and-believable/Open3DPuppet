@@ -97,14 +97,17 @@ What is true today (`develop` at `d50cbaa`, UE 5.8.4 sources):
 6. **Pose in.** Before the rig runs, each rig bone that the puppet has takes the puppet's current
    component-space transform, so the rig starts from what the earlier modules and the input pose
    left.
-7. **Output.** A list of puppet bones. After the forward solve, each listed bone takes the rig
-   bone's global transform, parents before children, blended over the pose by the solve context's
-   weight. Bones not listed are left untouched, so the adapter writes only its region.
+7. **Output.** A list of puppet bones and a list of rig curves. After the forward solve, each
+   listed bone takes the rig bone's global transform, parents before children, blended over the
+   pose by the solve context's weight. Each listed rig curve is written to the puppet curve of the
+   same name (a morph target or material parameter), times that weight, as Curve Remap's outputs
+   are. Bones and curves not listed are left untouched, so the adapter writes only its region.
 8. **Per frame.** `Solve` locks the rig's evaluate mutex as the engine node does, writes the
-   bones and controls through element indices cached in `Bind`, runs the forward solve event, and
-   reads the output bones.
+   bones and controls through element indices cached in `Bind`, runs the rig's Pre Forwards
+   Solve event (when the rig has one), its Forwards Solve, and its Post Forwards Solve (when it
+   has one), the events the engine node runs, and reads the outputs.
 9. **Errors.** `Bind` fails, and the module is skipped, when no rig is set, the rig cannot be
-   instanced, a control or output bone is missing, a control's type does not suit its input, or
+   instanced, a control, output bone or output curve is missing, a control's type does not suit its input, or
    a performer joint or curve is missing.
 10. **Contract.** No change to the module contract: `Bind` may allocate, and `Solve` reads the
     context's helpers like any module.
@@ -123,16 +126,13 @@ What is true today (`develop` at `d50cbaa`, UE 5.8.4 sources):
 
 1. Is a list of control inputs (joint rotation, joint transform, curve) the right interface?
    Should rig variables also be inputs (Option B)?
-2. Should rig curves also be outputs, written to puppet curves (morph targets)? Not in this
-   version.
-3. needs-verification: running construction once in `Bind`, then only the forward solve each
-   frame. A rig whose construction depends on per-frame data would need the construction event
-   again; the adapter does not run it again until the module binds again.
-4. needs-verification: the adapter was tested with a native rig built in code. A rig asset made
-   in the Control Rig editor has not been run through it; that needs a person at the desk. The
-   adapter runs the Forwards Solve event only (`Execute`), where the engine node runs the rig's
-   event queue (`Evaluate_AnyThread`), which also runs the Pre and Post Forwards Solve events: a
-   rig that uses those would not run them here.
-5. ADR 0002 question 2 (the Modular Control Rig and IK Retargeter assessments, from the 5.7
-   design): this ADR read the 5.8 Control Rig runtime but not Modular Control Rig's assembly
-   tools or the IK Retargeter, so it does not close that question.
+2. Answered (maintainer, 2026-10-27): yes, rig curves are outputs (item 7).
+3. Accepted as is (maintainer, 2026-10-27): construction runs once in `Bind`, then the forward
+   solve events each frame. A rig whose construction depends on per-frame data would need the
+   construction event again; the adapter does not run it again until the module binds again.
+4. Answered (maintainer, 2026-10-27): the Pre and Post Forwards Solve events run (item 8).
+   Still needs-verification: the adapter was tested with a native rig built in code. A rig asset
+   made in the Control Rig editor has not been run through it; that needs a person at the desk.
+5. Left open for a later phase (maintainer, 2026-10-27): ADR 0002 question 2 (the Modular Control
+   Rig and IK Retargeter assessments, from the 5.7 design). This ADR read the 5.8 Control Rig
+   runtime but not Modular Control Rig's assembly tools or the IK Retargeter.

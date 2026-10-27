@@ -55,6 +55,7 @@ namespace PuppetModuleControlRig
 			PoseIn.Reset();
 			Inputs.Reset();
 			Outputs.Reset();
+			Curves.Reset();
 			if (!Settings.Rig.IsValid())
 			{
 				OutError = TEXT("no Control Rig is set");
@@ -145,6 +146,21 @@ namespace PuppetModuleControlRig
 			// Parents before children, as the reference skeleton orders them.
 			Outputs.Sort([](const FBonePair& A, const FBonePair& B) { return A.PuppetBone < B.PuppetBone; });
 
+			for (const FName Name : Settings.Curves)
+			{
+				const int32 Element = Hierarchy->GetIndex(FRigElementKey(Name, ERigElementType::Curve));
+				if (Element == INDEX_NONE)
+				{
+					OutError = FString::Printf(TEXT("the Control Rig has no curve '%s'"), *Name.ToString());
+					return false;
+				}
+				Curves.Add({ Name, Element });
+			}
+
+			// The events the engine's Control Rig node runs around the forward solve, when the rig has them.
+			bPreForwardsSolve = Rig->SupportsEvent(FRigUnit_PreBeginExecution::EventName);
+			bPostForwardsSolve = Rig->SupportsEvent(FRigUnit_PostBeginExecution::EventName);
+
 			for (int32 Index = 0; Index < Inputs.Num(); ++Index)
 			{
 				FInput& Input = Inputs[Index];
@@ -210,7 +226,15 @@ namespace PuppetModuleControlRig
 				Hierarchy->SetTransform(Control, Target, ERigTransformType::CurrentGlobal, false);
 			}
 
+			if (bPreForwardsSolve)
+			{
+				Instance->Execute(FRigUnit_PreBeginExecution::EventName);
+			}
 			Instance->Execute(FRigUnit_BeginExecution::EventName);
+			if (bPostForwardsSolve)
+			{
+				Instance->Execute(FRigUnit_PostBeginExecution::EventName);
+			}
 
 			for (const FBonePair& Output : Outputs)
 			{
@@ -222,6 +246,12 @@ namespace PuppetModuleControlRig
 				Blended.SetTranslation(FMath::Lerp(Original.GetTranslation(), Rigged.GetTranslation(), Weight));
 				Blended.SetScale3D(FMath::Lerp(Original.GetScale3D(), Rigged.GetScale3D(), Weight));
 				Context.Puppet.SetComponent(Output.PuppetBone, Blended);
+			}
+
+			// Weighted as Curve Remap's outputs are.
+			for (const FCurveOutput& Curve : Curves)
+			{
+				Context.Puppet.SetCurve(Curve.Name, Hierarchy->GetCurveValue(Curve.Element) * Context.Weight);
 			}
 		}
 
@@ -251,6 +281,16 @@ namespace PuppetModuleControlRig
 		TArray<FInput> Inputs;
 		/** The listed bones, parents first. */
 		TArray<FBonePair> Outputs;
+
+		/** A listed rig curve, by name and hierarchy element index. */
+		struct FCurveOutput
+		{
+			FName Name;
+			int32 Element = INDEX_NONE;
+		};
+		TArray<FCurveOutput> Curves;
+		bool bPreForwardsSolve = false;
+		bool bPostForwardsSolve = false;
 	};
 }
 

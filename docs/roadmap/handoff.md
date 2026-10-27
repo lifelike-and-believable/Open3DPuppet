@@ -26,7 +26,7 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
   the asset types in the Add menu (#32), and WP-9 (the Fab source zip, its checks and the
   plugin icon, #34), and WP-10 (the Control Rig adapter, #35; ADR 0010 is proposed, awaiting
   sign-off).
-- 177 automation tests, all passing on the self-hosted runner.
+- 178 automation tests, all passing on the self-hosted runner.
 - Every module the Wolf and the Eagle need exists, except the Tier 2 physics hand-off (WP-15).
 
 ## Next steps

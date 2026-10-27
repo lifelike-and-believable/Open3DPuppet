@@ -56,7 +56,7 @@ Until then changes collect under `## Unreleased`.
   solve, the module writes only the bones it lists, blended by its weight. The plugin now
   depends on the engine's Control Rig plugin. `check-runtime-editor-deps.py` now rejects
   `ControlRigDeveloper` and `ControlRigEditor` in runtime modules, and the picker coverage test
-  covers the new module. 13 new tests (177).
+  covers the new module. 14 new tests (178).
 - **Fab source package** (WP-9): `Build/Scripts/fab-package.py` builds the source-only zip for
   Fab from the files git tracks under the plugin, without the test module
   (`Build/Fab/exclude-modules.txt`) and the files in `Build/Fab/exclude-files.txt`, and checks it:

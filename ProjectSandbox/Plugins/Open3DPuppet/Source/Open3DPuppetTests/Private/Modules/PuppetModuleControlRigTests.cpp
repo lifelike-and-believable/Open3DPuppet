@@ -99,6 +99,24 @@ bool FPuppetControlRigJointTransformTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigLiveScaleTest, "Open3DPuppet.Modules.ControlRig.ScaleIsReadEveryFrame", OPEN3DPUPPET_TEST_FLAGS)
+bool FPuppetControlRigLiveScaleTest::RunTest(const FString& Parameters)
+{
+	// Scale is a number edited in place, so it applies without binding again (PuppetEditing::IsLiveEdit).
+	PuppetTests::FPuppet Puppet(PuppetTests::Face());
+	UPuppetModule_ControlRig& Rig = PuppetControlRigTests::AddRig(Puppet, { TEXT("head") });
+	Rig.Inputs = { PuppetControlRigTests::HeadInput(EPuppetControlRigInput::JointTransform, 0.5f) };
+	PuppetTests::FPerformer Performer(PuppetTests::Face());
+	PuppetControlRigTests::Calibrate(Puppet, Performer);
+	Performer.SetLocalTranslation(TEXT("head"), FVector(10.0, 0.0, 10.0));
+	Puppet.Drive(0, Performer);
+	Puppet.Solve();
+	Rig.Inputs[0].Scale = 1.0f;
+	Puppet.Solve();
+	TestEqual(TEXT("The new Scale on the next frame"), Puppet.Component(TEXT("head")).GetTranslation(), Puppet.Reference(TEXT("head")).GetTranslation() + FVector(10.0, 0.0, 0.0), 1.e-3f);
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPuppetControlRigCurveTest, "Open3DPuppet.Modules.ControlRig.CurveDrivesAFloatControl", OPEN3DPUPPET_TEST_FLAGS)
 bool FPuppetControlRigCurveTest::RunTest(const FString& Parameters)
 {

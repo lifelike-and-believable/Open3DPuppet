@@ -181,7 +181,10 @@ and handing control between a clip and a performer.
    calibration.
 5. Puppeteer. Adjust module numbers live in the details panel: they apply without re-binding the
    puppet, so its hand-off offset and dynamics carry on; names and other structural edits re-bind
-   it. WP-8 adds a control panel for session use.
+   it. **Window > Tools > Puppet Session** gathers what a session needs in one place: each
+   performer's Live Link and calibration state with Calibrate, Save To Asset and Clear; each
+   running puppet's slots (source, performer, state) with the control blend and hand-off buttons;
+   and the selected puppet's modules to tune.
 
 ## 9. Out of scope for now
 

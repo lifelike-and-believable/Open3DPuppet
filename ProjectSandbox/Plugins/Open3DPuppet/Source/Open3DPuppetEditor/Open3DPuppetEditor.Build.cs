@@ -13,11 +13,16 @@ public class Open3DPuppetEditor : ModuleRules
 
 		// AnimGraph and BlueprintGraph: UAnimGraphNode_PuppetSolve and its UK2Node base, as the engine's
 		// LiveLinkGraphNode module does for the Live Link Pose node. AssetDefinition: how the Content
-		// Browser shows the plugin's asset types.
+		// Browser shows the plugin's asset types. Slate, PropertyEditor and WorkspaceMenuStructure: the
+		// Puppet Session panel.
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"AssetDefinition",
 			"Core",
+			"PropertyEditor",
+			"Slate",
+			"SlateCore",
+			"WorkspaceMenuStructure",
 			"CoreUObject",
 			"Engine",
 			"AnimGraph",

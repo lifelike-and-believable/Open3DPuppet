@@ -23,7 +23,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-M2 | Eagle: puppet asset, profiles and calibration, fly-in entrance (a clip authored on the Eagle) and hand-off; live session at the desk | WP-5, WP-6, WP-12, WP-13, WP-15, WP-16 | Planned |
 | WP-2 | Calibration and profiles in the editor: calibrate button, save calibrations to assets, choice of reference pose, profile auto-mapping by name | WP-1 | Done (#24, #25, #26) |
 | WP-7 | Prop-driven module (Live Link Transform role) and a multi-performer sample | WP-1 | Done (#28) |
-| WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | In progress (bone pickers: #29; setup assistant: #30; live tuning and slot status: #31) |
+| WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | Done (#29, #30, #31, #33) |
 | WP-9 | Fab readiness as Open3DBroadcast: packaging script (`fab-package.py`), exclusion lists, icon | WP-1 | Planned |
 | WP-10 | Control Rig adapter module | WP-1 | Planned |
 
@@ -49,7 +49,10 @@ Items that need a person at the desk or a maintainer decision:
   module, and its `curl_*` curves reading 0 flat and about 1 in a fist, and the Wolf's paw toes once the mesh exists; tune the default gains.
 - Physics assets for the Wolf and the Eagle, before WP-15 (ADR 0007; none exist yet).
 - ADR 0008: which hand-off triggers the show uses (question 1).
-- WP-2 and WP-3 at the desk: step by step in the [desk test plan](../guides/desk-test-plan.md).
+- WP-2, WP-3, WP-7 and WP-8 at the desk: step by step in the [desk test plan](../guides/desk-test-plan.md);
+  for WP-8, the bone pickers, Propose Modules on the mannequin and the Wolf, and the Puppet
+  Session panel during a live session (calibrate, hand off, tune a module without the puppet
+  snapping).
 - WP-7 at the desk: a tracked rod (any capture system's rigid body) cast into a Tail slot, driving
   a creature's tail with Prop Chain while a performer plays the body, as the
   [multi-performer sample](../guides/multi-performer-sample.md) sets it up; tune Shape, Space,

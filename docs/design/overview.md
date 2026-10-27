@@ -28,7 +28,7 @@ Three properties follow from that goal and shape every decision below:
 | Performer | A person, or a recorded take of one, whose motion arrives as a Live Link subject with the Animation role. |
 | Canonical joint | A performer joint named the way the UE5 mannequin names it (`pelvis`, `spine_01`, `upperarm_l`, ...). Modules address performer joints only by these names (ADR 0003). |
 | Curve | A named float value. Performers send them (facial expressions, from a face subject) and puppets receive them (morph targets, material parameters) (ADR 0006). |
-| Performer profile | An optional `UPuppetPerformerProfile` data asset that maps a source's own bone names to canonical joints. A source that already uses mannequin names needs none. |
+| Performer profile | An optional `UPuppetPerformerProfile` data asset that maps a source's own bone names to canonical joints. A source that already uses mannequin names needs none. **Map From Skeleton** or **Map From Live Link Subject** fills it from the naming scheme that fits the source best (Project Settings > Open3DPuppet > Naming Schemes, with defaults for common capture systems). |
 | Calibration | A performer's rest pose, captured once while the performer stands in the reference pose (T-pose by default), plus the rotation that aligns the performer's facing with the puppet's. |
 | Puppet | A `UPuppetAsset`: the target skeletal mesh, the performer slots, and an ordered list of modules. |
 | Performer slot | A named role in a puppet, for example `Body`, or `Front` and `Back` for a two-person quadruped. |
@@ -157,7 +157,10 @@ and handing control between a clip and a performer.
 2. Add modules and set their bones. (WP-8 adds a setup assistant that finds chains by name and
    topology and proposes modules.)
 3. In the character's Animation Blueprint, add the **Puppet Solve** node, choose the puppet, and
-   bind each performer slot to a Live Link subject.
+   bind each performer slot to a Live Link subject. A source that does not stream mannequin bone
+   names needs a performer profile: create one (Data Asset > Puppet Performer Profile), set its
+   Source Subject or Source Skeleton, press **Map From Live Link Subject** or **Map From
+   Skeleton**, check what it reports, and name it in the cast entry.
 4. Have the performer stand in the reference pose and calibrate: create a Puppet Calibration
    asset (Data Asset > Puppet Calibration Asset), set its Live Link subject and alignment, and
    press **Capture** in its details panel, or call **Calibrate Performer** on the Puppet

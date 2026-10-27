@@ -136,7 +136,8 @@ bool FPuppetNamingMatchTest::RunTest(const FString& Parameters)
 	{
 		return false;
 	}
-	TestNotEqual(TEXT("Not as Mixamo"), Schemes[XsensMatch.Scheme].Name, FString(TEXT("Mixamo")));
+	TestTrue(TEXT("As Xsens"), XsensMatch.Equivalent.Contains(Schemes.IndexOfByPredicate([](const FPuppetNamingScheme& S) { return S.Name == TEXT("Xsens"); })));
+	TestFalse(TEXT("Not as Mixamo"), XsensMatch.Equivalent.Contains(Schemes.IndexOfByPredicate([](const FPuppetNamingScheme& S) { return S.Name == TEXT("Mixamo"); })));
 	TestEqual(TEXT("The top of the spine"), PuppetNamingTests::Mapped(XsensMatch.CanonicalToSource, TEXT("spine_05")), FName(TEXT("Spine3")));
 	TestEqual(TEXT("The pelvis"), PuppetNamingTests::Mapped(XsensMatch.CanonicalToSource, TEXT("pelvis")), FName(TEXT("Hips")));
 	TestEqual(TEXT("The calf"), PuppetNamingTests::Mapped(XsensMatch.CanonicalToSource, TEXT("calf_r")), FName(TEXT("RightLeg")));
@@ -150,7 +151,8 @@ bool FPuppetNamingMatchTest::RunTest(const FString& Parameters)
 	{
 		return false;
 	}
-	TestEqual(TEXT("As Mixamo"), Schemes[MixamoMatch.Scheme].Name, FString(TEXT("Mixamo")));
+	// Without fingers, Mixamo's and Qualisys's names are the same, so both are given.
+	TestTrue(TEXT("As Mixamo"), MixamoMatch.Equivalent.Contains(Schemes.IndexOfByPredicate([](const FPuppetNamingScheme& S) { return S.Name == TEXT("Mixamo"); })));
 	TestEqual(TEXT("The top of the spine, namespace and all"), PuppetNamingTests::Mapped(MixamoMatch.CanonicalToSource, TEXT("spine_05")), FName(TEXT("mixamorig:Spine2")));
 	return true;
 }

@@ -41,6 +41,8 @@ namespace PuppetNaming
 	{
 		/** Index into the schemes, or INDEX_NONE when none matches a single bone. */
 		int32 Scheme = INDEX_NONE;
+		/** Scheme, then any other scheme that matches as well and maps the same bones (systems that share names, such as Mixamo and Qualisys without fingers). */
+		TArray<int32> Equivalent;
 		/** Canonical joint to the source's bone, as the source spells it; joints the source names canonically are left out. */
 		TMap<FName, FName> CanonicalToSource;
 		/** The scheme's canonical joints the source skeleton lacks. */
@@ -48,10 +50,11 @@ namespace PuppetNaming
 	};
 
 	/**
-	 * Picks the scheme that names the most of the source's bones, and among equals the one whose
-	 * mapped joints have the right parents (the neck under the top of the spine, the forearm under
-	 * the upper arm). Names match ignoring case, a namespace ("mixamorig:") and a prefix every bone
-	 * shares (a skeleton name). Parents are indices into SourceBones, as Live Link gives them.
+	 * Picks the scheme that names the most of the source's bones, less those whose source parent
+	 * contradicts the scheme (the neck not under its top of the spine, the forearm not under its
+	 * upper arm); the earlier scheme wins a tie. Names match ignoring case, a namespace
+	 * ("mixamorig:") and a prefix every bone shares (a skeleton name). Parents are indices into
+	 * SourceBones, as Live Link gives them.
 	 */
 	OPEN3DPUPPET_API FMatch Match(TConstArrayView<FName> SourceBones, TConstArrayView<int32> SourceParents, TConstArrayView<FPuppetNamingScheme> Schemes);
 }

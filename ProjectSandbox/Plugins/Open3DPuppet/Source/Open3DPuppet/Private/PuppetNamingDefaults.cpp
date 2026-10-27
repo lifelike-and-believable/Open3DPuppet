@@ -1,7 +1,7 @@
 // Copyright 2026 Lifelike & Believable. All Rights Reserved.
 
 // The default naming schemes (WP-2). The canonical names come first, so a source that already
-// uses them needs no mapping. The others are generated from the UE 5.8 IKRig auto-characterizer's
+// uses them needs no mapping. The others are taken from the UE 5.8 IKRig auto-characterizer's
 // template skeletons (Engine/Plugins/Animation/IKRig/Source/IKRigEditor/Private/RigEditor/
 // IKRigAutoCharacterizer.cpp, at the lines named below) and, for Unity humanoid / VMC, from
 // VMCLiveLink's VMCHumanoid.cpp (main at ce34176, BoneDefs); each row was checked against the

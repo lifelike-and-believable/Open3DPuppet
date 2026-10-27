@@ -20,6 +20,11 @@ Until then changes collect under `## Unreleased`.
 
 ### Changed
 
+- **The plugin's asset types are in the Add menu** (maintainer, 2026-10-26): Content Browser >
+  Add > Puppet offers Puppet Asset, Puppet Performer Profile and Puppet Calibration Asset, each
+  with its own factory and asset definition (name, colour, category), instead of a generic Data
+  Asset whose class the user then picks. A test finds every data asset class in the plugin and
+  fails on one without a factory and definition. 1 new test (158).
 - **CI in one workflow with a status comment:** `ci.yml` (was `ue-build-test.yml`) now also runs
   the source checks (was `plugin-checks.yml`), and its last job posts a new comment on the PR
   each time it finishes, through rules-for-robots' `rfr-ci-status.yml`, so a session waiting to

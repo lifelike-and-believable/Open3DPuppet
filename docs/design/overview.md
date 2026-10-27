@@ -159,7 +159,7 @@ and handing control between a clip and a performer.
 
 ## 8. Setting up a puppet (target workflow)
 
-1. Create a Puppet asset (Data Asset > Puppet Asset) and pick the skeletal mesh. If the mesh is
+1. Create a Puppet asset (Content Browser > Add > Puppet > Puppet Asset) and pick the skeletal mesh. If the mesh is
    not modelled in the pose performers calibrate in (T-pose by default), set **Rest Pose** to an
    AnimSequence of the puppet in that pose.
 2. Add modules and set their bones: each bone field offers the target mesh's bones, each
@@ -169,11 +169,11 @@ and handing control between a clip and a performer.
    leftover chain (a tail, ears), found by topology. Check its Setup Result, then tune.
 3. In the character's Animation Blueprint, add the **Puppet Solve** node, choose the puppet, and
    bind each performer slot to a Live Link subject. A source that does not stream mannequin bone
-   names needs a performer profile: create one (Data Asset > Puppet Performer Profile), set its
+   names needs a performer profile: create one (Add > Puppet > Puppet Performer Profile), set its
    Source Subject or Source Skeleton, press **Map From Live Link Subject** or **Map From
    Skeleton**, check what it reports, and name it in the cast entry.
 4. Have the performer stand in the reference pose and calibrate: create a Puppet Calibration
-   asset (Data Asset > Puppet Calibration Asset), set its Live Link subject and alignment, and
+   asset (Add > Puppet > Puppet Calibration Asset), set its Live Link subject and alignment, and
    press **Capture** in its details panel, or call **Calibrate Performer** on the Puppet
    Calibration subsystem from Blueprint. The asset keeps the calibration: name it as the cast
    entry's **Saved Calibration** and the puppet uses it until the performer is calibrated again,

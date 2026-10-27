@@ -1,4 +1,4 @@
 {
   "_comment": "Minimum number of UE automation tests a run of the Open3DPuppet filter must execute. A run below its floor fails, so a test file that was not compiled or registered cannot drop out silently. Raise the floor in the PR that adds tests; lower it only in a PR that removes tests on purpose, and say why.",
-  "plugin": 157
+  "plugin": 158
 }

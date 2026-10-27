@@ -49,6 +49,7 @@ Items that need a person at the desk or a maintainer decision:
   module, and its `curl_*` curves reading 0 flat and about 1 in a fist, and the Wolf's paw toes once the mesh exists; tune the default gains.
 - Physics assets for the Wolf and the Eagle, before WP-15 (ADR 0007; none exist yet).
 - ADR 0008: which hand-off triggers the show uses (question 1).
+- WP-2 and WP-3 at the desk: step by step in the [desk test plan](../guides/desk-test-plan.md).
 - WP-2 at the desk: Capture a performer into a calibration asset, restart, and drive the puppet
   from it as the cast entry's Saved Calibration; Map From Live Link Subject on each capture system
   the show uses (the default naming schemes are the IKRig templates' names, not checked against

@@ -35,7 +35,8 @@ In this order unless the maintainer says otherwise:
    - WP-M1 and WP-M2 (the Wolf and the Eagle) wait on their meshes.
 2. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5,
    WP-6, WP-11, WP-12, WP-13 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
-   and tune for each.
+   and tune for each; the [desk test plan](../guides/desk-test-plan.md) has the steps for WP-2
+   and WP-3.
 
 ## Waiting on the maintainer
 

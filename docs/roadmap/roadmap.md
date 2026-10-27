@@ -25,7 +25,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-7 | Prop-driven module (Live Link Transform role) and a multi-performer sample | WP-1 | Done (#28) |
 | WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | Done (#29, #30, #31, #33) |
 | WP-9 | Fab readiness as Open3DBroadcast: packaging script (`fab-package.py`), exclusion lists, icon | WP-1 | Done (#34) |
-| WP-10 | Control Rig adapter module | WP-1 | Planned |
+| WP-10 | Control Rig adapter module (ADR 0010) | WP-1 | Done (#35) |
 
 Work packages are listed in the order they are planned. The Wolf and Eagle (design overview §10)
 set that order: curves, digits and face first, because both characters use them, then the
@@ -36,6 +36,11 @@ ahead when a session needs it.
 
 Items that need a person at the desk or a maintainer decision:
 
+- ADR 0010 (Control Rig adapter): sign-off, and its open questions (rig variables as inputs, rig
+  curves as outputs).
+- WP-10 at the desk: a Control Rig made in the Control Rig editor on a puppet's mesh, driven
+  through the Control Rig module by a live performer (only a native rig built in code has been
+  run through it); profile the rig's forward solve with Unreal Insights.
 - WP-6 at the desk: a performer flapping and folding the Eagle's wings; set the fold poses and
   feather fold for the mesh, and tune the fold range and flap amplification.
 - WP-5 at the desk: the Wolf's tail, ears and mane swinging as the performer walks, turns and

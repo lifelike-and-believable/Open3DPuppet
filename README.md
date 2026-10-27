@@ -22,7 +22,7 @@ Status: early development. See the [roadmap](docs/roadmap/roadmap.md).
 
 | Path | Contents |
 |---|---|
-| `ProjectSandbox/Plugins/Open3DPuppet/` | The plugin: `Open3DPuppet` (runtime), `Open3DPuppetEditor`, `Open3DPuppetTests`. |
+| `ProjectSandbox/Plugins/Open3DPuppet/` | The plugin: `Open3DPuppet` (runtime), `Open3DPuppetControlRig` (runtime, the Control Rig adapter), `Open3DPuppetEditor`, `Open3DPuppetTests`. |
 | `ProjectSandbox/` | Host project for development and tests. |
 | `docs/` | Design, ADRs, roadmap and guides. |
 | `Build/` | CI check scripts. |

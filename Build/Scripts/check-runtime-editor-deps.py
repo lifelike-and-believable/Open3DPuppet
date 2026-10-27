@@ -66,6 +66,9 @@ FORBIDDEN_MODULES = {
     "BlueprintGraph",
     "Blutility",
     "ContentBrowser",
+    # The Control Rig adapter's runtime module uses ControlRig and RigVM only (ADR 0010).
+    "ControlRigDeveloper",
+    "ControlRigEditor",
     "DetailCustomizations",
     "EditorFramework",
     "EditorStyle",

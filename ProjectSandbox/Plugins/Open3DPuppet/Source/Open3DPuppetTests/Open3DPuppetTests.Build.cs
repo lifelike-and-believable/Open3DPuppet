@@ -19,13 +19,17 @@ public class Open3DPuppetTests : ModuleRules
 			"Open3DPuppet"
 		});
 
+		// The Control Rig adapter's tests run a native rig built in code (ADR 0010).
 		// The asset type tests read the editor's factories and asset definitions; the session tests
 		// the session panel's model and its tab.
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"AssetDefinition",
+			"ControlRig",
 			"LiveLinkInterface",
+			"Open3DPuppetControlRig",
 			"Open3DPuppetEditor",
+			"RigVM",
 			"Slate",
 			"SlateCore",
 			"UnrealEd"

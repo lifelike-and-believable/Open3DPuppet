@@ -67,6 +67,18 @@ public:
 	UFUNCTION()
 	TArray<FName> GetPerformerSlotOptions() const;
 
+	/** What the last Propose Modules did, and what to check. */
+	UPROPERTY(VisibleAnywhere, Transient, Category = "Setup")
+	FString SetupResult;
+
+	/**
+	 * Fills an empty module list for Target Mesh: Root, the spine, neck and head, limbs, digits,
+	 * eyes, and Dynamic Chains for leftover chains such as tails and ears, named through the naming
+	 * schemes in Project Settings > Open3DPuppet. Check what Setup Result reports, then tune.
+	 */
+	UFUNCTION(CallInEditor, Category = "Setup")
+	void ProposeModules();
+
 	/** Changes whenever the asset or one of its modules is edited. Game thread only. */
 	int32 GetRevision() const { return Revision; }
 

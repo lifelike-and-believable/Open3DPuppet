@@ -34,6 +34,15 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Setup assistant** (WP-8): **Propose Modules** on a puppet asset fills its empty module list
+  for Target Mesh (`PuppetSetup::ProposeModules`). The mesh's bones are named through the
+  naming schemes (`PuppetNaming::Match`), and the asset gets Root with Pelvis Bone set, a spine
+  Chain (from `spine_01` to the top of the spine, or to where the neck hangs), a neck and head
+  Chain, a Two-Bone Limb per arm and per leg (legs Pelvis Relative), Digits per hand with
+  fingers, Eyes, and a Dynamic Chain for each leftover chain of two or more bones (a tail, ears),
+  leaving out IK, twist and corrective bones. Puppet bones keep the mesh's names; performer
+  joints are canonical. It leaves an asset that has modules alone. Setup Result reports what it
+  proposed. 3 new tests (157).
 - **Bone pickers** (WP-8, ADR 0002): in the details panel, every module's puppet bone fields are
   dropdowns of the puppet asset's Target Mesh bones (the canonical joints when no mesh is set),
   performer joint fields list the canonical joints (`PuppetNaming::CanonicalJoints`), and

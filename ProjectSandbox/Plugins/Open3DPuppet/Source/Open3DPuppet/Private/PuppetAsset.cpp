@@ -5,6 +5,8 @@
 #include "Engine/SkeletalMesh.h"
 #include "PuppetModule.h"
 #include "PuppetNaming.h"
+#include "PuppetSettings.h"
+#include "PuppetSetup.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PuppetAsset)
 
@@ -26,6 +28,11 @@ TArray<FName> UPuppetAsset::GetPuppetBoneOptions() const
 TArray<FName> UPuppetAsset::GetPerformerSlotOptions() const
 {
 	return PerformerSlots;
+}
+
+void UPuppetAsset::ProposeModules()
+{
+	PuppetSetup::ProposeModules(*this, GetDefault<UPuppetSettings>()->NamingSchemes, SetupResult);
 }
 
 #if WITH_EDITOR

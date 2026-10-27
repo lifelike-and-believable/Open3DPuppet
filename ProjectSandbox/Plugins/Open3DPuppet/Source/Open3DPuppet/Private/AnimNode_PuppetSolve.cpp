@@ -9,6 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "Open3DPuppetLog.h"
 #include "PuppetAsset.h"
+#include "PuppetCalibrationAsset.h"
 #include "PuppetCalibrationSubsystem.h"
 #include "PuppetInstance.h"
 #include "PuppetLiveLink.h"
@@ -82,11 +83,21 @@ void FAnimNode_PuppetSolve::PreUpdate(const UAnimInstance* InAnimInstance)
 		const FName Subject = Cast[Index].Subject.Name;
 		int32 Revision = 0;
 		const FPuppetPerformerCalibration* Calibration = Calibrations ? Calibrations->FindCalibration(Subject, Revision) : nullptr;
-		if (Entry.Source != EPuppetCastSource::LiveLink || Subject != Entry.Subject || Revision != Entry.Revision)
+		// A live calibration wins over the saved one.
+		const UPuppetCalibrationAsset* Saved = Cast[Index].SavedCalibration;
+		const int32 SavedRevision = Saved ? Saved->GetRevision() : 0;
+		if (!Calibration && Saved && Saved->HasCalibration())
+		{
+			Calibration = &Saved->GetCalibration();
+		}
+		if (Entry.Source != EPuppetCastSource::LiveLink || Subject != Entry.Subject || Revision != Entry.Revision
+			|| Saved != Entry.Saved || SavedRevision != Entry.SavedRevision)
 		{
 			Entry.Source = EPuppetCastSource::LiveLink;
 			Entry.Subject = Subject;
 			Entry.Revision = Revision;
+			Entry.Saved = Saved;
+			Entry.SavedRevision = SavedRevision;
 			Entry.bHasCalibration = Calibration != nullptr;
 			Entry.Calibration = Calibration ? *Calibration : FPuppetPerformerCalibration();
 			Entry.bDirty = true;

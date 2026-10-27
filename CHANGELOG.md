@@ -39,7 +39,18 @@ Until then changes collect under `## Unreleased`.
   another pose than performers calibrate in, such as an A-pose mesh for T-pose performers. Its
   bone rotations are used, by bone name, and bone lengths stay the mesh's
   (`FPuppetClipSampler::SampleOnto`). Without it, modules retarget from the mesh's reference pose
-  as before. `FPuppetPose::GetReferenceComponent` returns the rest pose. 2 new tests (137).
+  as before. `FPuppetPose::GetReferenceComponent` returns the rest pose. 2 new tests (141).
+- **Naming schemes and profile auto-mapping** (WP-2, ADR 0003): Project Settings > Plugins >
+  Open3DPuppet > Naming Schemes maps canonical joints to capture systems' bone names, starting
+  with defaults for the UE5 mannequin, Xsens, OptiTrack / Motive, Rokoko, Vicon, Qualisys, Sony
+  Mocopi, Move One, HumanIK / MotionBuilder, Mixamo and Unity humanoid (VMC), taken from the UE
+  5.8 IKRig auto-characterizer's template skeletons and VMCLiveLink's humanoid bone list; edit
+  them or add others there. A performer profile's **Map From Skeleton** and **Map From Live Link
+  Subject** buttons fill its bone mapping from the scheme that fits the source best: names match
+  ignoring case, a namespace (`mixamorig:`) and a prefix every bone shares, and a scheme loses a
+  point for each joint whose parent contradicts it, so Xsens and Mixamo (which share names) are
+  told apart by the top of the spine. The profile reports the scheme, or the schemes that map the
+  same bones, and the joints the source lacks. 4 new tests (139).
 - **Saved calibrations** (WP-2, ADR 0003): `UPuppetCalibrationAsset` keeps a performer's
   calibration in an asset. **Capture** (a button in its details panel, and callable from
   Blueprint) calibrates its Live Link `Subject` with its `Alignment` and saves the result;

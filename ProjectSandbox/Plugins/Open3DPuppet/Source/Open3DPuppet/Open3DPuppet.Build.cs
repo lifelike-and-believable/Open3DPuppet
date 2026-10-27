@@ -17,6 +17,7 @@ public class Open3DPuppet : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
+			"DeveloperSettings",
 			"LiveLinkInterface"
 		});
 

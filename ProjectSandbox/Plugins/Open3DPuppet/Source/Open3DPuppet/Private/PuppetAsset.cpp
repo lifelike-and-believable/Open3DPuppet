@@ -39,6 +39,12 @@ void UPuppetAsset::ProposeModules()
 void UPuppetAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	MarkChanged();
+	// A number set in a module, edited through Modules, applies live as it does on the module itself;
+	// the asset's own settings are read when the puppet initialises, so they bind again.
+	const FProperty* Member = PropertyChangedEvent.MemberProperty;
+	if (!(Member && Member->GetFName() == GET_MEMBER_NAME_CHECKED(UPuppetAsset, Modules) && PuppetEditing::IsLiveEdit(PropertyChangedEvent)))
+	{
+		MarkChanged();
+	}
 }
 #endif

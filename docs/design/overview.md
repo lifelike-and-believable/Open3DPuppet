@@ -123,6 +123,7 @@ frame, so a change in the details panel shows up live in the viewport.
 | Curve to bone | A performer curve (face, finger curl) | Source range to bone rotation or translation range, dead zone, smoothing | WP-13 |
 | Curve remap | Performer curves (ARKit's 52 blend shapes by default; other sources through the profile) | Per-curve remap, combination, smoothing to puppet curves (morph targets) | WP-13 |
 | Eyes | Eye-look curves or eye bones | Range limits, convergence | WP-13 |
+| Fan | The bend of performer joints, averaged (the elbows for the Eagle's tail) | Spread angle, feather order from the middle out, input range, smoothing | WP-18 |
 | Physics Region (`Open3DPuppetPhysics`) | Its controls or a performer curve | Physics weight (strength) and extra damping of a region in Rigid Body With Control | WP-15 |
 | Control Rig adapter | A Control Rig made on the puppet's mesh: performer joints and curves drive its controls, it poses the bones the module lists (ADR 0010) | The rig's own controls | WP-10 |
 
@@ -221,7 +222,7 @@ maintainer and the meshes; each line names the module that carries it.
 | Primary feathers, alula | Finger spread and curl, thumb | Digits (WP-12) |
 | Legs | Legs | Two-bone limb or digitigrade leg |
 | Talons | A finger-curl or face curve chosen by the puppeteer | Curve to bone (WP-13) |
-| Tail fan | Pelvis motion, or finger spread | Tail (WP-5), Digits (WP-12) |
+| Tail fan | Opens as the wings spread: the performer's elbow bends, both arms (maintainer, 2026-10-27) | Fan (WP-18) |
 | Beak | `jawOpen` | Curve to bone (WP-13) |
 | Crest and head feathers | Brow curves | Curve to bone (WP-13) |
 | Eyes, eyelids | Eye-look and blink curves | Eyes, curve to bone (WP-13) |

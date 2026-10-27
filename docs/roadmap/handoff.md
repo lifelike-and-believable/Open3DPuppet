@@ -39,7 +39,9 @@ In this order unless the maintainer says otherwise:
    18), then live with a Rokoko suit (part 19). Fix what the `desk` issues report before new
    features. The Wolf and the Eagle are test meshes, not production puppets yet; WP-M1 and WP-M2
    come after. WP-17 still waits on which hand-off triggers the show uses (ADR 0008 question 1).
-2. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5, WP-7, WP-8,
+2. **WP-18** (the Fan module, for the Eagle's tail: the fan opens as the wings spread, read from
+   the performer's elbow bends) is planned for after the desk tests.
+3. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5, WP-7, WP-8,
    WP-6, WP-10, WP-11, WP-12, WP-13, WP-15 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
    and tune for each; the [desk test plan](../guides/desk-test-plan.md) has the steps for WP-2,
    WP-3 and WP-7.

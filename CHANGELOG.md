@@ -34,6 +34,12 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Puppet rest pose** (WP-2, ADR 0003): a puppet asset's `RestPose` (an AnimSequence on the
+  puppet's skeleton) and `RestPoseTime` set the pose modules retarget from, for a mesh modelled in
+  another pose than performers calibrate in, such as an A-pose mesh for T-pose performers. Its
+  bone rotations are used, by bone name, and bone lengths stay the mesh's
+  (`FPuppetClipSampler::SampleOnto`). Without it, modules retarget from the mesh's reference pose
+  as before. `FPuppetPose::GetReferenceComponent` returns the rest pose. 2 new tests (137).
 - **Saved calibrations** (WP-2, ADR 0003): `UPuppetCalibrationAsset` keeps a performer's
   calibration in an asset. **Capture** (a button in its details panel, and callable from
   Blueprint) calibrates its Live Link `Subject` with its `Alignment` and saves the result;

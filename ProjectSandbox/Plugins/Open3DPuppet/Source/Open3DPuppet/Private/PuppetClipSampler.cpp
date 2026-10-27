@@ -99,7 +99,21 @@ bool FPuppetClipSampler::CaptureCalibration(bool bReferencePose, double Time, co
 
 bool FPuppetClipSampler::SampleOnto(double Time, const FReferenceSkeleton& Target, TArray<FTransform>& OutLocal) const
 {
-	return false;
+	TArray<FTransform> Clip;
+	if (!Sample(Time, Clip))
+	{
+		return false;
+	}
+	OutLocal = Target.GetRefBonePose();
+	for (int32 Bone = 0; Bone < Target.GetNum(); ++Bone)
+	{
+		const int32 ClipBone = Names.IndexOfByKey(Target.GetBoneName(Bone));
+		if (ClipBone != INDEX_NONE)
+		{
+			OutLocal[Bone].SetRotation(Clip[ClipBone].GetRotation());
+		}
+	}
+	return true;
 }
 
 double FPuppetClipSampler::AdvanceTime(double Time, double DeltaTime, float PlayRate, bool bLoop, double Length)

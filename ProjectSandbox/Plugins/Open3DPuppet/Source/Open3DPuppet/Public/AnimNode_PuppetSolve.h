@@ -195,6 +195,10 @@ private:
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UPuppetModule>> BoundModules;
 
+	/** The puppet's rest pose clip (UPuppetAsset::RestPose), kept alive while it is sampled. */
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimSequence> BoundRestPose;
+
 	/** The performer clips the samplers play, indexed like Cast, kept alive while they are sampled. */
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UAnimSequence>> BoundClips;
@@ -209,6 +213,8 @@ private:
 	TSharedPtr<FPuppetInstance> Instance;
 	TArray<FCastCalibration> CastCalibrations;
 	TArray<FCastClip> CastClips;
+	FPuppetClipSampler RestPoseSampler;
+	float BoundRestPoseTime = 0.0f;
 	/** Indexed like the bound puppet's performer slots. */
 	TArray<FSlotControl> SlotControls;
 	TArray<FTransform> InputLocal;

@@ -4,7 +4,9 @@ param(
   [string]$Zip,
   # Scratch folder: the zip is extracted to <WorkDir>\Stage and packaged to <WorkDir>\Package.
   # Keep it short: BuildPlugin's intermediate paths under it must stay within 260 characters.
-  [string]$WorkDir
+  [string]$WorkDir,
+  # Temporary: passed to Build-Plugin.ps1 (see its -DisableFabPlugin).
+  [switch]$DisableFabPlugin
 )
 
 # Runs RunUAT BuildPlugin on the contents of the Fab source zip, the way Fab's build farm
@@ -58,7 +60,8 @@ Write-Host "Extracted $Zip -> $pluginDir"
   -OutDir $package `
   -TargetPlatforms @("Win64") `
   -Configuration "Development" `
-  -FailOnWarnings
+  -FailOnWarnings `
+  -DisableFabPlugin:$DisableFabPlugin
 if ($LASTEXITCODE -ne 0) {
   Write-Failure "BuildPlugin failed on the Fab zip's contents (exit code $LASTEXITCODE)."
   exit 1

@@ -37,11 +37,11 @@ Until then changes collect under `## Unreleased`.
   the source checks (was `plugin-checks.yml`), and its last job posts a new comment on the PR
   each time it finishes, through rules-for-robots' `rfr-ci-status.yml`, so a session waiting to
   merge on green is woken. Drafts get no comment.
-- **CI builds the plugin with Fab disabled, editor target only** (temporary, 2026-10-28): Epic's
-  Fab plugin 0.0.22 adds a `FabToolset` module that UE 5.8.4's precompiled build rules lack, so
-  every build with Fab enabled failed (RulesError). `Build-Plugin.ps1` and `Build-FabZip.ps1`
-  take `-DisableFabPlugin`, which CI passes; the game targets are not built until it is removed
-  (Build/README.md).
+- **CI builds the game targets again** (2026-10-29): Epic's Fab plugin 0.0.22 added a
+  `FabToolset` module that UE 5.8.4's precompiled build rules lack, so every build with Fab
+  enabled failed (RulesError), and CI built the editor target only, with Fab disabled
+  (`-DisableFabPlugin`, #41). Epic rolled Fab back to 0.0.21, which builds; the switch is
+  removed and CI builds the Development and Shipping game targets again.
 
 ### Fixed
 

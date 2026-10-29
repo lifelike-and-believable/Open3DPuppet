@@ -8,8 +8,8 @@
 
 #include "PuppetModule_ControlRig.generated.h"
 
-/** What a Control Rig input feeds its control (ADR 0010). */
-UENUM(BlueprintType)
+/** What a Control Rig input feeds its control (ADR 0010). ScriptName keeps it apart from FPuppetControlRigInput in Python. */
+UENUM(BlueprintType, meta = (ScriptName = "PuppetControlRigInputKind"))
 enum class EPuppetControlRigInput : uint8
 {
 	/** The control's rest rotation turned by the performer joint's rotation since calibration. Transform, Euler transform or rotator controls. */

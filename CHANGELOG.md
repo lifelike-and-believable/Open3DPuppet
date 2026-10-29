@@ -44,6 +44,10 @@ Until then changes collect under `## Unreleased`.
   (ADR 0008), the module blended the lower and end bones from where blending the upper bone had
   moved them, not from their solved transforms, so the hand or foot landed in the wrong place. It
   now reads every solved transform before blending. 1 new test (95).
+- **Control Rig input kind in Python** (found after WP-10): `EPuppetControlRigInput` and
+  `FPuppetControlRigInput` both became `unreal.PuppetControlRigInput`, so one was not exposed. The
+  enum is now `unreal.PuppetControlRigInputKind`. 1 new test (197) checks every enum and struct in
+  the plugin.
 
 ### Added
 

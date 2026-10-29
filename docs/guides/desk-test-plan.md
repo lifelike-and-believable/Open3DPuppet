@@ -386,9 +386,20 @@ Driven by the finger-curl curves from `MM_Attack_01` (part 9).
    fully bent elbow gives a folded wing, and record the values that work for the Eagle.
 4. The legs: two Digitigrade Legs from `thigh_l`, `calf_l`, `foot_l` onto `RigLLeg1`,
    `RigLLeg2`, `RigLLeg3`, `RigLLegAnkle` (and the right side), with the walk.
-5. **Not covered yet:** the tail fan's 11 feathers are siblings under `RigTail_1`, each one bone,
-   so neither Dynamic Chain nor Digits drives them as a fan. The Fan module (WP-18, planned)
-   will open it as the wings spread, from the performer's elbows; it gets its own part here.
+5. **The tail fan** (WP-18): add a **Fan** module after the Wings and after any module that moves
+   the tail root, since the fan is posed under its parent as that is by then. **Performer
+   Joints** `lowerarm_l`, `lowerarm_r` (the default); **Feathers** the 11 tail feathers, edge to
+   edge. The mesh names them `RigTail_2_01` to `RigTail_2_11` (read from the asset file, not
+   checked in the editor): in the skeleton tree, confirm their parent and that this order runs
+   across the fan from one edge to the other, and correct the list if not.
+   - Cast `MM_Attack_01`. **Expect:** the tail opens as the arms straighten and closes as the
+     elbows bend, with the wings; the middle feather stays.
+   - **Spread Axis** and **Spread Angle** are set for the mesh: find the axis that fans the
+     feathers sideways (try `Z`, then `X` or `Y`), then an angle that opens the fan as wide as the
+     mesh allows without feathers crossing. Record both.
+   - **Open Bend** and **Closed Bend** default to the Wing's fold range (20 and 120); change them
+     with the Wing's **Fold Start Angle** and **Fold End Angle** so tail and wings stay together.
+   - **Smoothing Time** `0.1`: the tail opens and closes more softly than the wings.
 
 ## 17. Control Rig adapter (WP-10)
 

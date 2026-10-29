@@ -26,7 +26,7 @@ Work packages (WPs) in the order they are planned. One WP per pull request, bran
 | WP-8 | Setup assistant (finds chains, proposes modules), bone pickers bound to the target mesh, a session control panel | WP-1 | Done (#29, #30, #31, #33) |
 | WP-9 | Fab readiness as Open3DBroadcast: packaging script (`fab-package.py`), exclusion lists, icon | WP-1 | Done (#34) |
 | WP-10 | Control Rig adapter module (ADR 0010) | WP-1 | Done (#35) |
-| WP-18 | Fan module: spreads a fan of sibling bones (the Eagle's tail feathers) from the bend of performer joints, averaged (the Eagle's elbows, so the tail opens as the wings spread); feathers from the middle outwards, spread angle, input range, smoothing; tests and a desk test part. After the desk tests (maintainer, 2026-10-27) | WP-1 | Planned |
+| WP-18 | Fan module: spreads a fan of sibling bones (the Eagle's tail feathers) from the bend of performer joints, averaged (the Eagle's elbows, so the tail opens as the wings spread); feathers from the middle outwards, spread angle, input range, smoothing; tests and a desk test step | WP-1 | Done (#42) |
 
 Work packages are listed in the order they are planned. The Wolf and Eagle (design overview §10)
 set that order: curves, digits and face first, because both characters use them, then the
@@ -46,6 +46,9 @@ live.
   through the Control Rig module by a live performer (only a native rig built in code has been
   run through it): pick the rig in the module's details, set its variables, then drive it; profile the rig's
   forward solve with Unreal Insights.
+- WP-18 at the desk: the Eagle's tail fan opening with the wings ([desk test plan](../guides/desk-test-plan.md)
+  part 16, step 5): confirm the feather order across the fan, and set Spread Axis and Spread
+  Angle for the mesh.
 - WP-6 at the desk: a performer flapping and folding the Eagle's wings; set the fold poses and
   feather fold for the mesh, and tune the fold range and flap amplification.
 - WP-5 at the desk: the Wolf's tail, ears and mane swinging as the performer walks, turns and

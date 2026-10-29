@@ -102,9 +102,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Warnings in plugin sources fail the build (rule FAB-004). -DisableFabPlugin is temporary
-      # (Build-Plugin.ps1 says why): remove it from this step and the Fab zip step once Epic's
-      # Fab plugin builds with UE 5.8.4 again.
+      # Warnings in plugin sources fail the build (rule FAB-004).
       - name: Build the plugin (Win64)
         shell: powershell
         run: |
@@ -113,8 +111,7 @@ jobs:
             -UEPath "$env:UE_ROOT" `
             -PluginUPluginPath (Join-Path $PWD 'ProjectSandbox\Plugins\Open3DPuppet\Open3DPuppet.uplugin') `
             -OutDir $pkg `
-            -FailOnWarnings `
-            -DisableFabPlugin
+            -FailOnWarnings
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Run the automation tests against the package
@@ -153,8 +150,7 @@ jobs:
           & .\Build\Scripts\Build-FabZip.ps1 `
             -UEPath "$env:UE_ROOT" `
             -Zip (Join-Path $env:RUNNER_TEMP 'FabZip') `
-            -WorkDir (Join-Path $env:RUNNER_TEMP 'FabBuild') `
-            -DisableFabPlugin
+            -WorkDir (Join-Path $env:RUNNER_TEMP 'FabBuild')
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Upload the Fab build log

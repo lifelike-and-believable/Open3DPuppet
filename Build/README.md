@@ -43,16 +43,6 @@ with UE 5.8 at `C:\Program Files\Epic Games\UE_5.8`:
 Drafts skip the UE job so unfinished work does not hold the shared runner. The scripts come
 from Open3DBroadcast.
 
-**Temporary (2026-10-28): `-DisableFabPlugin`.** Epic's Fab plugin 0.0.22 adds a `FabToolset`
-module that the installed UE 5.8.4's precompiled build rules do not contain, so every build with
-Fab enabled fails before compiling (`Expecting to find a type ... named 'FabToolset'`,
-RulesError). Steps 1 and 4 pass `-DisableFabPlugin`, which disables Fab for UBT
-(`UBT_EXTRA_ARGS=-DisablePlugin=Fab`) and builds only the editor target: UBT refuses to disable
-a plugin for the game targets, so the Development and Shipping game builds are not checked until
-it is removed. Pass it to local package builds too. To build ProjectSandbox locally, disable Fab
-in your copy of `ProjectSandbox.uproject` (not committed). Remove the switch from `ci.yml` once a
-Fab or engine update builds again.
-
 The last job, `status`, calls rules-for-robots' reusable
 [`rfr-ci-status.yml`](https://github.com/lifelike-and-believable/rules-for-robots/blob/main/.github/workflows/rfr-ci-status.yml).
 It posts a new comment on the PR each time the workflow finishes, headed "Open3DPuppet CI

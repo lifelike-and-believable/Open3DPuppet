@@ -15,7 +15,13 @@ param(
   [switch]$StrictIncludes,
   # Fail when the compiler reports a warning in a file under this plugin, even if
   # BuildPlugin succeeds. Warnings located in engine headers are not counted.
-  [switch]$FailOnWarnings
+  [switch]$FailOnWarnings,
+  # Temporary, until Epic ships a Fab plugin that matches UE 5.8.4: Fab 0.0.22 adds a
+  # FabToolset module that the installed engine's precompiled rules do not know, so every
+  # build with Fab enabled fails (RulesError). This disables Fab for UBT through
+  # UBT_EXTRA_ARGS, which UBT allows only for the editor target, so the game targets
+  # (Development and Shipping) are skipped with -NoTargetPlatforms.
+  [switch]$DisableFabPlugin
 )
 
 # Returns the unique compiler warnings in $LogPath whose file is inside the plugin.
@@ -360,6 +366,13 @@ if ($StrictIncludes) {
   $uatArgs += "-StrictIncludes"
 }
 
+$savedUbtExtraArgs = $env:UBT_EXTRA_ARGS
+if ($DisableFabPlugin) {
+  Write-Warning "-DisableFabPlugin: Fab is disabled and only the editor target is built; the game targets are not."
+  $uatArgs += "-NoTargetPlatforms"
+  $env:UBT_EXTRA_ARGS = "$savedUbtExtraArgs -DisablePlugin=Fab".Trim()
+}
+
 # UAT's output is also written to a log next to the package (not inside it), so the
 # warnings can be scanned afterwards and the log can be uploaded.
 $uatLog = Join-Path (Split-Path -Parent $OutDir) ((Split-Path -Leaf $OutDir) + "-BuildPlugin.log")
@@ -369,6 +382,7 @@ Write-Host "  UAT log: $uatLog"
 & $UAT $uatArgs | Tee-Object -FilePath $uatLog
 $uatExitCode = $LASTEXITCODE
 if ($null -eq $uatExitCode) { $uatExitCode = 1 }  # never report success without an exit code
+$env:UBT_EXTRA_ARGS = $savedUbtExtraArgs
 
 if ($uatExitCode -eq 0) {
   if ($FailOnWarnings) {

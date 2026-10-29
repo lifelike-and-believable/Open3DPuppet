@@ -55,6 +55,13 @@ namespace PuppetTests
 	/** The biped with three feathers under hand_l, feather_01 to feather_03, 10 cm out along +Y and 2 cm apart along X. */
 	TArray<FBone> Wing();
 
+	/**
+	 * The biped with a right arm, mirroring the left along -Y, and a tail fan: tail_01 20 cm behind
+	 * the pelvis (along -X) with five sibling feathers under it, fan_01 to fan_05, 10 cm further
+	 * back and 4 cm apart from +Y to -Y. Feathers spread about Z.
+	 */
+	TArray<FBone> Fan();
+
 	/** The biped with a jaw and two eyes under the head, all at identity rest rotations: jaw, eye_l (+Y side), eye_r. */
 	TArray<FBone> Face();
 

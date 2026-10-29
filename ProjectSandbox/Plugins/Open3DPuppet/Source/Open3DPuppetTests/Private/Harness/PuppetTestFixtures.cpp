@@ -100,6 +100,23 @@ namespace PuppetTests
 		return Bones;
 	}
 
+	TArray<FBone> Fan()
+	{
+		TArray<FBone> Bones = Biped();
+		Bones.Append({
+			{ TEXT("upperarm_r"), TEXT("spine_03"), FVector(0, -15, 0) },
+			{ TEXT("lowerarm_r"), TEXT("upperarm_r"), FVector(0, -30, 0) },
+			{ TEXT("hand_r"), TEXT("lowerarm_r"), FVector(0, -25, 0) },
+			{ TEXT("tail_01"), TEXT("pelvis"), FVector(-20, 0, 0) },
+			{ TEXT("fan_01"), TEXT("tail_01"), FVector(-10, 8, 0) },
+			{ TEXT("fan_02"), TEXT("tail_01"), FVector(-10, 4, 0) },
+			{ TEXT("fan_03"), TEXT("tail_01"), FVector(-10, 0, 0) },
+			{ TEXT("fan_04"), TEXT("tail_01"), FVector(-10, -4, 0) },
+			{ TEXT("fan_05"), TEXT("tail_01"), FVector(-10, -8, 0) },
+		});
+		return Bones;
+	}
+
 	TArray<FBone> Face()
 	{
 		TArray<FBone> Bones = Biped();

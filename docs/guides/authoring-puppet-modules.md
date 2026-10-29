@@ -21,6 +21,7 @@ Check whether an existing module already does the job with different settings:
 | Eyes from the performer's gaze (ARKit eye-look curves or eye joints) | Eyes |
 | A tail, ears, a mane or feathers that swing with the puppet's motion and settle | Dynamic Chain (Tail), with Stiffness, Damping, Amplitude and Physics Weight |
 | A wing from the performer's arm: flap, fold, feather fan | Wing |
+| A fan of sibling bones (a tail fan) that opens as performer joints straighten, averaged (the elbows: the tail opens as the wings spread) | Fan, with Open Bend, Closed Bend, Spread Angle and Spread Axis |
 | A tail, trunk or tentacle a puppeteer plays with a tracked rod (a Live Link Transform-role subject, read as the joint `prop`) | Prop Chain, with Shape, Space, Amplification and Smoothing |
 | A region that a puppeteer makes more or less physical under engine physics (Rigid Body With Control) | Physics Region ([setup guide](physics-hand-off.md)): writes no bones; publishes the region's physics weight and extra damping as curves |
 | Behaviour you would rather build in the Control Rig editor than in C++ | Control Rig ([ADR 0010](../adr/0010-control-rig-adapter.md)): a rig made on the puppet's mesh, whose controls the performer drives (joint rotation, joint transform or curve inputs) and whose variables take values set per puppet, posing the bones and setting the curves the module lists |

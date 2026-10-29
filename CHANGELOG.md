@@ -56,6 +56,12 @@ Until then changes collect under `## Unreleased`.
 
 ### Added
 
+- **Fan module** (WP-18): the Eagle's tail fan opens as the wings spread. The bends of the
+  listed `PerformerJoints` (both elbows by default) are averaged and remapped from `ClosedBend`
+  (the fan at its reference pose) to `OpenBend` (fully open), with optional `SmoothingTime`.
+  The `Feathers`, listed edge to edge, turn about `SpreadAxis` by their place from the middle of
+  the fan: the middle stays, the edges turn `SpreadAngle` one each way. The defaults match the
+  Wing's fold range, so the tail opens as the wings spread. 11 new tests (208).
 - **Engine physics hand-off** (WP-15, ADR 0007 Tier 2, ADR 0011): a new runtime module,
   `Open3DPuppetPhysics`, with the Physics Region module and Make Physics Region Parameters. The
   module writes no bones; it publishes a region's physics weight (`Physics_<Region>`) and extra

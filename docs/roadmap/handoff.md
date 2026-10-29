@@ -15,8 +15,7 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 
 ## Where things stand (2026-10-28)
 
-- `develop` after the desk test plan for recorded motion (#37) and the WP-18 plan (#38). No open
-  pull requests or issues.
+- `develop` after WP-18, the Fan module (#42). No open pull requests or issues.
 - Done: WP-0, WP-1, WP-9a, WP-11 (curves, #8), WP-12 (Digits #13, finger-curl curves #14, ADR
   0009), WP-13 (face modules, #15), WP-4 (digitigrade leg, #16), WP-14 (solver dynamics, #18),
   WP-5 (dynamic chain, #19), WP-6 (wing, #20), WP-16 (hand-offs, #9; Two-Bone Limb weight fix #17)
@@ -27,8 +26,9 @@ is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
   the asset types in the Add menu (#32), and WP-9 (the Fab source zip, its checks and the
   plugin icon, #34), WP-10 (the Control Rig adapter, #35; ADR 0010) and WP-15 (the engine
   physics hand-off, #36; ADR 0011). The desk test plan now covers every module with recorded
-  mannequin motion (parts 9 to 18, #37), and WP-18 is planned (#38).
-- 196 automation tests, all passing on the self-hosted runner.
+  mannequin motion (parts 9 to 18, #37). WP-18 (the Fan module, #42) opens the Eagle's tail fan
+  as the wings spread; its desk test is part 16, step 5.
+- 208 automation tests, all passing on the self-hosted runner.
 - Every module the Wolf and the Eagle need exists. Their meshes and physics assets are in the
   host project (not committed: licensed assets); the show uses the Mamaawi copies.
 
@@ -41,10 +41,8 @@ In this order unless the maintainer says otherwise:
    18), then live with a Rokoko suit (part 19), recording results as part 20 says. Fix what the `desk` issues report before new
    features. The Wolf and the Eagle are test meshes, not production puppets yet; WP-M1 and WP-M2
    come after. WP-17 still waits on which hand-off triggers the show uses (ADR 0008 question 1).
-2. **WP-18** (the Fan module, for the Eagle's tail: the fan opens as the wings spread, read from
-   the performer's elbow bends) is planned for after the desk tests.
-3. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5, WP-7, WP-8,
-   WP-6, WP-10, WP-11, WP-12, WP-13, WP-15 and WP-16. The roadmap's [Next](roadmap.md#next) lists what to try
+2. **At the desk** (not verifiable without a person and a capture setup): WP-1, WP-2, WP-3, WP-4, WP-5, WP-7, WP-8,
+   WP-6, WP-10, WP-11, WP-12, WP-13, WP-15, WP-16 and WP-18. The roadmap's [Next](roadmap.md#next) lists what to try
    and tune for each; the [desk test plan](../guides/desk-test-plan.md) has the steps for every
    one of them.
 

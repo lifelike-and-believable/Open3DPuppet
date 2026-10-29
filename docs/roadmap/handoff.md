@@ -1,7 +1,7 @@
 # Handoff
 
 Where the last working session left Open3DPuppet, and how to start the next one. Last updated
-2026-10-28. The [roadmap](roadmap.md) stays the source of truth for work packages; this page says
+2026-10-29. The [roadmap](roadmap.md) stays the source of truth for work packages; this page says
 what changed, what is open, and what to do first. Work that spans Open3DBroadcast, VMCLiveLink
 and Open3DPuppet together is planned in
 [`live-virtual-performance`](https://github.com/lifelike-and-believable/live-virtual-performance)
@@ -13,9 +13,13 @@ Read [`AGENTS.md`](../../AGENTS.md), then this page, then the [roadmap](roadmap.
 is in [`docs/design/overview.md`](../design/overview.md) and the decisions in
 [`docs/adr/`](../adr/README.md), including the maintainer's answers to open questions.
 
-## Where things stand (2026-10-28)
+## Where things stand (2026-10-29)
 
-- `develop` after WP-18, the Fan module (#42). No open pull requests or issues.
+- `develop` after #43: CI builds the game targets with the Fab plugin enabled again. Epic's Fab
+  0.0.22 broke every UE 5.8.4 build on 2026-10-28 (RulesError on its new `FabToolset` module),
+  and #41 had CI build the editor target only, with Fab disabled. Epic rolled Fab back to
+  0.0.21, which builds locally and on the runner. The last feature is WP-18, the Fan module
+  (#42). No open pull requests or issues.
 - Done: WP-0, WP-1, WP-9a, WP-11 (curves, #8), WP-12 (Digits #13, finger-curl curves #14, ADR
   0009), WP-13 (face modules, #15), WP-4 (digitigrade leg, #16), WP-14 (solver dynamics, #18),
   WP-5 (dynamic chain, #19), WP-6 (wing, #20), WP-16 (hand-offs, #9; Two-Bone Limb weight fix #17)
@@ -95,6 +99,10 @@ These are not obvious from the rest of the repository's docs:
 - **Local runs:**
   - An automation run creates an untracked `ProjectSandbox/Config/` (`DefaultEngine.ini`,
     `DefaultInput.ini`). Delete it; do not commit it.
+  - An engine plugin update can break every build before compiling: Fab 0.0.22 (2026-10-28)
+    added a module the installed engine's precompiled `UE5Rules.dll` did not know. Compare the
+    plugin's `.uplugin` version and `Source/` modules with that dll's date; #41's diff is the
+    CI workaround if it happens again.
   - `Build-Plugin.ps1` needs a short `-OutDir` (for example `<repo>\Artifacts\Package`, which is
     ignored): a deep one, such as a temporary scratch folder, pushes intermediate paths past 260
     characters and the build fails with `OtherCompilationError`.
